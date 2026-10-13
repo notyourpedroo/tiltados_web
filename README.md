@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tiltados F1 — site
 
-## Getting Started
+Site de resultados da liga Tiltados de F1 virtual, no estilo das páginas de resultados da F1.
+Consome a [Tiltados API](https://github.com/notyourpedroo/tiltados_api).
 
-First, run the development server:
+Feito com Next.js 16 (App Router, Cache Components), TypeScript e Tailwind CSS 4.
+
+## Páginas
+
+| Rota | Conteúdo |
+|---|---|
+| `/{temporada}` | Visão geral: líder/campeão, última corrida, destaques e evolução do campeonato |
+| `/{temporada}/corridas` | Todas as etapas com vencedor, pole, volta mais rápida e sprint |
+| `/{temporada}/corridas/{race_id}` | Classificação completa da sessão, pódio, posições ganhas e punições |
+| `/{temporada}/pilotos` | Classificação de pilotos e gráfico de pontos acumulados |
+| `/{temporada}/pilotos/{driver_id}` | Perfil do piloto: estatísticas, resumo da temporada, duelo com companheiro e resultados |
+| `/{temporada}/equipes` | Campeonato de construtores e contribuição de cada piloto |
+| `/2026/superlicenca` | Saldo da Superlicença e punições registradas |
+
+`/` redireciona para `/2026`.
+
+## Rodando
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+A URL da API pode ser trocada pela variável `TILTADOS_API_URL` (veja `.env.example`).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Como os dados são buscados
 
-## Learn More
+- A API é chamada **só pelo servidor do Next** (`src/lib/api.ts`), nunca pelo navegador.
+  Como ela é servida em HTTP, isso permite hospedar o site em HTTPS (Vercel etc.) sem bloqueio de
+  *mixed content*.
+- As respostas ficam em cache com `"use cache"` + `cacheLife("minutes")`: um CSV novo publicado na API
+  aparece no site em cerca de um minuto, sem precisar de novo deploy.
+- Pontos por sessão, voltas mais rápidas, rodadas e a evolução do campeonato são derivados em
+  `src/lib/season.ts`, usando a mesma tabela de pontuação de `files/{season}/scores.csv` da API.
+  As classificações (pilotos e construtores) vêm prontas da API.
+- O build (`npm run build`) pré-renderiza todas as páginas conhecidas, então a API precisa estar no ar
+  durante o build.
 
-To learn more about Next.js, take a look at the following resources:
+## Estrutura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```text
+src/
+├── app/[season]/          # rotas por temporada (visão geral, corridas, pilotos, equipes, superlicença)
+├── components/            # cabeçalho, tabelas, gráfico de pontos e peças de UI
+└── lib/
+    ├── api.ts             # chamadas à Tiltados API (com cache)
+    ├── season.ts          # modelo derivado da temporada
+    ├── teams.ts           # cores e nomes curtos das equipes
+    └── types.ts           # tipos das respostas da API
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Ao adicionar uma equipe nova na liga, inclua a cor dela em `src/lib/teams.ts` (equipes desconhecidas
+aparecem em cinza).

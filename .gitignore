@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# exemplo de configuração
+!.env.example
+
+# arquivos locais de agentes/IA (não versionados)
+AGENTS.md
+/.claude/

@@ -1,0 +1,154 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import {
+  Card,
+  PageTitle,
+  SectionTitle,
+  Skeleton,
+  Table,
+  TeamBar,
+  td,
+  th,
+  tr,
+} from "@/components/ui";
+import { getPunishments, getSuperLicense } from "@/lib/api";
+import { formatDate } from "@/lib/format";
+import { teamStyle } from "@/lib/teams";
+import type { LicenseStatus } from "@/lib/types";
+
+export const metadata: Metadata = { title: "Superlicença" };
+
+// Cores de status reservadas (nunca usadas como cor de série), sempre com ícone + rótulo.
+const STATUS: Record<LicenseStatus, { label: string; icon: string; color: string }> = {
+  Regular: { label: "Regular", icon: "✓", color: "#0ca30c" },
+  Atencao: { label: "Atenção", icon: "!", color: "#fab219" },
+  "Alerta Critico": { label: "Alerta crítico", icon: "‼", color: "#ec835a" },
+  "Suspenso (Ban)": { label: "Suspenso", icon: "⛔", color: "#d03b3b" },
+};
+
+export default function SuperLicensePage({ params }: PageProps<"/[season]/superlicenca">) {
+  return (
+    <Suspense fallback={<Skeleton rows={8} />}>
+      {params.then(({ season }) => (
+        <SuperLicense season={season} />
+      ))}
+    </Suspense>
+  );
+}
+
+async function SuperLicense({ season }: { season: string }) {
+  // A Superlicença só existe a partir de 2026.
+  if (season !== "2026") notFound();
+  const [licenses, punishments] = await Promise.all([getSuperLicense(), getPunishments()]);
+  const sortedPunishments = [...punishments].sort((a, b) => b.race_date.localeCompare(a.race_date));
+
+  return (
+    <>
+      <PageTitle eyebrow="Temporada 2026" title="Superlicença">
+        Cada piloto começa com 12 pontos. Infrações descontam pontos da carteira: com 8 ou
+        menos o piloto entra em atenção, com 4 ou menos em alerta crítico, e ao zerar é
+        suspenso.
+      </PageTitle>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {licenses.map((l) => {
+          const status = STATUS[l.status] ?? STATUS.Regular;
+          const team = teamStyle(l.team_name);
+          const pct = Math.max(0, l.remaining_points / l.initial_points) * 100;
+          return (
+            <Card key={l.driver_id} className="p-5">
+              <div className="flex items-center gap-2">
+                <TeamBar color={team.color} />
+                <Link
+                  href={`/2026/pilotos/${l.driver_id}`}
+                  className="text-lg font-black hover:underline"
+                >
+                  {l.driver_name}
+                </Link>
+                <span className="ml-auto text-xs text-muted">{team.short}</span>
+              </div>
+              <p className="mt-3 text-4xl font-black">
+                {l.remaining_points}
+                <span className="text-lg text-muted"> / {l.initial_points}</span>
+              </p>
+              <div
+                className="mt-2 h-2 overflow-hidden rounded-full"
+                style={{ backgroundColor: `${status.color}33` }}
+                role="meter"
+                aria-valuemin={0}
+                aria-valuemax={l.initial_points}
+                aria-valuenow={l.remaining_points}
+                aria-label={`Pontos restantes de ${l.driver_name}`}
+              >
+                <div
+                  className="h-full rounded-full"
+                  style={{ width: `${pct}%`, backgroundColor: status.color }}
+                />
+              </div>
+              <p className="mt-3 flex items-center gap-2 text-sm">
+                <span
+                  aria-hidden
+                  className="flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-black text-bg"
+                  style={{ backgroundColor: status.color }}
+                >
+                  {status.icon}
+                </span>
+                <span className="font-bold">{status.label}</span>
+                <span className="ml-auto text-muted">
+                  {l.punishments_count
+                    ? `${l.punishments_count} punição${l.punishments_count > 1 ? "ões" : ""}`
+                    : "sem punições"}
+                </span>
+              </p>
+            </Card>
+          );
+        })}
+      </div>
+
+      <section className="mt-10">
+        <SectionTitle>Punições registradas</SectionTitle>
+        {sortedPunishments.length ? (
+          <Table>
+            <thead>
+              <tr>
+                <th className={th}>Data</th>
+                <th className={th}>Grande Prêmio</th>
+                <th className={th}>Piloto</th>
+                <th className={th}>Motivo</th>
+                <th className={`${th} text-right`}>Pontos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedPunishments.map((p) => (
+                <tr key={`${p.driver_id}-${p.race_id}-${p.penalty_reason}`} className={tr}>
+                  <td className={`${td} tabular whitespace-nowrap text-text-2`}>
+                    {formatDate(p.race_date)}
+                  </td>
+                  <td className={td}>
+                    <Link href={`/2026/corridas/${p.race_id}`} className="font-bold hover:underline">
+                      {p.race_name}
+                    </Link>
+                  </td>
+                  <td className={td}>
+                    <span className="flex items-center gap-2 whitespace-nowrap">
+                      <TeamBar color={teamStyle(p.team_name).color} className="h-4" />
+                      <span className="font-bold">{p.driver_name}</span>
+                    </span>
+                  </td>
+                  <td className={`${td} text-text-2`}>{p.penalty_reason}</td>
+                  <td className={`${td} tabular text-right font-black text-loss`}>
+                    −{p.deduction_points}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        ) : (
+          <Card className="p-6 text-text-2">Nenhuma punição registrada até agora. 👏</Card>
+        )}
+      </section>
+    </>
+  );
+}
