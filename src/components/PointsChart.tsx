@@ -11,13 +11,35 @@ export interface ChartSession {
 export interface ChartSeries {
   id: number;
   name: string;
+  /** Cor da equipe atual do piloto. */
+  color: string;
+  /** Companheiro de equipe atrás na classificação: mesma cor, linha tracejada. */
+  dashed: boolean;
   cumulative: number[];
 }
 
-// Até 3 pilotos em destaque: as três primeiras posições da paleta categórica
-// validam em todos os pares (CVD) contra a superfície escura. O resto fica cinza.
-const SLOTS = ["var(--series-1)", "var(--series-2)", "var(--series-3)"];
+// Até 3 pilotos em destaque, na cor da equipe; o resto fica cinza ao fundo.
+const MAX_HIGHLIGHT = 3;
 const REST = "var(--series-rest)";
+const DASH = "6 4";
+
+/** Amostra de traço usada na legenda e no tooltip (espelha a linha do gráfico). */
+function LineKey({ color, dashed }: { color: string; dashed: boolean }) {
+  return (
+    <svg width="16" height="4" aria-hidden className="shrink-0">
+      <line
+        x1="1"
+        x2="15"
+        y1="2"
+        y2="2"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeDasharray={dashed ? "3 3" : undefined}
+      />
+    </svg>
+  );
+}
 const HEIGHT = 340;
 const M = { top: 16, right: 104, bottom: 32, left: 40 };
 
@@ -37,13 +59,9 @@ export function PointsChart({
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(800);
-  // slots[i] = id do piloto destacado na cor i (null = livre). A cor segue o piloto:
-  // desmarcar alguém não repinta os demais.
-  const [slots, setSlots] = useState<(number | null)[]>(() =>
-    SLOTS.map((_, i) => series[i]?.id ?? null),
-  );
-  const [order, setOrder] = useState<number[]>(() =>
-    series.slice(0, SLOTS.length).map((s) => s.id),
+  // Pilotos em destaque, do mais antigo para o mais recente.
+  const [selected, setSelected] = useState<number[]>(() =>
+    series.slice(0, MAX_HIGHLIGHT).map((s) => s.id),
   );
   const [hover, setHover] = useState<number | null>(null);
 
@@ -64,28 +82,12 @@ export function PointsChart({
   const x = (i: number) => M.left + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
   const y = (v: number) => M.top + plotH - (v / yMax) * plotH;
 
-  const colorOf = (id: number) => {
-    const slot = slots.indexOf(id);
-    return slot === -1 ? null : SLOTS[slot];
-  };
+  const isOn = (id: number) => selected.includes(id);
 
   const toggle = (id: number) => {
-    const slot = slots.indexOf(id);
-    if (slot !== -1) {
-      setSlots(slots.map((s) => (s === id ? null : s)));
-      setOrder(order.filter((o) => o !== id));
-      return;
-    }
-    let free = slots.indexOf(null);
-    let nextOrder = order;
-    if (free === -1) {
-      // Cheio: substitui o destaque mais antigo, na mesma cor que ele ocupava.
-      const oldest = order[0];
-      free = slots.indexOf(oldest);
-      nextOrder = order.slice(1);
-    }
-    setSlots(slots.map((s, i) => (i === free ? id : s)));
-    setOrder([...nextOrder, id]);
+    if (isOn(id)) setSelected(selected.filter((s) => s !== id));
+    // Cheio: o destaque mais antigo sai para o novo entrar.
+    else setSelected([...selected, id].slice(-MAX_HIGHLIGHT));
   };
 
   const yTicks: number[] = [];
@@ -102,8 +104,8 @@ export function PointsChart({
     }
   }
 
-  const highlighted = series.filter((s) => colorOf(s.id));
-  const background = series.filter((s) => !colorOf(s.id));
+  const highlighted = series.filter((s) => isOn(s.id));
+  const background = series.filter((s) => !isOn(s.id));
 
   // Rótulos no fim das linhas destacadas; se encostarem, afasta com linha-guia.
   const endLabels = highlighted
@@ -202,10 +204,11 @@ export function PointsChart({
               key={s.id}
               d={pathOf(s.cumulative)}
               fill="none"
-              stroke={colorOf(s.id)!}
+              stroke={s.color}
               strokeWidth={2}
               strokeLinejoin="round"
               strokeLinecap="round"
+              strokeDasharray={s.dashed ? DASH : undefined}
             />
           ))}
           {endLabels.map(({ s, y0, yy }) => {
@@ -215,7 +218,7 @@ export function PointsChart({
                 {Math.abs(yy - y0) > 1 && (
                   <line x1={ex + 6} y1={y0} x2={ex + 14} y2={yy} stroke="var(--muted)" strokeWidth={1} />
                 )}
-                <circle cx={ex} cy={y0} r={4} fill={colorOf(s.id)!} stroke="var(--surface)" strokeWidth={2} />
+                <circle cx={ex} cy={y0} r={4} fill={s.color} stroke="var(--surface)" strokeWidth={2} />
                 <text x={ex + 16} y={yy} dy="0.32em" className="fill-text text-[12px] font-bold">
                   {s.name}
                   <tspan className="tabular fill-text-2 font-normal"> {s.cumulative[n - 1]}</tspan>
@@ -240,7 +243,7 @@ export function PointsChart({
                   cx={x(hover)}
                   cy={y(s.cumulative[hover] ?? 0)}
                   r={4}
-                  fill={colorOf(s.id)!}
+                  fill={s.color}
                   stroke="var(--surface)"
                   strokeWidth={2}
                 />
@@ -274,13 +277,9 @@ export function PointsChart({
             <ul className="mt-2 space-y-1">
               {hoverRows.map(({ s, v }) => (
                 <li key={s.id} className="flex items-center gap-2 text-sm">
-                  <span
-                    aria-hidden
-                    className="h-0.5 w-3 rounded-full"
-                    style={{ backgroundColor: colorOf(s.id) ?? REST }}
-                  />
+                  <LineKey color={isOn(s.id) ? s.color : REST} dashed={isOn(s.id) && s.dashed} />
                   <span className="tabular w-8 font-bold">{v}</span>
-                  <span className={colorOf(s.id) ? "text-text" : "text-text-2"}>
+                  <span className={isOn(s.id) ? "text-text" : "text-text-2"}>
                     {s.name}
                   </span>
                 </li>
@@ -292,24 +291,20 @@ export function PointsChart({
 
       <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Pilotos em destaque (até 3)">
         {series.map((s) => {
-          const c = colorOf(s.id);
+          const on = isOn(s.id);
           return (
             <button
               key={s.id}
               type="button"
               onClick={() => toggle(s.id)}
-              aria-pressed={!!c}
+              aria-pressed={on}
               className={`flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold transition-colors ${
-                c
+                on
                   ? "border-text-2 bg-surface-2 text-text"
                   : "border-line text-muted hover:text-text"
               }`}
             >
-              <span
-                aria-hidden
-                className="h-0.5 w-3 rounded-full"
-                style={{ backgroundColor: c ?? REST }}
-              />
+              <LineKey color={on ? s.color : REST} dashed={on && s.dashed} />
               {s.name}
             </button>
           );

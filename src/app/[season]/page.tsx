@@ -136,7 +136,7 @@ async function Overview({ season }: { season: string }) {
                     >
                       {r.position}
                     </span>
-                    <TeamBar color={team?.color ?? "#888"} />
+                    <TeamBar color={team?.color ?? "var(--team-other)"} />
                     <span className="font-bold">{data.drivers[r.driverId]?.name}</span>
                     <span className="text-sm text-muted">{team?.short}</span>
                     <span className="tabular ml-auto text-sm text-text-2">+{r.points} pts</span>

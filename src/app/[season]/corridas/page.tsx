@@ -23,7 +23,7 @@ function DriverChip({ data, result }: { data: SeasonData; result?: SessionResult
   const team = data.teams[result.teamId];
   return (
     <span className="flex items-center gap-2 whitespace-nowrap">
-      <TeamBar color={team?.color ?? "#888"} className="h-4" />
+      <TeamBar color={team?.color ?? "var(--team-other)"} className="h-4" />
       <span className="font-bold">{data.drivers[result.driverId]?.name}</span>
     </span>
   );

@@ -18,10 +18,7 @@
   --purple: #b05cff;
   --stripe: rgb(255 255 255 / 0.04);
 
-  /* Séries do gráfico — paleta categórica validada (CVD) na superfície escura. */
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --series-3: #199e70;
+  /* Linhas sem destaque no gráfico (as destacadas usam a cor da equipe). */
   --series-rest: #4a4a5c;
 
   /* Preenchimentos fixos (medalhas, status) e a tinta escura que vai por cima deles,
@@ -30,6 +27,20 @@
   --silver-fill: #c4c9d1;
   --bronze-fill: #d29a6c;
   --on-fill: #15151e;
+
+  /* Cores das equipes (oficiais da F1). Racing Bulls um pouco mais clara para não
+     se confundir com a Red Bull no gráfico. */
+  --team-racing-bulls: #7ea4ff;
+  --team-red-bull: #3671c6;
+  --team-ferrari: #e8002d;
+  --team-mclaren: #ff8000;
+  --team-mercedes: #27f4d2;
+  --team-alpine: #0093cc;
+  --team-sauber: #52e252;
+  --team-aston-martin: #229971;
+  --team-williams: #64c4ff;
+  --team-haas: #b6babd;
+  --team-other: #8a8a99;
 }
 
 /* Tema claro: segue o sistema, a menos que o visitante tenha escolhido o escuro… */
@@ -51,10 +62,17 @@
     --loss: #cc2b2b;
     --purple: #7c3aed;
     --stripe: rgb(0 0 0 / 0.035);
-    --series-1: #2a78d6;
-    --series-2: #eb6834;
-    --series-3: #1baf7a;
     --series-rest: #c9c9d3;
+    /* Tons mais escuros das cores claras demais para fundo branco. */
+    --team-racing-bulls: #5b86f0;
+    --team-red-bull: #1f4c9c;
+    --team-mclaren: #e06c00;
+    --team-mercedes: #00877a;
+    --team-sauber: #2e8b2e;
+    --team-aston-martin: #1d8a66;
+    --team-williams: #1f7fc4;
+    --team-haas: #7a7f84;
+    --team-other: #6b6b78;
   }
 }
 
@@ -76,10 +94,17 @@
   --loss: #cc2b2b;
   --purple: #7c3aed;
   --stripe: rgb(0 0 0 / 0.035);
-  --series-1: #2a78d6;
-  --series-2: #eb6834;
-  --series-3: #1baf7a;
   --series-rest: #c9c9d3;
+  /* Tons mais escuros das cores claras demais para fundo branco. */
+  --team-racing-bulls: #5b86f0;
+  --team-red-bull: #1f4c9c;
+  --team-mclaren: #e06c00;
+  --team-mercedes: #00877a;
+  --team-sauber: #2e8b2e;
+  --team-aston-martin: #1d8a66;
+  --team-williams: #1f7fc4;
+  --team-haas: #7a7f84;
+  --team-other: #6b6b78;
 }
 
 @theme inline {

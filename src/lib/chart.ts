@@ -17,10 +17,19 @@ export function chartData(data: SeasonData): {
       round: s.round,
       isSprint: s.isSprint,
     })),
-    series: data.progression.map((p) => ({
-      id: p.driverId,
-      name: data.drivers[p.driverId]?.name ?? `#${p.driverId}`,
-      cumulative: p.cumulative,
-    })),
+    series: data.progression.map((p, i) => {
+      const teamId = data.drivers[p.driverId]?.teamId;
+      // Tracejado se um companheiro de equipe estiver à frente na classificação.
+      const dashed = data.progression
+        .slice(0, i)
+        .some((q) => data.drivers[q.driverId]?.teamId === teamId);
+      return {
+        id: p.driverId,
+        name: data.drivers[p.driverId]?.name ?? `#${p.driverId}`,
+        color: data.teams[teamId]?.color ?? "var(--team-other)",
+        dashed,
+        cumulative: p.cumulative,
+      };
+    }),
   };
 }

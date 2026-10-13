@@ -180,7 +180,7 @@ async function Race({ season, raceId }: { season: string; raceId: string }) {
                     href={`/${data.season}/pilotos/${r.driverId}`}
                     className="flex items-center gap-3 hover:underline"
                   >
-                    <TeamBar color={team?.color ?? "#888"} />
+                    <TeamBar color={team?.color ?? "var(--team-other)"} />
                     <span>
                       <span className="block text-base font-bold leading-tight">{name(r.driverId)}</span>
                       <span className="block text-xs text-muted sm:hidden">{team?.short}</span>

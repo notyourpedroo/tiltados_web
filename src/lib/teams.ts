@@ -6,21 +6,22 @@ interface TeamStyle {
   short: string;
 }
 
+// As cores ficam em variáveis CSS (globals.css) para cada tema ter seu tom.
 // A ordem importa: "racing bulls" precisa vir antes de "red bull".
 const TEAM_STYLES: [match: string, style: TeamStyle][] = [
-  ["racing bulls", { color: "#6692ff", short: "Racing Bulls" }],
-  ["red bull", { color: "#3671c6", short: "Red Bull" }],
-  ["ferrari", { color: "#e8002d", short: "Ferrari" }],
-  ["mclaren", { color: "#ff8000", short: "McLaren" }],
-  ["mercedes", { color: "#27f4d2", short: "Mercedes" }],
-  ["alpine", { color: "#0093cc", short: "Alpine" }],
-  ["sauber", { color: "#52e252", short: "Sauber" }],
-  ["aston martin", { color: "#229971", short: "Aston Martin" }],
-  ["williams", { color: "#64c4ff", short: "Williams" }],
-  ["haas", { color: "#b6babd", short: "Haas" }],
+  ["racing bulls", { color: "var(--team-racing-bulls)", short: "Racing Bulls" }],
+  ["red bull", { color: "var(--team-red-bull)", short: "Red Bull" }],
+  ["ferrari", { color: "var(--team-ferrari)", short: "Ferrari" }],
+  ["mclaren", { color: "var(--team-mclaren)", short: "McLaren" }],
+  ["mercedes", { color: "var(--team-mercedes)", short: "Mercedes" }],
+  ["alpine", { color: "var(--team-alpine)", short: "Alpine" }],
+  ["sauber", { color: "var(--team-sauber)", short: "Sauber" }],
+  ["aston martin", { color: "var(--team-aston-martin)", short: "Aston Martin" }],
+  ["williams", { color: "var(--team-williams)", short: "Williams" }],
+  ["haas", { color: "var(--team-haas)", short: "Haas" }],
 ];
 
-const FALLBACK_COLOR = "#8a8a99";
+const FALLBACK_COLOR = "var(--team-other)";
 
 export function teamStyle(teamName: string): TeamStyle {
   const name = teamName.toLowerCase();
