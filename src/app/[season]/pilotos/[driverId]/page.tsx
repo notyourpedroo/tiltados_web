@@ -57,9 +57,9 @@ export default function DriverPage({ params }: PageProps<"/[season]/pilotos/[dri
 }
 
 const CELL_STYLE: Record<number, string> = {
-  1: "bg-gold text-bg",
-  2: "bg-silver text-bg",
-  3: "bg-bronze text-bg",
+  1: "bg-gold-fill text-on-fill",
+  2: "bg-silver-fill text-on-fill",
+  3: "bg-bronze-fill text-on-fill",
 };
 
 async function DriverProfile({ season, driverId }: { season: string; driverId: string }) {

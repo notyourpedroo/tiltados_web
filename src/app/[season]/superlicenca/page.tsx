@@ -90,7 +90,7 @@ async function SuperLicense({ season }: { season: string }) {
               <p className="mt-3 flex items-center gap-2 text-sm">
                 <span
                   aria-hidden
-                  className="flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-black text-bg"
+                  className="flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-black text-on-fill"
                   style={{ backgroundColor: status.color }}
                 >
                   {status.icon}

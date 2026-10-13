@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SEASONS, isSeason } from "@/lib/types";
+import { ThemeToggle } from "./ThemeToggle";
 
 const SECTIONS = [
   { slug: "", label: "Visão geral" },
@@ -38,25 +39,28 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <div
-          className="ml-auto flex rounded-full border border-line p-0.5 text-sm font-bold"
-          role="group"
-          aria-label="Temporada"
-        >
-          {SEASONS.map((s) => (
-            <Link
-              key={s}
-              href={seasonHref(s)}
-              aria-current={s === season ? "true" : undefined}
-              className={`rounded-full px-3 py-1 transition-colors ${
-                s === season
-                  ? "bg-text text-bg"
-                  : "text-text-2 hover:text-text"
-              }`}
-            >
-              {s}
-            </Link>
-          ))}
+        <div className="ml-auto flex items-center gap-2">
+          <div
+            className="flex rounded-full border border-line p-0.5 text-sm font-bold"
+            role="group"
+            aria-label="Temporada"
+          >
+            {SEASONS.map((s) => (
+              <Link
+                key={s}
+                href={seasonHref(s)}
+                aria-current={s === season ? "true" : undefined}
+                className={`rounded-full px-3 py-1 transition-colors ${
+                  s === season
+                    ? "bg-text text-bg"
+                    : "text-text-2 hover:text-text"
+                }`}
+              >
+                {s}
+              </Link>
+            ))}
+          </div>
+          <ThemeToggle />
         </div>
       </div>
 

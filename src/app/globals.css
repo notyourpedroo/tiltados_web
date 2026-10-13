@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: dark;
   --bg: #101017;
   --surface: #1c1c27;
   --surface-2: #252533;
@@ -15,12 +16,70 @@
   --gain: #2fbf71;
   --loss: #ff5a5a;
   --purple: #b05cff;
+  --stripe: rgb(255 255 255 / 0.04);
 
   /* Séries do gráfico — paleta categórica validada (CVD) na superfície escura. */
   --series-1: #3987e5;
   --series-2: #d95926;
   --series-3: #199e70;
   --series-rest: #4a4a5c;
+
+  /* Preenchimentos fixos (medalhas, status) e a tinta escura que vai por cima deles,
+     iguais nos dois temas para o contraste não depender do tema. */
+  --gold-fill: #e6b34a;
+  --silver-fill: #c4c9d1;
+  --bronze-fill: #d29a6c;
+  --on-fill: #15151e;
+}
+
+/* Tema claro: segue o sistema, a menos que o visitante tenha escolhido o escuro… */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #f2f2f5;
+    --surface: #ffffff;
+    --surface-2: #ececf1;
+    --line: #dcdce3;
+    --text: #15151e;
+    --text-2: #4b4b58;
+    --muted: #6b6b78;
+    --accent: #d10500;
+    --gold: #8a6000;
+    --silver: #5f6672;
+    --bronze: #9a5a2b;
+    --gain: #0f7a43;
+    --loss: #cc2b2b;
+    --purple: #7c3aed;
+    --stripe: rgb(0 0 0 / 0.035);
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --series-3: #1baf7a;
+    --series-rest: #c9c9d3;
+  }
+}
+
+/* …ou escolhido explicitamente pelo botão de tema. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f2f2f5;
+  --surface: #ffffff;
+  --surface-2: #ececf1;
+  --line: #dcdce3;
+  --text: #15151e;
+  --text-2: #4b4b58;
+  --muted: #6b6b78;
+  --accent: #d10500;
+  --gold: #8a6000;
+  --silver: #5f6672;
+  --bronze: #9a5a2b;
+  --gain: #0f7a43;
+  --loss: #cc2b2b;
+  --purple: #7c3aed;
+  --stripe: rgb(0 0 0 / 0.035);
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-rest: #c9c9d3;
 }
 
 @theme inline {
@@ -38,11 +97,14 @@
   --color-gain: var(--gain);
   --color-loss: var(--loss);
   --color-purple: var(--purple);
+  --color-gold-fill: var(--gold-fill);
+  --color-silver-fill: var(--silver-fill);
+  --color-bronze-fill: var(--bronze-fill);
+  --color-on-fill: var(--on-fill);
   --font-sans: var(--font-titillium);
 }
 
 html {
-  color-scheme: dark;
   background: var(--bg);
 }
 
@@ -61,7 +123,7 @@ body {
   background-image: repeating-linear-gradient(
     -60deg,
     transparent 0 6px,
-    rgb(255 255 255 / 0.04) 6px 8px
+    var(--stripe) 6px 8px
   );
 }
 
