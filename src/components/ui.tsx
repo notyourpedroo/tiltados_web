@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import type { TeamLogo as TeamLogoSrc } from "@/lib/teams";
 import type { ReactNode } from "react";
 
 export function PageTitle({
@@ -75,6 +77,50 @@ export function TeamBar({ color, className = "h-5" }: { color: string; className
       style={{ backgroundColor: color }}
     />
   );
+}
+
+/**
+ * Logo da equipe na versão do tema ativo (branca no escuro, colorida no claro).
+ * Decorativa: o nome da equipe sempre aparece junto em texto.
+ */
+export function TeamLogo({
+  logo,
+  size = 20,
+  className = "",
+}: {
+  logo: TeamLogoSrc;
+  size?: number;
+  className?: string;
+}) {
+  const img = (src: string, only: string) => (
+    <Image
+      src={src}
+      alt=""
+      width={size}
+      height={size}
+      unoptimized
+      className={`shrink-0 object-contain ${only} ${className}`}
+      style={{ width: size, height: size }}
+    />
+  );
+  return (
+    <>
+      {img(logo.dark, "only-dark")}
+      {img(logo.light, "only-light")}
+    </>
+  );
+}
+
+/** Logo da equipe ou, para equipes sem logo, a barrinha na cor dela. */
+export function TeamMark({
+  team,
+  size = 20,
+}: {
+  team?: { color: string; logo?: TeamLogoSrc };
+  size?: number;
+}) {
+  if (team?.logo) return <TeamLogo logo={team.logo} size={size} />;
+  return <TeamBar color={team?.color ?? "var(--team-other)"} />;
 }
 
 const PODIUM = ["text-gold", "text-silver", "text-bronze"];

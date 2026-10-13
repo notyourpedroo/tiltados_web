@@ -152,6 +152,25 @@ body {
   );
 }
 
+/* Imagens com versão por tema (logos das equipes): só a do tema ativo aparece. */
+.only-light {
+  display: none;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .only-light {
+    display: revert;
+  }
+  :root:not([data-theme="dark"]) .only-dark {
+    display: none;
+  }
+}
+:root[data-theme="light"] .only-light {
+  display: revert;
+}
+:root[data-theme="light"] .only-dark {
+  display: none;
+}
+
 /* Rolagem horizontal das tabelas largas no celular. */
 .table-scroll {
   overflow-x: auto;

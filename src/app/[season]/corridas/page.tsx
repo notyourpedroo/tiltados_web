@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { PageTitle, Skeleton, Table, TeamBar, td, th, tr } from "@/components/ui";
+import { PageTitle, Skeleton, Table, TeamMark, td, th, tr } from "@/components/ui";
 import { formatDate } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { weekendOf, mainSessions, type SeasonData, type SessionResult } from "@/lib/season";
@@ -23,7 +23,7 @@ function DriverChip({ data, result }: { data: SeasonData; result?: SessionResult
   const team = data.teams[result.teamId];
   return (
     <span className="flex items-center gap-2 whitespace-nowrap">
-      <TeamBar color={team?.color ?? "var(--team-other)"} className="h-4" />
+      <TeamMark team={team} size={18} />
       <span className="font-bold">{data.drivers[result.driverId]?.name}</span>
     </span>
   );

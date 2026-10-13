@@ -13,6 +13,7 @@ import {
   SprintBadge,
   Table,
   TeamBar,
+  TeamLogo,
   td,
   th,
   tr,
@@ -138,7 +139,10 @@ async function Race({ season, raceId }: { season: string; raceId: string }) {
                 className="absolute inset-x-0 top-0 h-1"
                 style={{ backgroundColor: team?.color }}
               />
-              <p className={`text-3xl font-black ${style.text}`}>{style.label}</p>
+              <div className="flex items-start justify-between gap-3">
+                <p className={`text-3xl font-black ${style.text}`}>{style.label}</p>
+                {team?.logo && <TeamLogo logo={team.logo} size={40} />}
+              </div>
               <Link
                 href={`/${data.season}/pilotos/${r.driverId}`}
                 className="mt-1 block text-2xl font-black uppercase leading-tight hover:underline"
@@ -183,11 +187,19 @@ async function Race({ season, raceId }: { season: string; raceId: string }) {
                     <TeamBar color={team?.color ?? "var(--team-other)"} />
                     <span>
                       <span className="block text-base font-bold leading-tight">{name(r.driverId)}</span>
-                      <span className="block text-xs text-muted sm:hidden">{team?.short}</span>
+                      <span className="flex items-center gap-1 text-xs text-muted sm:hidden">
+                        {team?.logo && <TeamLogo logo={team.logo} size={14} />}
+                        {team?.short}
+                      </span>
                     </span>
                   </Link>
                 </td>
-                <td className={`${td} hidden text-text-2 sm:table-cell`}>{team?.name}</td>
+                <td className={`${td} hidden text-text-2 sm:table-cell`}>
+                  <span className="flex items-center gap-2">
+                    {team?.logo && <TeamLogo logo={team.logo} />}
+                    {team?.name}
+                  </span>
+                </td>
                 <td className={`${td} tabular text-right text-text-2`}>{r.grid}</td>
                 <td className={`${td} text-right`}>
                   <Gained value={r.gained} />

@@ -9,6 +9,8 @@ import {
   Skeleton,
   Table,
   TeamBar,
+  TeamLogo,
+  TeamMark,
   td,
   th,
   tr,
@@ -67,7 +69,10 @@ async function SuperLicense({ season }: { season: string }) {
                 >
                   {l.driver_name}
                 </Link>
-                <span className="ml-auto text-xs text-muted">{team.short}</span>
+                <span className="ml-auto flex items-center gap-1.5 text-xs text-muted">
+                  {team.logo && <TeamLogo logo={team.logo} size={18} />}
+                  {team.short}
+                </span>
               </div>
               <p className="mt-3 text-4xl font-black">
                 {l.remaining_points}
@@ -133,7 +138,7 @@ async function SuperLicense({ season }: { season: string }) {
                   </td>
                   <td className={td}>
                     <span className="flex items-center gap-2 whitespace-nowrap">
-                      <TeamBar color={teamStyle(p.team_name).color} className="h-4" />
+                      <TeamMark team={teamStyle(p.team_name)} size={18} />
                       <span className="font-bold">{p.driver_name}</span>
                     </span>
                   </td>

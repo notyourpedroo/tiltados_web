@@ -9,7 +9,7 @@ import {
   getTeamStandings,
   getTeams,
 } from "./api";
-import { teamStyle } from "./teams";
+import { teamStyle, type TeamLogo } from "./teams";
 import type {
   ApiDriverStanding,
   ApiPunishment,
@@ -30,6 +30,7 @@ export interface Team {
   name: string;
   short: string;
   color: string;
+  logo?: TeamLogo;
 }
 
 export interface Driver {

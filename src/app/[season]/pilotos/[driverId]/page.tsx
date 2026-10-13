@@ -14,6 +14,7 @@ import {
   StatTile,
   Table,
   TeamBar,
+  TeamLogo,
   td,
   th,
   tr,
@@ -116,7 +117,10 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           </span>
         }
       >
-        {standing.team_name}
+        <span className="flex items-center gap-2">
+          {team.logo && <TeamLogo logo={team.logo} size={32} />}
+          {standing.team_name}
+        </span>
       </PageTitle>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

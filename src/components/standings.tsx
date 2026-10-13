@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { SeasonData } from "@/lib/season";
 import { teamStyle } from "@/lib/teams";
-import { Position, Table, TeamBar, td, th, tr } from "./ui";
+import { Position, Table, TeamBar, TeamLogo, td, th, tr } from "./ui";
 
 export function DriverStandingsTable({
   data,
@@ -46,14 +46,22 @@ export function DriverStandingsTable({
                     <span className="block text-base font-bold leading-tight">
                       {d.driver_name}
                     </span>
-                    <span className={`block text-xs text-muted ${compact ? "" : "sm:hidden"}`}>
+                    <span
+                      className={`flex items-center gap-1 text-xs text-muted ${compact ? "" : "sm:hidden"}`}
+                    >
+                      {team.logo && <TeamLogo logo={team.logo} size={14} />}
                       {team.short}
                     </span>
                   </span>
                 </Link>
               </td>
               {!compact && (
-                <td className={`${td} hidden text-text-2 sm:table-cell`}>{d.team_name}</td>
+                <td className={`${td} hidden text-text-2 sm:table-cell`}>
+                  <span className="flex items-center gap-2">
+                    {team.logo && <TeamLogo logo={team.logo} />}
+                    {d.team_name}
+                  </span>
+                </td>
               )}
               {!compact && <td className={`${td} tabular text-right`}>{d.wins}</td>}
               {!compact && <td className={`${td} tabular text-right`}>{d.sprint_wins}</td>}
@@ -103,6 +111,7 @@ export function TeamStandingsTable({
               <td className={td}>
                 <span className="flex items-center gap-3">
                   <TeamBar color={style.color} />
+                  {style.logo && <TeamLogo logo={style.logo} size={24} />}
                   <span className="text-base font-bold leading-tight">
                     {compact ? style.short : t.team_name}
                   </span>

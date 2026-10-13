@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { TeamStandingsTable } from "@/components/standings";
-import { Card, PageTitle, SectionTitle, Skeleton } from "@/components/ui";
+import { Card, PageTitle, SectionTitle, Skeleton, TeamLogo } from "@/components/ui";
 import { ordinal } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { teamStyle } from "@/lib/teams";
@@ -54,9 +54,12 @@ async function Teams({ season }: { season: string }) {
                   style={{ backgroundColor: style.color }}
                 />
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-bold text-muted">{ordinal(t.position)}</p>
-                    <p className="text-xl font-black uppercase leading-tight">{t.team_name}</p>
+                  <div className="flex items-center gap-3">
+                    {style.logo && <TeamLogo logo={style.logo} size={44} />}
+                    <div>
+                      <p className="text-sm font-bold text-muted">{ordinal(t.position)}</p>
+                      <p className="text-xl font-black uppercase leading-tight">{t.team_name}</p>
+                    </div>
                   </div>
                   <p className="text-right">
                     <span className="block text-3xl font-black leading-none">{t.points}</span>

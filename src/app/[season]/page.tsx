@@ -10,7 +10,8 @@ import {
   Skeleton,
   SprintBadge,
   StatTile,
-  TeamBar,
+  TeamLogo,
+  TeamMark,
 } from "@/components/ui";
 import { chartData } from "@/lib/chart";
 import { formatDate, plural } from "@/lib/format";
@@ -89,7 +90,10 @@ async function Overview({ season }: { season: string }) {
             >
               {leader.driver_name}
             </Link>
-            <p className="mt-2 text-text-2">{leader.team_name}</p>
+            <p className="mt-3 flex items-center gap-2 text-text-2">
+              {leaderTeam.logo && <TeamLogo logo={leaderTeam.logo} size={28} />}
+              {leader.team_name}
+            </p>
             <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
               <div>
                 <p className="text-4xl font-black">{leader.points}</p>
@@ -136,7 +140,7 @@ async function Overview({ season }: { season: string }) {
                     >
                       {r.position}
                     </span>
-                    <TeamBar color={team?.color ?? "var(--team-other)"} />
+                    <TeamMark team={team} />
                     <span className="font-bold">{data.drivers[r.driverId]?.name}</span>
                     <span className="text-sm text-muted">{team?.short}</span>
                     <span className="tabular ml-auto text-sm text-text-2">+{r.points} pts</span>

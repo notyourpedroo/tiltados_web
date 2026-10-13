@@ -56,5 +56,9 @@ src/
     └── types.ts           # tipos das respostas da API
 ```
 
-Ao adicionar uma equipe nova na liga, inclua a cor dela em `src/lib/teams.ts` (equipes desconhecidas
-aparecem em cinza).
+Ao adicionar uma equipe nova na liga, inclua a cor dela em `src/lib/teams.ts` e em `src/app/globals.css`
+(equipes desconhecidas aparecem em cinza). As logos ficam em `public/teams/`: `{equipe}.webp` (colorida,
+usada no tema claro) e `{equipe}-white.webp` (branca, usada no tema escuro), obtidas da CDN oficial da F1
+(`media.formula1.com/.../common/f1/{ano}/{equipe}/{ano}{equipe}logo[white].webp`). A branca da Kick
+Sauber vem da pasta de 2024, porque a de 2025 é igual à colorida. Equipes sem logo mostram a barrinha na
+cor da equipe.
