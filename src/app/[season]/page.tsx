@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { PointsChart } from "@/components/PointsChart";
+import { ChampionshipCharts } from "@/components/ChampionshipCharts";
 import { DriverStandingsTable, TeamStandingsTable } from "@/components/standings";
 import {
   Card,
@@ -162,12 +162,7 @@ async function Overview({ season }: { season: string }) {
         <StatTile label="Mais voltas rápidas" value={fastest.best} sub={fastest.names.join(", ")} />
       </div>
 
-      <section className="mt-10">
-        <SectionTitle>Evolução do campeonato</SectionTitle>
-        <Card className="p-4 sm:p-6">
-          <PointsChart sessions={chart.sessions} series={chart.series} />
-        </Card>
-      </section>
+      <ChampionshipCharts sessions={chart.sessions} series={chart.series} />
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <section>

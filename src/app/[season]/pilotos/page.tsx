@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { PointsChart } from "@/components/PointsChart";
+import { ChampionshipCharts } from "@/components/ChampionshipCharts";
 import { DriverStandingsTable } from "@/components/standings";
-import { Card, PageTitle, SectionTitle, Skeleton } from "@/components/ui";
+import { PageTitle, Skeleton } from "@/components/ui";
 import { loadSeason } from "@/lib/load";
 import { chartData } from "@/lib/chart";
 
@@ -31,12 +31,7 @@ async function Drivers({ season }: { season: string }) {
 
       <DriverStandingsTable data={data} />
 
-      <section className="mt-10">
-        <SectionTitle>Evolução do campeonato</SectionTitle>
-        <Card className="p-4 sm:p-6">
-          <PointsChart sessions={sessions} series={series} />
-        </Card>
-      </section>
+      <ChampionshipCharts sessions={sessions} series={series} />
     </>
   );
 }

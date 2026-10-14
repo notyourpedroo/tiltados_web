@@ -74,8 +74,11 @@ export interface SeasonData {
   results: Record<number, SessionResult[]>;
   driverStandings: ApiDriverStanding[];
   teamStandings: ApiTeamStanding[];
-  /** Pontos acumulados de cada piloto após cada sessão (mesma ordem de `sessions`). */
-  progression: { driverId: number; cumulative: number[] }[];
+  /**
+   * Evolução de cada piloto após cada sessão (mesma ordem de `sessions`): pontos
+   * acumulados e posição no campeonato naquele momento.
+   */
+  progression: { driverId: number; cumulative: number[]; positions: number[] }[];
   punishments: ApiPunishment[];
 }
 
@@ -169,13 +172,33 @@ export async function getSeason(season: Season): Promise<SeasonData> {
     if (best) best.fastestLap = true;
   }
 
-  const progression = driverStandings.map((st) => {
-    let total = 0;
-    const cumulative = sessions.map((s) => {
-      total += results[s.id].find((r) => r.driverId === st.driver_id)?.points ?? 0;
-      return total;
+  // Acumula pontos, vitórias em GP e pódios sessão a sessão; a posição em cada
+  // momento usa o mesmo desempate da API (pontos, vitórias, pódios) e, persistindo
+  // o empate (ex.: todos zerados no início), a ordem da classificação final.
+  const progression = driverStandings.map((st) => ({
+    driverId: st.driver_id,
+    cumulative: [] as number[],
+    positions: [] as number[],
+  }));
+  const tally = progression.map((_, finalIndex) => ({ finalIndex, points: 0, wins: 0, podiums: 0 }));
+  sessions.forEach((s, i) => {
+    progression.forEach((p, d) => {
+      const r = results[s.id].find((res) => res.driverId === p.driverId);
+      if (r) {
+        tally[d].points += r.points;
+        if (r.position === 1 && !s.isSprint) tally[d].wins += 1;
+        if (r.position <= 3) tally[d].podiums += 1;
+      }
+      p.cumulative.push(tally[d].points);
     });
-    return { driverId: st.driver_id, cumulative };
+    const ranking = [...tally].sort(
+      (a, b) =>
+        b.points - a.points ||
+        b.wins - a.wins ||
+        b.podiums - a.podiums ||
+        a.finalIndex - b.finalIndex,
+    );
+    ranking.forEach((t, pos) => (progression[t.finalIndex].positions[i] = pos + 1));
   });
 
   return {

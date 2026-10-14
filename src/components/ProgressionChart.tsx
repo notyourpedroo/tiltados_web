@@ -15,13 +15,25 @@ export interface ChartSeries {
   color: string;
   /** Companheiro de equipe atrás na classificação: mesma cor, linha tracejada. */
   dashed: boolean;
+  /** Pontos acumulados após cada sessão. */
   cumulative: number[];
+  /** Posição no campeonato após cada sessão. */
+  positions: number[];
 }
+
+export type ChartMode = "points" | "position";
 
 // Até 3 pilotos em destaque, na cor da equipe; o resto fica cinza ao fundo.
 const MAX_HIGHLIGHT = 3;
 const REST = "var(--series-rest)";
 const DASH = "6 4";
+const HEIGHT = 340;
+const M = { top: 16, right: 104, bottom: 32, left: 40 };
+
+const MODE_TEXT: Record<ChartMode, { aria: string }> = {
+  points: { aria: "Pontos acumulados de cada piloto ao longo da temporada." },
+  position: { aria: "Posição de cada piloto no campeonato ao longo da temporada." },
+};
 
 /** Amostra de traço usada na legenda e no tooltip (espelha a linha do gráfico). */
 function LineKey({ color, dashed }: { color: string; dashed: boolean }) {
@@ -40,8 +52,6 @@ function LineKey({ color, dashed }: { color: string; dashed: boolean }) {
     </svg>
   );
 }
-const HEIGHT = 340;
-const M = { top: 16, right: 104, bottom: 32, left: 40 };
 
 function niceStep(max: number, target = 5) {
   const raw = max / target;
@@ -50,19 +60,37 @@ function niceStep(max: number, target = 5) {
   return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * pow;
 }
 
-export function PointsChart({
-  sessions,
-  series,
-}: {
-  sessions: ChartSession[];
-  series: ChartSeries[];
-}) {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(800);
+/** Seleção de pilotos em destaque, compartilhada entre os gráficos de uma página. */
+export function useHighlight(series: ChartSeries[]) {
   // Pilotos em destaque, do mais antigo para o mais recente.
   const [selected, setSelected] = useState<number[]>(() =>
     series.slice(0, MAX_HIGHLIGHT).map((s) => s.id),
   );
+  const toggle = (id: number) =>
+    setSelected((cur) =>
+      cur.includes(id)
+        ? cur.filter((s) => s !== id)
+        : // Cheio: o destaque mais antigo sai para o novo entrar.
+          [...cur, id].slice(-MAX_HIGHLIGHT),
+    );
+  return { selected, toggle };
+}
+
+export function ProgressionChart({
+  mode,
+  sessions,
+  series,
+  selected,
+  onToggle,
+}: {
+  mode: ChartMode;
+  sessions: ChartSession[];
+  series: ChartSeries[];
+  selected: number[];
+  onToggle: (id: number) => void;
+}) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(800);
   const [hover, setHover] = useState<number | null>(null);
 
   useEffect(() => {
@@ -73,25 +101,28 @@ export function PointsChart({
     return () => ro.disconnect();
   }, []);
 
+  const byPosition = mode === "position";
+  const valuesOf = (s: ChartSeries) => (byPosition ? s.positions : s.cumulative);
+  const format = (v: number) => (byPosition ? `${v}º` : String(v));
+
   const n = sessions.length;
   const plotW = Math.max(width - M.left - M.right, 10);
   const plotH = HEIGHT - M.top - M.bottom;
-  const max = Math.max(1, ...series.map((s) => s.cumulative[n - 1] ?? 0));
-  const step = niceStep(max);
-  const yMax = Math.ceil(max / step) * step;
   const x = (i: number) => M.left + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
-  const y = (v: number) => M.top + plotH - (v / yMax) * plotH;
+
+  // Pontos: escala de 0 ao máximo arredondado. Posição: 1º no topo, uma linha por posição.
+  const drivers = series.length;
+  const maxPoints = Math.max(1, ...series.map((s) => s.cumulative[n - 1] ?? 0));
+  const step = niceStep(maxPoints);
+  const yMax = Math.ceil(maxPoints / step) * step;
+  const y = byPosition
+    ? (p: number) => M.top + (drivers <= 1 ? 0 : ((p - 1) / (drivers - 1)) * plotH)
+    : (v: number) => M.top + plotH - (v / yMax) * plotH;
+  const yTicks: number[] = [];
+  if (byPosition) for (let p = 1; p <= drivers; p++) yTicks.push(p);
+  else for (let v = 0; v <= yMax; v += step) yTicks.push(v);
 
   const isOn = (id: number) => selected.includes(id);
-
-  const toggle = (id: number) => {
-    if (isOn(id)) setSelected(selected.filter((s) => s !== id));
-    // Cheio: o destaque mais antigo sai para o novo entrar.
-    else setSelected([...selected, id].slice(-MAX_HIGHLIGHT));
-  };
-
-  const yTicks: number[] = [];
-  for (let v = 0; v <= yMax; v += step) yTicks.push(v);
 
   // Rótulos do eixo X: número da etapa, uma vez por fim de semana, espaçados.
   const xTicks: { i: number; round: number }[] = [];
@@ -109,7 +140,7 @@ export function PointsChart({
 
   // Rótulos no fim das linhas destacadas; se encostarem, afasta com linha-guia.
   const endLabels = highlighted
-    .map((s) => ({ s, y0: y(s.cumulative[n - 1] ?? 0), yy: 0 }))
+    .map((s) => ({ s, y0: y(valuesOf(s)[n - 1] ?? 0), yy: 0 }))
     .sort((a, b) => a.y0 - b.y0);
   for (let i = 0; i < endLabels.length; i++) {
     const prev = i ? endLabels[i - 1].yy : -Infinity;
@@ -134,12 +165,13 @@ export function PointsChart({
     } else if (e.key === "Escape") setHover(null);
   };
 
+  // Tooltip na ordem do campeonato naquele momento.
   const hoverRows =
     hover === null
       ? []
       : [...series]
-          .map((s) => ({ s, v: s.cumulative[hover] ?? 0 }))
-          .sort((a, b) => b.v - a.v);
+          .map((s) => ({ s, v: valuesOf(s)[hover] ?? 0 }))
+          .sort((a, b) => (byPosition ? a.v - b.v : b.v - a.v));
   const tipLeft = hover === null ? 0 : x(hover);
   const tipOnLeft = tipLeft > width / 2;
 
@@ -149,7 +181,7 @@ export function PointsChart({
         <svg
           viewBox={`0 0 ${width} ${HEIGHT}`}
           role="img"
-          aria-label="Pontos acumulados de cada piloto ao longo da temporada. Use as setas para navegar pelas etapas."
+          aria-label={`${MODE_TEXT[mode].aria} Use as setas para navegar pelas etapas.`}
           tabIndex={0}
           onKeyDown={onKey}
           onBlur={() => setHover(null)}
@@ -172,7 +204,7 @@ export function PointsChart({
                 textAnchor="end"
                 className="tabular fill-muted text-[11px]"
               >
-                {t}
+                {format(t)}
               </text>
             </g>
           ))}
@@ -191,7 +223,7 @@ export function PointsChart({
           {background.map((s) => (
             <path
               key={s.id}
-              d={pathOf(s.cumulative)}
+              d={pathOf(valuesOf(s))}
               fill="none"
               stroke={REST}
               strokeWidth={1.5}
@@ -202,7 +234,7 @@ export function PointsChart({
           {highlighted.map((s) => (
             <path
               key={s.id}
-              d={pathOf(s.cumulative)}
+              d={pathOf(valuesOf(s))}
               fill="none"
               stroke={s.color}
               strokeWidth={2}
@@ -221,7 +253,10 @@ export function PointsChart({
                 <circle cx={ex} cy={y0} r={4} fill={s.color} stroke="var(--surface)" strokeWidth={2} />
                 <text x={ex + 16} y={yy} dy="0.32em" className="fill-text text-[12px] font-bold">
                   {s.name}
-                  <tspan className="tabular fill-text-2 font-normal"> {s.cumulative[n - 1]}</tspan>
+                  <tspan className="tabular fill-text-2 font-normal">
+                    {" "}
+                    {format(valuesOf(s)[n - 1])}
+                  </tspan>
                 </text>
               </g>
             );
@@ -241,7 +276,7 @@ export function PointsChart({
                 <circle
                   key={s.id}
                   cx={x(hover)}
-                  cy={y(s.cumulative[hover] ?? 0)}
+                  cy={y(valuesOf(s)[hover] ?? 0)}
                   r={4}
                   fill={s.color}
                   stroke="var(--surface)"
@@ -278,7 +313,7 @@ export function PointsChart({
               {hoverRows.map(({ s, v }) => (
                 <li key={s.id} className="flex items-center gap-2 text-sm">
                   <LineKey color={isOn(s.id) ? s.color : REST} dashed={isOn(s.id) && s.dashed} />
-                  <span className="tabular w-8 font-bold">{v}</span>
+                  <span className="tabular w-8 font-bold">{format(v)}</span>
                   <span className={isOn(s.id) ? "text-text" : "text-text-2"}>
                     {s.name}
                   </span>
@@ -296,7 +331,7 @@ export function PointsChart({
             <button
               key={s.id}
               type="button"
-              onClick={() => toggle(s.id)}
+              onClick={() => onToggle(s.id)}
               aria-pressed={on}
               className={`flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold transition-colors ${
                 on
@@ -310,9 +345,6 @@ export function PointsChart({
           );
         })}
       </div>
-      <p className="mt-2 text-xs text-muted">
-        Toque nos nomes para destacar até 3 pilotos. A tabela de classificação traz os valores exatos.
-      </p>
     </div>
   );
 }

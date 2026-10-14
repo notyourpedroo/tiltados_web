@@ -1,4 +1,4 @@
-import type { ChartSeries, ChartSession } from "@/components/PointsChart";
+import type { ChartSeries, ChartSession } from "@/components/ProgressionChart";
 import type { SeasonData } from "./season";
 
 /** "GP da China" → "China". */
@@ -29,6 +29,7 @@ export function chartData(data: SeasonData): {
         color: data.teams[teamId]?.color ?? "var(--team-other)",
         dashed,
         cumulative: p.cumulative,
+        positions: p.positions,
       };
     }),
   };
