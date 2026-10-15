@@ -16,7 +16,7 @@ import {
   tr,
 } from "@/components/ui";
 import { getPunishments, getSuperLicense } from "@/lib/api";
-import { formatDate } from "@/lib/format";
+import { formatDate, plural } from "@/lib/format";
 import { teamStyle } from "@/lib/teams";
 import type { LicenseStatus } from "@/lib/types";
 
@@ -103,7 +103,7 @@ async function SuperLicense({ season }: { season: string }) {
                 <span className="font-bold">{status.label}</span>
                 <span className="ml-auto text-muted">
                   {l.punishments_count
-                    ? `${l.punishments_count} punição${l.punishments_count > 1 ? "ões" : ""}`
+                    ? plural(l.punishments_count, "punição", "punições")
                     : "sem punições"}
                 </span>
               </p>
