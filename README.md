@@ -43,12 +43,46 @@ A URL da API pode ser trocada pela variável `TILTADOS_API_URL` (veja `.env.exam
 - O build (`npm run build`) pré-renderiza todas as páginas conhecidas, então a API precisa estar no ar
   durante o build.
 
+## Deploy automático
+
+Cada push na `main` dispara o workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
+
+1. **Verificar e empacotar** (no GitHub): `npm ci`, lint e `next build` com `output: "standalone"`.
+   O resultado (`server.js` + só os arquivos necessários, ~6 MB) vira um pacote `release.tgz`.
+   Pull requests param aqui, sem publicar.
+2. **Publicar no servidor**: envia o pacote por SSH (usuário `deploy`) e roda
+   [`deploy/publicar.sh`](deploy/publicar.sh), que extrai em `/opt/tiltados_web/releases/<data>-<commit>`,
+   aponta o link `current` para a versão nova, reinicia o serviço `tiltados-web` e confere se o site
+   responde. Se não responder, volta sozinho para a versão anterior. Ficam guardadas as 3 últimas versões.
+
+O build é feito no GitHub porque o servidor tem 1 GB de RAM; lá só roda o `node server.js`.
+Também dá para disparar uma publicação manual pela aba **Actions** (*Run workflow*).
+
+**Preparação do servidor (uma vez):** [`deploy/setup-servidor.sh`](deploy/setup-servidor.sh), como root,
+recebendo a chave pública do deploy. Cria o usuário `deploy`, a pasta `/opt/tiltados_web` e o serviço
+`tiltados-web.service` (que lê a API em `http://127.0.0.1:8000`).
+
+**Secrets do repositório** (Settings → Secrets and variables → Actions):
+
+| Secret | Conteúdo |
+|---|---|
+| `DEPLOY_HOST` | IP do servidor |
+| `DEPLOY_SSH_KEY` | Chave **privada** do usuário `deploy` |
+| `DEPLOY_KNOWN_HOSTS` | Linha do `ssh-keyscan -t ed25519 <ip>` (identidade do servidor) |
+
+**Voltar uma versão manualmente** (no servidor, como root):
+
+```bash
+ls -1t /opt/tiltados_web/releases
+ln -sfn /opt/tiltados_web/releases/<versao> /opt/tiltados_web/current && systemctl restart tiltados-web
+```
+
 ## Estrutura
 
 ```text
 src/
 ├── app/[season]/          # rotas por temporada (visão geral, corridas, pilotos, equipes, superlicença)
-├── components/            # cabeçalho, tabelas, gráfico de pontos e peças de UI
+├── components/            # cabeçalho, tabelas, gráficos de evolução e peças de UI
 └── lib/
     ├── api.ts             # chamadas à Tiltados API (com cache)
     ├── season.ts          # modelo derivado da temporada
