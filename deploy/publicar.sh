@@ -18,7 +18,12 @@ HEALTH_URL=http://127.0.0.1:3000/2026
 SYSTEMCTL="$(command -v systemctl)"
 
 REL="$BASE/releases/$NAME"
-PREV="$(readlink -f "$BASE/current" 2>/dev/null || true)"
+# Versão no ar antes desta publicação (vazio na primeira). Só lê o link se ele
+# existir: "readlink -f" de um caminho inexistente devolve o próprio caminho.
+PREV=""
+if [[ -L "$BASE/current" ]]; then
+  PREV="$(readlink -f "$BASE/current")"
+fi
 MIGRATED=0
 
 point_current_to() {
@@ -27,13 +32,19 @@ point_current_to() {
 }
 
 healthy() {
-  for _ in $(seq 1 30); do
-    if curl -fsS -o /dev/null --max-time 5 "$HEALTH_URL"; then
+  for attempt in $(seq 1 30); do
+    if curl -fs -o /dev/null --max-time 5 "$HEALTH_URL"; then
       return 0
+    fi
+    if [[ $attempt -eq 30 ]]; then
+      # Mostra a resposta do site (ou o erro do curl) para o log mostrar a causa.
+      echo "!! $HEALTH_URL não respondeu:" >&2
+      curl -sS --max-time 5 "$HEALTH_URL" 2>&1 | head -c 500 >&2 || true
+      echo >&2
+      return 1
     fi
     sleep 1
   done
-  return 1
 }
 
 echo "==> Extraindo $NAME"
