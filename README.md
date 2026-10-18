@@ -21,14 +21,16 @@ Feito com Next.js 16 (App Router, Cache Components), TypeScript e Tailwind CSS 4
 
 ## Rodando
 
+O endereço da API não fica no repositório. Copie `.env.example` para `.env.local` (ignorado pelo Git)
+e preencha `TILTADOS_API_URL` com o endereço real:
+
 ```bash
+cp .env.example .env.local
 npm install
 npm run dev
 ```
 
 Abra http://localhost:3000.
-
-A URL da API pode ser trocada pela variável `TILTADOS_API_URL` (veja `.env.example`).
 
 ## Como os dados são buscados
 
@@ -62,11 +64,12 @@ Também dá para disparar uma publicação manual pela aba **Actions** (*Run wor
 recebendo a chave pública do deploy. Cria o usuário `deploy`, a pasta `/opt/tiltados_web` e o serviço
 `tiltados-web.service` (que lê a API em `http://127.0.0.1:8000`).
 
-**Secrets do repositório** (Settings → Secrets and variables → Actions):
+**Secrets do repositório** (Settings → Secrets and variables → Actions). O endereço do servidor fica
+só aqui, fora do código e dos logs:
 
 | Secret | Conteúdo |
 |---|---|
-| `DEPLOY_HOST` | IP do servidor |
+| `DEPLOY_HOST` | IP do servidor (também usado para montar a URL da API no build: `http://<ip>:8000`) |
 | `DEPLOY_SSH_KEY` | Chave **privada** do usuário `deploy` |
 | `DEPLOY_KNOWN_HOSTS` | Linha do `ssh-keyscan -t ed25519 <ip>` (identidade do servidor) |
 

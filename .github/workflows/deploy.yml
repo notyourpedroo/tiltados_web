@@ -22,9 +22,9 @@ jobs:
     name: Verificar e empacotar
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -40,6 +40,8 @@ jobs:
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: 1
+          # A API roda no mesmo servidor do site (porta 8000).
+          TILTADOS_API_URL: http://${{ secrets.DEPLOY_HOST }}:8000
 
       - name: Empacotar (standalone)
         if: github.event_name != 'pull_request'
@@ -48,7 +50,7 @@ jobs:
           cp -r .next/static .next/standalone/.next/
           tar -czf release.tgz -C .next/standalone .
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: github.event_name != 'pull_request'
         with:
           name: release
@@ -60,15 +62,14 @@ jobs:
     needs: build
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
-    environment:
-      name: production
-      url: https://<ip-do-servidor>
+    # Sem "url": o endereço do servidor fica só nos Secrets, fora do código e dos logs.
+    environment: production
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: deploy
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: release
 

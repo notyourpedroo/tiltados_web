@@ -14,9 +14,14 @@ import type {
 
 // A API é servida via HTTP puro, então ela é sempre consultada pelo servidor do
 // Next (nunca pelo navegador) — assim o site pode rodar em HTTPS sem mixed content.
-const API_URL = (
-  process.env.TILTADOS_API_URL ?? "http://<ip-do-servidor>:8000"
-).replace(/\/+$/, "");
+// O endereço não fica no código: vem de TILTADOS_API_URL (.env.local no dev,
+// Secret no GitHub Actions, unit do systemd em produção).
+const API_URL = process.env.TILTADOS_API_URL?.replace(/\/+$/, "");
+if (!API_URL) {
+  throw new Error(
+    "TILTADOS_API_URL não definida. Copie .env.example para .env.local e preencha o endereço da API.",
+  );
+}
 
 async function get<T>(path: string): Promise<T> {
   "use cache";
