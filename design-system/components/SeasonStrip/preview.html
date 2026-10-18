@@ -1,0 +1,20 @@
+<!-- @dsCard group="Padrões de página" height=160 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../bundle.css">
+<script>document.documentElement.dataset.theme = new URLSearchParams(location.search).get("theme") || "dark";</script>
+<title>SeasonStrip</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap">
+<style>
+.strip { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.strip li { display: flex; width: 40px; height: 40px; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-md); font-size: 14px; line-height: 16px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.strip small { font-size: 8px; line-height: 1; font-weight: 700; opacity: .7; }
+</style>
+</head>
+<body>
+<div class="demo"><div class="card" style="padding:var(--space-4)"><ol class="strip"><li title="GP da Austrália — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>R1</small></li><li title="GP da China (SPRINT) — 6º" style="background:var(--surface-2);color:var(--text)">6<small>SPR</small></li><li title="GP da China — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>R2</small></li><li title="GP do Japão — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>R3</small></li><li title="GP de Miami (SPRINT) — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>SPR</small></li><li title="GP de Miami — 2º" style="background:var(--silver-fill);color:var(--on-fill)">2<small>R4</small></li><li title="GP do Canadá (SPRINT) — 2º" style="background:var(--silver-fill);color:var(--on-fill)">2<small>SPR</small></li><li title="GP do Canadá — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>R5</small></li><li title="GP de Mônaco — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>R6</small></li><li title="GP da Espanha — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>R7</small></li><li title="GP da Áustria — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>R8</small></li><li title="GP da Grã-Bretanha (SPRINT) — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>SPR</small></li><li title="GP da Grã-Bretanha — 2º" style="background:var(--silver-fill);color:var(--on-fill)">2<small>R9</small></li><li title="GP da Bélgica — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>R10</small></li><li title="GP da Hungria — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>R11</small></li><li title="GP dos Países Baixos (SPRINT) — 2º" style="background:var(--silver-fill);color:var(--on-fill)">2<small>SPR</small></li><li title="GP dos Países Baixos — 3º" style="background:var(--bronze-fill);color:var(--on-fill)">3<small>R12</small></li><li title="GP da Arábia Saudita — 2º" style="background:var(--silver-fill);color:var(--on-fill)">2<small>R13</small></li><li title="GP do Azerbaijão — 6º" style="background:var(--surface-2);color:var(--text)">6<small>R14</small></li><li title="GP do Barém — 2º" style="background:var(--silver-fill);color:var(--on-fill)">2<small>R15</small></li><li title="GP de Singapura (SPRINT) — 2º" style="background:var(--silver-fill);color:var(--on-fill)">2<small>SPR</small></li><li title="GP de Singapura — 1º" style="background:var(--gold-fill);color:var(--on-fill)">1<small>R16</small></li></ol></div></div>
+</body>
+</html>

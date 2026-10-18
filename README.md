@@ -45,6 +45,16 @@ Abra http://localhost:3000.
 - O build (`npm run build`) pré-renderiza todas as páginas conhecidas, então a API precisa estar no ar
   durante o build.
 
+## Design system
+
+A pasta [`design-system/`](design-system/README.md) documenta a identidade visual do site: guia de uso
+(voz, cores, tipografia, espaços, gráficos, acessibilidade), todos os tokens em `tokens.json` e
+`tokens.css`, e uma ficha por componente com guia e prévia estática. Abra `design-system/index.html`
+no navegador para ver todas as prévias, nos temas escuro e claro.
+
+As cores usadas pelo site moram em `src/app/globals.css`; ao mudar uma cor, fonte ou componente,
+atualize a pasta junto.
+
 ## Deploy automático
 
 Cada push na `main` dispara o workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):

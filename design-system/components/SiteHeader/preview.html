@@ -1,0 +1,39 @@
+<!-- @dsCard group="Estrutura" height=112 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../bundle.css">
+<script>document.documentElement.dataset.theme = new URLSearchParams(location.search).get("theme") || "dark";</script>
+<title>SiteHeader</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap">
+<style>
+.hdr { border-bottom: 1px solid var(--line); background: var(--bg); }
+.hdr-strip { height: 4px; background: var(--accent); }
+.hdr-row { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-4); }
+.wm { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; }
+.wm-box { background: var(--accent); padding: 2px var(--space-2); transform: skewX(-12deg); }
+.wm-txt { display: inline-block; transform: skewX(12deg); color: var(--on-accent); font-size: 18px; line-height: 28px; font-weight: 900; font-style: italic; letter-spacing: -0.025em; }
+.wm-f1 { color: var(--text-2); font-size: 18px; line-height: 28px; font-weight: 900; font-style: italic; letter-spacing: -0.025em; }
+.hdr-tools { margin-left: auto; display: flex; align-items: center; gap: var(--space-2); }
+.theme-btn { display: flex; width: 32px; height: 32px; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: var(--radius-full); background: none; color: var(--text-2); }
+.tabs { display: flex; gap: var(--space-1); padding: 0 var(--space-2); font-size: 14px; line-height: 20px; font-weight: 600; }
+.tabs a { padding: var(--space-1) var(--space-3) 10px; border-bottom: 2px solid transparent; color: var(--muted); white-space: nowrap; }
+.tabs a.on { border-color: var(--accent); color: var(--text); }
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-strip"></div>
+  <div class="hdr-row">
+    <a class="wm"><span class="wm-box"><span class="wm-txt">TILTADOS</span></span><span class="wm-f1">F1</span></a>
+    <div class="hdr-tools">
+      <div class="pills" role="group" aria-label="Temporada"><a>2025</a><a class="on">2026</a></div>
+      <button class="theme-btn" type="button" aria-label="Tema automático"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></button>
+    </div>
+  </div>
+  <nav class="tabs"><a class="on">Visão geral</a><a>Corridas</a><a>Pilotos</a><a>Equipes</a><a>Superlicença</a></nav>
+</header>
+</body>
+</html>

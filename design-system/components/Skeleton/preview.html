@@ -1,0 +1,24 @@
+<!-- @dsCard group="Estrutura" height=230 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../bundle.css">
+<script>document.documentElement.dataset.theme = new URLSearchParams(location.search).get("theme") || "dark";</script>
+<title>Skeleton</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap">
+<style>
+.pulse { animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite; }
+@keyframes pulse { 50% { opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+</style>
+</head>
+<body>
+<div class="demo" aria-busy="true" aria-label="Carregando"><div class="pulse">
+  <div style="height:16px;width:96px;border-radius:var(--radius-sm);background:var(--surface-2);margin-bottom:8px"></div>
+  <div style="height:48px;width:66%;border-radius:var(--radius-sm);background:var(--surface-2);margin-bottom:32px"></div>
+  <div style="display:grid;gap:8px"><div style="height:48px;border-radius:var(--radius-lg);background:var(--surface)"></div><div style="height:48px;border-radius:var(--radius-lg);background:var(--surface)"></div><div style="height:48px;border-radius:var(--radius-lg);background:var(--surface)"></div></div>
+</div></div>
+</body>
+</html>

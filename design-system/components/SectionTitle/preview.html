@@ -1,0 +1,22 @@
+<!-- @dsCard group="Estrutura" height=88 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../bundle.css">
+<script>document.documentElement.dataset.theme = new URLSearchParams(location.search).get("theme") || "dark";</script>
+<title>SectionTitle</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap">
+<style>
+.st { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); }
+.more { font-size: 14px; line-height: 20px; font-weight: 700; color: var(--text-2); }
+</style>
+</head>
+<body>
+<div class="demo">
+  <div class="st"><h2 class="section-title caps" style="margin:0">Pilotos</h2><a class="more">Ver tudo <span aria-hidden="true">→</span></a></div>
+  <div class="st"><h2 class="section-title caps" style="margin:0">Evolução do campeonato <span class="c-muted">| Posição</span></h2></div>
+</div>
+</body>
+</html>

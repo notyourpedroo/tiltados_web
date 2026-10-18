@@ -1,0 +1,1 @@
+Ícones da aba do navegador, iguais aos do site oficial da Fórmula 1: `icon.svg` (ícone principal, logo F1 vermelho) e `apple-icon.png` (180×180, atalho na tela inicial do iOS). No código ficam em `src/app/` com esses nomes, que o Next transforma nas tags do `<head>`.

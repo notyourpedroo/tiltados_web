@@ -1,0 +1,18 @@
+<!-- @dsCard group="Estrutura" height=250 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../bundle.css">
+<script>document.documentElement.dataset.theme = new URLSearchParams(location.search).get("theme") || "dark";</script>
+<title>Table</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap">
+</head>
+<body>
+<div class="demo"><div class="card tbl-wrap"><table class="tbl">
+  <thead><tr><th style="width:48px">Pos</th><th>Piloto</th><th class="num">Grid</th><th class="num">+/−</th><th class="num">Pts</th></tr></thead>
+  <tbody><tr><td><span class="pos pos-1" style="font-size:16px">1</span></td><td><span class="who"><span class="team-bar" style="background:var(--team-racing-bulls);height:20px"></span><span class="who-name">Matheus</span></span></td><td class="num c-text-2">2</td><td class="num"><span class="gain">▲ 1</span></td><td class="pts">25</td></tr><tr class="hover"><td><span class="pos pos-2" style="font-size:16px">2</span></td><td><span class="who"><span class="team-bar" style="background:var(--team-red-bull);height:20px"></span><span class="who-name">Yohan</span></span></td><td class="num c-text-2">1</td><td class="num"><span class="loss">▼ 1</span></td><td class="pts">18</td></tr><tr><td><span class="pos pos-3" style="font-size:16px">3</span></td><td><span class="who"><span class="team-bar" style="background:var(--team-mercedes);height:20px"></span><span class="who-name">Douglas</span></span></td><td class="num c-text-2">3</td><td class="num"><span class="flat">–</span></td><td class="pts">15</td></tr><tr><td><span class="pos" style="font-size:16px">4</span></td><td><span class="who"><span class="team-bar" style="background:var(--team-red-bull);height:20px"></span><span class="who-name">Erick</span></span></td><td class="num c-text-2">7</td><td class="num"><span class="gain">▲ 3</span></td><td class="pts">12</td></tr></tbody>
+</table></div></div>
+</body>
+</html>

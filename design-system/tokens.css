@@ -1,0 +1,118 @@
+/* Tiltados F1 — gerado a partir de tokens.json (não edite à mão). */
+:root, [data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101017;
+  --surface: #1c1c27;
+  --surface-2: #252533;
+  --line: #2f2f3f;
+  --stripe: rgb(255 255 255 / 0.04);
+  --text: #ffffff;
+  --text-2: #b9b9c8;
+  --muted: #858596;
+  --accent: #e10600;
+  --gold: #e6b34a;
+  --silver: #b9bec7;
+  --bronze: #c98a5a;
+  --gain: #2fbf71;
+  --loss: #ff5a5a;
+  --purple: #b05cff;
+  --gold-fill: #e6b34a;
+  --silver-fill: #c4c9d1;
+  --bronze-fill: #d29a6c;
+  --on-fill: #15151e;
+  --on-accent: #ffffff;
+  --series-rest: #4a4a5c;
+  --status-regular: #0ca30c;
+  --status-atencao: #fab219;
+  --status-alerta: #ec835a;
+  --status-suspenso: #d03b3b;
+  --team-racing-bulls: #7ea4ff;
+  --team-red-bull: #3671c6;
+  --team-ferrari: #e8002d;
+  --team-mclaren: #ff8000;
+  --team-mercedes: #27f4d2;
+  --team-alpine: #0093cc;
+  --team-sauber: #52e252;
+  --team-aston-martin: #229971;
+  --team-williams: #64c4ff;
+  --team-haas: #b6babd;
+  --team-other: #8a8a99;
+  --shadow-tooltip: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f2f2f5;
+  --surface: #ffffff;
+  --surface-2: #ececf1;
+  --line: #dcdce3;
+  --stripe: rgb(0 0 0 / 0.035);
+  --text: #15151e;
+  --text-2: #4b4b58;
+  --muted: #6b6b78;
+  --accent: #d10500;
+  --gold: #8a6000;
+  --silver: #5f6672;
+  --bronze: #9a5a2b;
+  --gain: #0f7a43;
+  --loss: #cc2b2b;
+  --purple: #7c3aed;
+  --gold-fill: #e6b34a;
+  --silver-fill: #c4c9d1;
+  --bronze-fill: #d29a6c;
+  --on-fill: #15151e;
+  --on-accent: #ffffff;
+  --series-rest: #c9c9d3;
+  --status-regular: #0ca30c;
+  --status-atencao: #fab219;
+  --status-alerta: #ec835a;
+  --status-suspenso: #d03b3b;
+  --team-racing-bulls: #5b86f0;
+  --team-red-bull: #1f4c9c;
+  --team-ferrari: #e8002d;
+  --team-mclaren: #e06c00;
+  --team-mercedes: #00877a;
+  --team-alpine: #0093cc;
+  --team-sauber: #2e8b2e;
+  --team-aston-martin: #1d8a66;
+  --team-williams: #1f7fc4;
+  --team-haas: #7a7f84;
+  --team-other: #6b6b78;
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-16: 64px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+  --content-max: 1152px;
+  --chart-height: 340px;
+  --team-bar-width: 4px;
+  --font-sans: "Titillium Web", system-ui, sans-serif;
+}
+
+.hero-name { font-family: var(--font-sans); font-size: 60px; line-height: 60px; font-weight: 900; letter-spacing: -0.025em; }
+.page-title { font-family: var(--font-sans); font-size: 48px; line-height: 48px; font-weight: 900; letter-spacing: -0.025em; }
+.stat-hero { font-family: var(--font-sans); font-size: 36px; line-height: 40px; font-weight: 900; }
+.stat { font-family: var(--font-sans); font-size: 30px; line-height: 37.5px; font-weight: 900; }
+.card-title { font-family: var(--font-sans); font-size: 24px; line-height: 32px; font-weight: 900; }
+.section-title { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 900; letter-spacing: -0.025em; }
+.table-name { font-family: var(--font-sans); font-size: 16px; line-height: 20px; font-weight: 700; }
+.body { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 400; }
+.table { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
+.caption { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 400; }
+.wordmark { font-family: var(--font-sans); font-size: 18px; line-height: 28px; font-weight: 900; letter-spacing: -0.025em; font-style: italic; }
+.eyebrow { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: 0.1em; }
+.label { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.05em; }
+.table-head { font-family: var(--font-sans); font-size: 11px; line-height: 20px; font-weight: 700; letter-spacing: 0.05em; }
+.badge { font-family: var(--font-sans); font-size: 10px; line-height: 14px; font-weight: 900; letter-spacing: 0.05em; }

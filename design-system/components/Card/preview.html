@@ -1,0 +1,21 @@
+<!-- @dsCard group="Estrutura" height=150 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../bundle.css">
+<script>document.documentElement.dataset.theme = new URLSearchParams(location.search).get("theme") || "dark";</script>
+<title>Card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap">
+<style>
+.two { grid-template-columns: 1fr 1fr; }
+</style>
+</head>
+<body>
+<div class="demo two">
+  <div class="card" style="padding:var(--space-5)"><p class="lbl" style="margin:0">Card simples</p><p style="margin:4px 0 0" class="c-text-2">Fundo surface, borda line, radius-xl.</p></div>
+  <div class="card stripe" style="padding:var(--space-5)"><span class="card-top" style="background:var(--team-ferrari)"></span><p class="lbl" style="margin:0">Card de destaque</p><p style="margin:4px 0 0" class="c-text-2">Textura stripe e faixa da equipe.</p></div>
+</div>
+</body>
+</html>
