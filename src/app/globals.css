@@ -27,6 +27,15 @@
   --silver-fill: #c4c9d1;
   --bronze-fill: #d29a6c;
   --on-fill: #15151e;
+  /* Texto sobre accent (logotipo): branco nos dois temas (4,97:1 e 5,63:1). */
+  --on-accent: #ffffff;
+
+  /* Status da Superlicença: reservados (nunca cor de série), iguais nos dois temas
+     e sempre acompanhados de ícone e rótulo. */
+  --status-regular: #0ca30c;
+  --status-atencao: #fab219;
+  --status-alerta: #ec835a;
+  --status-suspenso: #d03b3b;
 
   /* Cores das equipes (oficiais da F1). Racing Bulls um pouco mais clara para não
      se confundir com a Red Bull no gráfico. */
@@ -126,6 +135,11 @@
   --color-silver-fill: var(--silver-fill);
   --color-bronze-fill: var(--bronze-fill);
   --color-on-fill: var(--on-fill);
+  --color-on-accent: var(--on-accent);
+  --color-status-regular: var(--status-regular);
+  --color-status-atencao: var(--status-atencao);
+  --color-status-alerta: var(--status-alerta);
+  --color-status-suspenso: var(--status-suspenso);
   --font-sans: var(--font-titillium);
 }
 

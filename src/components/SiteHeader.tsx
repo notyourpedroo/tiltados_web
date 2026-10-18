@@ -32,7 +32,7 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
         <Link href={`/${season}`} className="group flex items-center gap-2">
           <span className="-skew-x-12 bg-accent px-2 py-0.5 text-lg font-black italic tracking-tight">
-            <span className="inline-block skew-x-12">TILTADOS</span>
+            <span className="inline-block skew-x-12 text-on-accent">TILTADOS</span>
           </span>
           <span className="text-lg font-black italic tracking-tight text-text-2 group-hover:text-text">
             F1

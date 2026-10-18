@@ -22,12 +22,12 @@ import type { LicenseStatus } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Superlicença" };
 
-// Cores de status reservadas (nunca usadas como cor de série), sempre com ícone + rótulo.
+// Cores de status reservadas (tokens status-* em globals.css), sempre com ícone + rótulo.
 const STATUS: Record<LicenseStatus, { label: string; icon: string; color: string }> = {
-  Regular: { label: "Regular", icon: "✓", color: "#0ca30c" },
-  Atencao: { label: "Atenção", icon: "!", color: "#fab219" },
-  "Alerta Critico": { label: "Alerta crítico", icon: "‼", color: "#ec835a" },
-  "Suspenso (Ban)": { label: "Suspenso", icon: "⛔", color: "#d03b3b" },
+  Regular: { label: "Regular", icon: "✓", color: "var(--status-regular)" },
+  Atencao: { label: "Atenção", icon: "!", color: "var(--status-atencao)" },
+  "Alerta Critico": { label: "Alerta crítico", icon: "‼", color: "var(--status-alerta)" },
+  "Suspenso (Ban)": { label: "Suspenso", icon: "⛔", color: "var(--status-suspenso)" },
 };
 
 export default function SuperLicensePage({ params }: PageProps<"/[season]/superlicenca">) {
@@ -80,7 +80,8 @@ async function SuperLicense({ season }: { season: string }) {
               </p>
               <div
                 className="mt-2 h-2 overflow-hidden rounded-full"
-                style={{ backgroundColor: `${status.color}33` }}
+                // Trilho do medidor: a cor do status a 20%.
+                style={{ backgroundColor: `color-mix(in srgb, ${status.color} 20%, transparent)` }}
                 role="meter"
                 aria-valuemin={0}
                 aria-valuemax={l.initial_points}
