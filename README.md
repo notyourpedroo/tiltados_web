@@ -55,41 +55,6 @@ no navegador para ver todas as prévias, nos temas escuro e claro.
 As cores usadas pelo site moram em `src/app/globals.css`; ao mudar uma cor, fonte ou componente,
 atualize a pasta junto.
 
-## Deploy automático
-
-Cada push na `main` dispara o workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
-
-1. **Verificar e empacotar** (no GitHub): `npm ci`, lint e `next build` com `output: "standalone"`.
-   O resultado (`server.js` + só os arquivos necessários, ~6 MB) vira um pacote `release.tgz`.
-   Pull requests param aqui, sem publicar.
-2. **Publicar no servidor**: envia o pacote por SSH (usuário `deploy`) e roda
-   [`deploy/publicar.sh`](deploy/publicar.sh), que extrai em `/opt/tiltados_web/releases/<data>-<commit>`,
-   aponta o link `current` para a versão nova, reinicia o serviço `tiltados-web` e confere se o site
-   responde. Se não responder, volta sozinho para a versão anterior. Ficam guardadas as 3 últimas versões.
-
-O build é feito no GitHub porque o servidor tem 1 GB de RAM; lá só roda o `node server.js`.
-Também dá para disparar uma publicação manual pela aba **Actions** (*Run workflow*).
-
-**Preparação do servidor (uma vez):** [`deploy/setup-servidor.sh`](deploy/setup-servidor.sh), como root,
-recebendo a chave pública do deploy. Cria o usuário `deploy`, a pasta `/opt/tiltados_web` e o serviço
-`tiltados-web.service` (que lê a API em `http://127.0.0.1:8000`).
-
-**Secrets do repositório** (Settings → Secrets and variables → Actions). O endereço do servidor fica
-só aqui, fora do código e dos logs:
-
-| Secret | Conteúdo |
-|---|---|
-| `DEPLOY_HOST` | IP do servidor (também usado para montar a URL da API no build: `http://<ip>:8000`) |
-| `DEPLOY_SSH_KEY` | Chave **privada** do usuário `deploy` |
-| `DEPLOY_KNOWN_HOSTS` | Linha do `ssh-keyscan -t ed25519 <ip>` (identidade do servidor) |
-
-**Voltar uma versão manualmente** (no servidor, como root):
-
-```bash
-ls -1t /opt/tiltados_web/releases
-ln -sfn /opt/tiltados_web/releases/<versao> /opt/tiltados_web/current && systemctl restart tiltados-web
-```
-
 ## Estrutura
 
 ```text
