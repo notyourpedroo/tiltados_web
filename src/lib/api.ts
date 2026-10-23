@@ -12,10 +12,11 @@ import type {
   Season,
 } from "./types";
 
-// A API é servida via HTTP puro, então ela é sempre consultada pelo servidor do
-// Next (nunca pelo navegador) — assim o site pode rodar em HTTPS sem mixed content.
+// A API é sempre consultada pelo servidor do Next (nunca pelo navegador): em
+// produção, direto em http://127.0.0.1:8000; no build do GitHub Actions, que roda
+// fora do servidor, por HTTPS através do nginx em /api.
 // O endereço não fica no código: vem de TILTADOS_API_URL (.env.local no dev,
-// Secret no GitHub Actions, unit do systemd em produção).
+// Secret DEPLOY_HOST no GitHub Actions, unit do systemd em produção).
 const API_URL = process.env.TILTADOS_API_URL?.replace(/\/+$/, "");
 if (!API_URL) {
   throw new Error(

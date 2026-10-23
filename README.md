@@ -35,8 +35,8 @@ Abra http://localhost:3000.
 ## Como os dados são buscados
 
 - A API é chamada **só pelo servidor do Next** (`src/lib/api.ts`), nunca pelo navegador.
-  Como ela é servida em HTTP, isso permite hospedar o site em HTTPS (Vercel etc.) sem bloqueio de
-  *mixed content*.
+  Em produção o site fala com ela direto em `http://127.0.0.1:8000`; no build do GitHub Actions, que
+  roda fora do servidor, por HTTPS através do nginx em `/api` (a porta 8000 só aceita conexões locais).
 - As respostas ficam em cache com `"use cache"` + `cacheLife("minutes")`: um CSV novo publicado na API
   aparece no site em cerca de um minuto, sem precisar de novo deploy.
 - Pontos por sessão, voltas mais rápidas, rodadas e a evolução do campeonato são derivados em
