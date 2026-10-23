@@ -40,8 +40,9 @@ jobs:
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: 1
-          # A API roda no mesmo servidor do site (porta 8000).
-          TILTADOS_API_URL: http://${{ secrets.DEPLOY_HOST }}:8000
+          # A API roda no mesmo servidor do site, atrás do nginx em /api (HTTPS).
+          # A porta 8000 só aceita conexões de dentro do servidor.
+          TILTADOS_API_URL: https://${{ secrets.DEPLOY_HOST }}/api
 
       - name: Empacotar (standalone)
         if: github.event_name != 'pull_request'
