@@ -15,6 +15,7 @@ Feito com Next.js 16 (App Router, Cache Components), TypeScript e Tailwind CSS 4
 | `/{temporada}/pilotos` | Classificação de pilotos e gráfico de pontos acumulados |
 | `/{temporada}/pilotos/{driver_id}` | Perfil do piloto: estatísticas, resumo da temporada, duelo com companheiro e resultados |
 | `/{temporada}/equipes` | Campeonato de construtores e contribuição de cada piloto |
+| `/2026/titulo` | Chance de título de pilotos e construtores, com o status e o Motivo de cada um |
 | `/2026/superlicenca` | Saldo da Superlicença e punições registradas |
 
 `/` redireciona para `/2026`.
@@ -30,7 +31,7 @@ npm install
 npm run dev
 ```
 
-Abra http://localhost:3000.
+Abra http://localhost:3000. Os testes rodam com `npm test` (Vitest).
 
 ## Como os dados são buscados
 
@@ -41,7 +42,8 @@ Abra http://localhost:3000.
   aparece no site em cerca de um minuto, sem precisar de novo deploy.
 - Pontos por sessão, voltas mais rápidas, rodadas e a evolução do campeonato são derivados em
   `src/lib/season.ts`, usando a mesma tabela de pontuação de `files/{season}/scores.csv` da API.
-  As classificações (pilotos e construtores) vêm prontas da API.
+  As classificações (pilotos e construtores) vêm prontas da API, assim como a Chance de título de 2026,
+  que a API calcula simulando as Sessões pendentes.
 - O build (`npm run build`) pré-renderiza todas as páginas conhecidas, então a API precisa estar no ar
   durante o build.
 
@@ -59,10 +61,11 @@ atualize a pasta junto.
 
 ```text
 src/
-├── app/[season]/          # rotas por temporada (visão geral, corridas, pilotos, equipes, superlicença)
+├── app/[season]/          # rotas por temporada (visão geral, corridas, pilotos, equipes, título, superlicença)
 ├── components/            # cabeçalho, tabelas, gráficos de evolução e peças de UI
 └── lib/
     ├── api.ts             # chamadas à Tiltados API (com cache)
+    ├── chance.ts          # como a Chance de título aparece na tela (testado com o Vitest)
     ├── season.ts          # modelo derivado da temporada
     ├── teams.ts           # cores e nomes curtos das equipes
     └── types.ts           # tipos das respostas da API
