@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import { ChampionshipCharts } from "@/components/ChampionshipCharts";
+import { HideOnError } from "@/components/HideOnError";
 import { DriverStandingsTable, TeamStandingsTable } from "@/components/standings";
 import {
   Card,
@@ -13,6 +14,8 @@ import {
   TeamLogo,
   TeamMark,
 } from "@/components/ui";
+import { getDriverPrediction } from "@/lib/api";
+import { describeChance } from "@/lib/chance";
 import { chartData } from "@/lib/chart";
 import { formatDate, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
@@ -42,6 +45,80 @@ function topBy(data: SeasonData, pick: (r: SessionResult) => boolean) {
     .filter(([, c]) => c === best)
     .map(([id]) => data.drivers[id]?.name ?? `#${id}`);
   return { best, names };
+}
+
+function LeaderLabel({ children }: { children: ReactNode }) {
+  return <p className="text-sm font-bold uppercase tracking-widest text-gold">{children}</p>;
+}
+
+/**
+ * Rótulo do card do líder em volta do nome e da equipe (`children`). Em 2026, a
+ * Chance de título carrega à parte: se demorar ou falhar, o card mostra só
+ * "Líder do campeonato", sem a linha da Chance.
+ */
+function LeaderHeading({
+  season,
+  finished,
+  driverId,
+  children,
+}: {
+  season: string;
+  finished: boolean;
+  driverId: number;
+  children: ReactNode;
+}) {
+  if (finished) {
+    return (
+      <>
+        <LeaderLabel>🏆 Campeão</LeaderLabel>
+        {children}
+      </>
+    );
+  }
+  const plain = (
+    <>
+      <LeaderLabel>Líder do campeonato</LeaderLabel>
+      {children}
+    </>
+  );
+  if (season !== "2026") return plain;
+  return (
+    <HideOnError fallback={plain}>
+      <Suspense fallback={plain}>
+        <LeaderTitleChance driverId={driverId}>{children}</LeaderTitleChance>
+      </Suspense>
+    </HideOnError>
+  );
+}
+
+/** Líder Campeão pela matemática ganha "🏆 Campeão"; senão, a linha da Chance de título. */
+async function LeaderTitleChance({ driverId, children }: { driverId: number; children: ReactNode }) {
+  const row = (await getDriverPrediction()).find((r) => r.driver_id === driverId);
+  if (row?.status === "Campeao") {
+    return (
+      <>
+        <LeaderLabel>🏆 Campeão</LeaderLabel>
+        {children}
+      </>
+    );
+  }
+  return (
+    <>
+      <LeaderLabel>Líder do campeonato</LeaderLabel>
+      {children}
+      {row && (
+        <Link href="/2026/titulo" className="group mt-4 inline-flex items-baseline gap-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-muted">Chance de título</span>
+          <span className="tabular text-2xl font-black group-hover:underline">
+            {describeChance(row, "driver").text}
+          </span>
+          <span aria-hidden className="text-sm font-bold text-text-2 transition-colors group-hover:text-text">
+            →
+          </span>
+        </Link>
+      )}
+    </>
+  );
 }
 
 async function Overview({ season }: { season: string }) {
@@ -81,19 +158,18 @@ async function Overview({ season }: { season: string }) {
               className="absolute inset-y-0 left-0 w-1.5"
               style={{ backgroundColor: leaderTeam.color }}
             />
-            <p className="text-sm font-bold uppercase tracking-widest text-gold">
-              {finished ? "🏆 Campeão" : "Líder do campeonato"}
-            </p>
-            <Link
-              href={`/${data.season}/pilotos/${leader.driver_id}`}
-              className="mt-1 block text-5xl font-black uppercase leading-none tracking-tight hover:underline sm:text-6xl"
-            >
-              {leader.driver_name}
-            </Link>
-            <p className="mt-3 flex items-center gap-2 text-text-2">
-              {leaderTeam.logo && <TeamLogo logo={leaderTeam.logo} size={28} />}
-              {leader.team_name}
-            </p>
+            <LeaderHeading season={data.season} finished={finished} driverId={leader.driver_id}>
+              <Link
+                href={`/${data.season}/pilotos/${leader.driver_id}`}
+                className="mt-1 block text-5xl font-black uppercase leading-none tracking-tight hover:underline sm:text-6xl"
+              >
+                {leader.driver_name}
+              </Link>
+              <p className="mt-3 flex items-center gap-2 text-text-2">
+                {leaderTeam.logo && <TeamLogo logo={leaderTeam.logo} size={28} />}
+                {leader.team_name}
+              </p>
+            </LeaderHeading>
             <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
               <div>
                 <p className="text-4xl font-black">{leader.points}</p>
