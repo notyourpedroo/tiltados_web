@@ -85,4 +85,18 @@ describe("Disputa pelo título", () => {
   test("lista vazia não tem linhas", () => {
     expect(describeTitleRace([], "driver").rows).toEqual([]);
   });
+
+  test("título está decidido quando há Campeão e todos os outros Eliminados", () => {
+    const race = describeTitleRace([row(1, "Campeao", 100), row(2, "Eliminado", 0)], "driver");
+    expect(race.decided).toBe(true);
+  });
+
+  test("título não está decidido com alguém Na disputa", () => {
+    const race = describeTitleRace([row(1, "Na disputa", 100), row(2, "Na disputa", 0), row(3, "Eliminado", 0)], "driver");
+    expect(race.decided).toBe(false);
+  });
+
+  test("lista vazia não tem título decidido", () => {
+    expect(describeTitleRace([], "driver").decided).toBe(false);
+  });
 });

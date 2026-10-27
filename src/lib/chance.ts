@@ -52,6 +52,13 @@ export function describeChance(
 export function describeTitleRace<T extends { status: TitleStatus; championship_probability: number }>(
   rows: T[],
   entrant: Entrant,
-): { rows: (T & { view: ChanceView })[] } {
-  return { rows: rows.map((row) => ({ ...row, view: describeChance(row, entrant) })) };
+): {
+  rows: (T & { view: ChanceView })[];
+  /** Ninguém está Na disputa: o título já é de alguém (antes ou depois da última Sessão). */
+  decided: boolean;
+} {
+  return {
+    rows: rows.map((row) => ({ ...row, view: describeChance(row, entrant) })),
+    decided: rows.length > 0 && !rows.some((row) => row.status === "Na disputa"),
+  };
 }

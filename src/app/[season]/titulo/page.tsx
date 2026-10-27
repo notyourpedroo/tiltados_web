@@ -20,6 +20,13 @@ export default function TitleChancePage({ params }: PageProps<"/[season]/titulo"
   );
 }
 
+/** Ninguém do campeonato está Na disputa: as barras somem e o Motivo vira o destaque. */
+function DecidedTag() {
+  return (
+    <span className="text-sm font-bold uppercase tracking-wider text-gold">Título decidido</span>
+  );
+}
+
 async function TitleChance({ season }: { season: string }) {
   // A Chance de título só existe a partir de 2026.
   if (season !== "2026") notFound();
@@ -36,7 +43,7 @@ async function TitleChance({ season }: { season: string }) {
       </PageTitle>
 
       <section>
-        <SectionTitle>Pilotos</SectionTitle>
+        <SectionTitle action={drivers.decided && <DecidedTag />}>Pilotos</SectionTitle>
         <Card>
           <ol>
             {drivers.rows.map((d) => {
@@ -55,6 +62,7 @@ async function TitleChance({ season }: { season: string }) {
                   points={d.points}
                   maxPoints={d.max_points}
                   reason={d.probability_reason}
+                  decided={drivers.decided}
                 />
               );
             })}
@@ -63,7 +71,7 @@ async function TitleChance({ season }: { season: string }) {
       </section>
 
       <section className="mt-10">
-        <SectionTitle>Construtores</SectionTitle>
+        <SectionTitle action={teams.decided && <DecidedTag />}>Construtores</SectionTitle>
         <Card>
           <ol>
             {teams.rows.map((t) => (
@@ -75,6 +83,7 @@ async function TitleChance({ season }: { season: string }) {
                 points={t.points}
                 maxPoints={t.max_points}
                 reason={t.probability_reason}
+                decided={teams.decided}
               />
             ))}
           </ol>

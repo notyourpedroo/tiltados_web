@@ -57,6 +57,7 @@ export function ChanceRow({
   points,
   maxPoints,
   reason,
+  decided = false,
 }: {
   view: ChanceView;
   /** Nome (com link, para pilotos). */
@@ -68,6 +69,8 @@ export function ChanceRow({
   points: number;
   maxPoints: number;
   reason: string;
+  /** Título decidido: sem barra (só mostraria 100% e 0%) e com o Motivo em destaque. */
+  decided?: boolean;
 }) {
   return (
     <li className={`border-t border-line px-4 py-4 first:border-t-0 ${view.dimmed ? "opacity-60" : ""}`}>
@@ -77,9 +80,11 @@ export function ChanceRow({
         {team && <span className="hidden text-sm text-muted sm:inline">{team}</span>}
         <span className="tabular ml-auto text-2xl font-black">{view.text}</span>
       </div>
-      <div className="mt-2">
-        <ChanceBar view={view} label={`Chance de título: ${view.text}`} />
-      </div>
+      {!decided && (
+        <div className="mt-2">
+          <ChanceBar view={view} label={`Chance de título: ${view.text}`} />
+        </div>
+      )}
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
         <ChanceBadge view={view} />
         <span className="tabular text-text-2">
@@ -87,7 +92,7 @@ export function ChanceRow({
           <span className="sr-only">, Pontos máximos:</span> {maxPoints} máx.
         </span>
       </div>
-      <p className="mt-2 text-sm text-text-2">{reason}</p>
+      <p className={decided ? "mt-2 text-text" : "mt-2 text-sm text-text-2"}>{reason}</p>
     </li>
   );
 }
