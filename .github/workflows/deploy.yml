@@ -1,6 +1,6 @@
 name: CI/CD
 
-# Pull requests: só verifica (lint + build).
+# Pull requests: só verifica (lint + testes + build).
 # Push na main (ou disparo manual): verifica, empacota e publica no servidor.
 on:
   push:
@@ -33,6 +33,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Testes
+        run: npm test
 
       # O build também checa os tipos e pré-renderiza as páginas com os dados
       # da Tiltados API (precisa da API no ar).
