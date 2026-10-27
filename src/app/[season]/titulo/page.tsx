@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ChanceRow } from "@/components/chance";
 import { Card, PageTitle, SectionTitle, Skeleton, TeamMark } from "@/components/ui";
-import { getDriverPrediction } from "@/lib/api";
+import { getDriverPrediction, getTeamPrediction } from "@/lib/api";
 import { describeTitleRace } from "@/lib/chance";
 import { teamStyle } from "@/lib/teams";
 
@@ -23,7 +23,9 @@ export default function TitleChancePage({ params }: PageProps<"/[season]/titulo"
 async function TitleChance({ season }: { season: string }) {
   // A Chance de título só existe a partir de 2026.
   if (season !== "2026") notFound();
-  const drivers = describeTitleRace(await getDriverPrediction(), "driver");
+  const [driverRows, teamRows] = await Promise.all([getDriverPrediction(), getTeamPrediction()]);
+  const drivers = describeTitleRace(driverRows, "driver");
+  const teams = describeTitleRace(teamRows, "team");
 
   return (
     <>
@@ -56,6 +58,25 @@ async function TitleChance({ season }: { season: string }) {
                 />
               );
             })}
+          </ol>
+        </Card>
+      </section>
+
+      <section className="mt-10">
+        <SectionTitle>Construtores</SectionTitle>
+        <Card>
+          <ol>
+            {teams.rows.map((t) => (
+              <ChanceRow
+                key={t.team_id}
+                view={t.view}
+                mark={<TeamMark team={teamStyle(t.team_name)} />}
+                name={t.team_name}
+                points={t.points}
+                maxPoints={t.max_points}
+                reason={t.probability_reason}
+              />
+            ))}
           </ol>
         </Card>
       </section>

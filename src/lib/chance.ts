@@ -16,10 +16,16 @@ export interface ChanceView {
   dimmed: boolean;
 }
 
-const BADGES: Record<TitleStatus, { label: string; tone: BadgeTone }> = {
-  Campeao: { label: "Campeão", tone: "champion" },
-  "Na disputa": { label: "Na disputa", tone: "contention" },
-  Eliminado: { label: "Eliminado", tone: "eliminated" },
+const TONES: Record<TitleStatus, BadgeTone> = {
+  Campeao: "champion",
+  "Na disputa": "contention",
+  Eliminado: "eliminated",
+};
+
+// O selo concorda com quem disputa: o piloto é Campeão, a equipe é Campeã.
+const LABELS: Record<Entrant, Record<TitleStatus, string>> = {
+  driver: { Campeao: "Campeão", "Na disputa": "Na disputa", Eliminado: "Eliminado" },
+  team: { Campeao: "Campeã", "Na disputa": "Na disputa", Eliminado: "Eliminada" },
 };
 
 function chanceText(status: TitleStatus, p: number): string {
@@ -37,7 +43,7 @@ export function describeChance(
   return {
     text: chanceText(row.status, row.championship_probability),
     bar: row.championship_probability,
-    badge: BADGES[row.status],
+    badge: { label: LABELS[entrant][row.status], tone: TONES[row.status] },
     dimmed: row.status === "Eliminado",
   };
 }

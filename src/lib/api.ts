@@ -9,6 +9,7 @@ import type {
   ApiResult,
   ApiSuperLicense,
   ApiTeam,
+  ApiTeamPrediction,
   ApiTeamStanding,
   Season,
 } from "./types";
@@ -65,3 +66,5 @@ export const getSuperLicense = () =>
   get<ApiSuperLicense[]>(`/load/2026/super-license`);
 export const getDriverPrediction = () =>
   get<ApiDriverPrediction[]>(`/load/2026/prediction/drivers`);
+export const getTeamPrediction = () =>
+  get<ApiTeamPrediction[]>(`/load/2026/prediction/teams`);

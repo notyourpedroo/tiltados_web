@@ -44,6 +44,23 @@ describe("Chance de título", () => {
     expect(champion.dimmed).toBe(false);
   });
 
+  test("equipe Campeã ganha o selo no feminino", () => {
+    const view = describeChance({ status: "Campeao", championship_probability: 100 }, "team");
+    expect(view.badge).toEqual({ label: "Campeã", tone: "champion" });
+  });
+
+  test("equipe Na disputa ganha o selo Na disputa, sem esmaecer", () => {
+    const view = describeChance({ status: "Na disputa", championship_probability: 55.5 }, "team");
+    expect(view.badge).toEqual({ label: "Na disputa", tone: "contention" });
+    expect(view.dimmed).toBe(false);
+  });
+
+  test("equipe Eliminada ganha o selo no feminino e a linha esmaecida", () => {
+    const view = describeChance({ status: "Eliminado", championship_probability: 0 }, "team");
+    expect(view.badge).toEqual({ label: "Eliminada", tone: "eliminated" });
+    expect(view.dimmed).toBe(true);
+  });
+
   test("a barra ocupa a porcentagem da Chance de título", () => {
     expect(describeChance({ status: "Na disputa", championship_probability: 62.5 }, "driver").bar).toBe(62.5);
   });
