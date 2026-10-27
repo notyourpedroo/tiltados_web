@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { ChanceBadge, ChanceBar } from "@/components/chance";
+import { HideOnError } from "@/components/HideOnError";
 import {
   Card,
   FastestLapBadge,
@@ -19,7 +21,8 @@ import {
   th,
   tr,
 } from "@/components/ui";
-import { getSuperLicense } from "@/lib/api";
+import { getDriverPrediction, getSuperLicense } from "@/lib/api";
+import { describeChance } from "@/lib/chance";
 import { shortGpName } from "@/lib/chart";
 import { formatDate, ordinal, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
@@ -54,6 +57,27 @@ export default function DriverPage({ params }: PageProps<"/[season]/pilotos/[dri
         <DriverProfile season={season} driverId={driverId} />
       ))}
     </Suspense>
+  );
+}
+
+/** Chance de título do piloto em 2026, com o selo e o Motivo, para qualquer status. */
+async function DriverTitleChance({ driverId }: { driverId: number }) {
+  const row = (await getDriverPrediction()).find((p) => p.driver_id === driverId);
+  if (!row) return null;
+  const view = describeChance(row, "driver");
+
+  return (
+    <Card className="mt-4 p-5">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted">Chance de título</p>
+        <ChanceBadge view={view} />
+      </div>
+      <p className="tabular mt-1 text-2xl font-black">{view.text}</p>
+      <div className="mt-2">
+        <ChanceBar view={view} label={`Chance de título: ${view.text}`} />
+      </div>
+      <p className="mt-3 text-sm text-text-2">{row.probability_reason}</p>
+    </Card>
   );
 }
 
@@ -149,6 +173,16 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           sub="saldo grid → chegada"
         />
       </div>
+
+      {/* Carrega à parte: se a rota demorar, o resto da página não espera; se
+          falhar, o bloco some sem derrubar a página. */}
+      {data.season === "2026" && (
+        <HideOnError>
+          <Suspense fallback={null}>
+            <DriverTitleChance driverId={id} />
+          </Suspense>
+        </HideOnError>
+      )}
 
       <section className="mt-10">
         <SectionTitle>Temporada em resumo</SectionTitle>

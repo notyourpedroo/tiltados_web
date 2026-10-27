@@ -82,6 +82,41 @@ export type SprintBadgeProps = Record<string, never>;
 /** Sem propriedades. */
 export type FastestLapBadgeProps = Record<string, never>;
 
+/** Chance de título (src/components/chance.tsx) */
+export interface ChanceView {
+  /** Chance de título como exibida ("87,3%", "< 0,1%", "> 99,9%"). */
+  text: string;
+  /** Largura da barra, em porcentagem. */
+  bar: number;
+  /** Rótulo concordando com piloto ou equipe; o tom define a cor. */
+  badge: { label: string; tone: "champion" | "contention" | "eliminated" };
+  /** Eliminados aparecem esmaecidos. */
+  dimmed: boolean;
+}
+export interface ChanceBadgeProps {
+  view: ChanceView;
+}
+export interface ChanceBarProps {
+  view: ChanceView;
+  /** Rótulo acessível do medidor. */
+  label: string;
+}
+export interface ChanceRowProps {
+  view: ChanceView;
+  /** Nome (com link, para pilotos). */
+  name: ReactNode;
+  /** Marca da equipe (TeamMark). */
+  mark: ReactNode;
+  /** Equipe atual, para pilotos. */
+  team?: ReactNode;
+  points: number;
+  maxPoints: number;
+  /** Motivo da Chance de título. */
+  reason: string;
+  /** Título decidido: sem barra nem porcentagem, com o Motivo em destaque. */
+  decided: boolean;
+}
+
 /** Classificação */
 export interface DriverStandingsTableProps {
   /** Temporada derivada (SeasonData, de getSeason em src/lib/season.ts). */

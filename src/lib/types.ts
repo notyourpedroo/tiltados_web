@@ -77,6 +77,39 @@ export type LicenseStatus =
   | "Alerta Critico"
   | "Suspenso (Ban)";
 
+/** Situação no título pela matemática (Pontos máximos contra os pontos do líder). */
+export type TitleStatus = "Campeao" | "Na disputa" | "Eliminado";
+
+export interface ApiDriverPrediction {
+  /** Ordem pela Chance de título, não a posição no campeonato. */
+  position: number;
+  driver_id: number;
+  driver_name: string;
+  team_id: number;
+  team_name: string;
+  points: number;
+  max_points: number;
+  status: TitleStatus;
+  /** Chance de título, em porcentagem com 1 casa. */
+  championship_probability: number;
+  expected_points: number;
+  probability_reason: string;
+}
+
+export interface ApiTeamPrediction {
+  /** Ordem pela Chance de título, não a posição no campeonato. */
+  position: number;
+  team_id: number;
+  team_name: string;
+  points: number;
+  max_points: number;
+  status: TitleStatus;
+  /** Chance de título, em porcentagem com 1 casa. */
+  championship_probability: number;
+  expected_points: number;
+  probability_reason: string;
+}
+
 export interface ApiSuperLicense {
   driver_id: number;
   driver_name: string;
