@@ -31,7 +31,31 @@ npm install
 npm run dev
 ```
 
-Abra http://localhost:3000. Os testes rodam com `npm test` (Vitest).
+Abra http://localhost:3000. O `npm install` também ativa o hook `commit-msg` de `.githooks/`.
+
+Verificações (as duas primeiras rodam no CI junto com o build):
+
+```bash
+npm run lint       # ESLint, inclusive as regras de cor do design system
+npm test           # Vitest
+npm run typecheck  # gera os tipos de rota do Next e roda o tsc
+```
+
+### Rodando contra a API local
+
+Quando a API de produção não responde da sua máquina, rode a [Tiltados API](https://github.com/notyourpedroo/tiltados_api)
+localmente (clone em `../tiltados_api`, com o `.venv` criado como no README dela) e aponte o site para ela.
+A variável de ambiente tem prioridade sobre o `.env.local`:
+
+```powershell
+# terminal 1, na pasta da API
+.\.venv\Scripts\uvicorn.exe main:app --port 8000
+
+# terminal 2, na pasta do site
+$env:TILTADOS_API_URL = "http://127.0.0.1:8000"; npm run dev
+```
+
+As rotas e o formato das respostas estão no código da API: `main.py` e `scripts/{temporada}/`.
 
 ## Como os dados são buscados
 
