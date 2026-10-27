@@ -2,6 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import type {
   ApiDriver,
+  ApiDriverPrediction,
   ApiDriverStanding,
   ApiPunishment,
   ApiRace,
@@ -62,3 +63,5 @@ export const getPunishments = () =>
   get<ApiPunishment[]>(`/load/2026/punishments`);
 export const getSuperLicense = () =>
   get<ApiSuperLicense[]>(`/load/2026/super-license`);
+export const getDriverPrediction = () =>
+  get<ApiDriverPrediction[]>(`/load/2026/prediction/drivers`);

@@ -10,6 +10,7 @@ const SECTIONS = [
   { slug: "corridas", label: "Corridas" },
   { slug: "pilotos", label: "Pilotos" },
   { slug: "equipes", label: "Equipes" },
+  { slug: "titulo", label: "Título", only: "2026" },
   { slug: "superlicenca", label: "Superlicença", only: "2026" },
 ];
 
