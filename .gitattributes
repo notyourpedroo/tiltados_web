@@ -1,2 +1,4 @@
 # Scripts executados no servidor Linux precisam de quebra de linha LF.
 *.sh text eol=lf
+# Hooks do git rodam em sh, inclusive no Git for Windows.
+.githooks/* text eol=lf
