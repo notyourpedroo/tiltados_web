@@ -7,7 +7,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 const SECTIONS = [
   { slug: "", label: "Visão geral" },
-  { slug: "corridas", label: "Corridas" },
+  { slug: "corridas", label: "Etapas" },
   { slug: "pilotos", label: "Pilotos" },
   { slug: "equipes", label: "Equipes" },
   { slug: "titulo", label: "Título", only: "2026" },

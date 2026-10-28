@@ -8,7 +8,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 - Use os termos da F1 sem traduzir à força: GP, Sprint, pole, pódio, grid, volta mais rápida (abreviada **VMR** no selo), construtores, Superlicença.
 - Posições sempre com ordinal: `1º`, `2º`, `12º`. Etapas como `R16`. Datas no formato `05 out 2026` (mês abreviado em minúsculas), sem dia da semana.
 - Pontos como número puro (`385`, `+25 pts` só quando é um ganho). Diferença para o líder com sinal de menos tipográfico: `−117`.
-- Títulos e rótulos em CAIXA ALTA via estilo, não digitados assim no texto: "Resultados das corridas" vira RESULTADOS DAS CORRIDAS na tela.
+- Títulos e rótulos em CAIXA ALTA via estilo, não digitados assim no texto: "Resultados das etapas" vira RESULTADOS DAS ETAPAS na tela.
 - Plural sempre pelo helper do projeto (`plural(n, "punição", "punições")`), nunca colando sufixos.
 - Emoji só nos lugares onde a transmissão também usaria um símbolo: 🏆 em "Campeão", ⚠ no aviso de punição, ⏱ no selo VMR e 👏 em "Nenhuma punição registrada até agora". Nada de emoji decorativo.
 - Exemplos reais: "Líder do campeonato", "Maior recuperação · Do 7º ao 4º lugar", "Toque nos nomes para destacar até 3 pilotos", "Bandeira vermelha · Não deu para carregar os dados", "404 · Fora da pista".
