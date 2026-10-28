@@ -6,7 +6,7 @@ Cabeçalho fixo do site: faixa vermelha, logotipo, seletor de temporada, botão 
 Uma vez por página, no topo do layout da temporada (`src/app/[season]/layout.tsx`). Fica grudado no topo ao rolar, com fundo `bg` a 95% e desfoque.
 
 ## O que você fornece
-Nada: ele lê a temporada e a seção pela URL (`usePathname`). As abas Título e Superlicença só aparecem em 2026 (a ordem é Visão geral, Corridas, Pilotos, Equipes, Título, Superlicença). Trocar de temporada mantém a seção, mas volta para a lista (os IDs mudam entre temporadas).
+Nada: ele lê a temporada e a seção pela URL (`usePathname`). As abas Título e Superlicença só aparecem em 2026 (a ordem é Visão geral, Etapas, Pilotos, Equipes, Título, Superlicença). Trocar de temporada mantém a seção, mas volta para a lista (os IDs mudam entre temporadas).
 
 ## Faça
 - Logotipo: TILTADOS em `on-accent` sobre `accent`, inclinado −12°, seguido de F1 em `text-2`.
