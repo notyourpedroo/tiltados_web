@@ -10,6 +10,7 @@ import {
   getTeams,
 } from "./api";
 import { teamStyle, type TeamLogo } from "./teams";
+import { weekends } from "./weekend";
 import type {
   ApiDriverStanding,
   ApiPunishment,
@@ -219,12 +220,7 @@ export function weekendOf(data: SeasonData, session: Session): Session[] {
   return data.sessions.filter((s) => s.round === session.round);
 }
 
-/** Corrida principal de cada etapa (ou a sprint, se a etapa só teve sprint). */
+/** A Corrida de cada Etapa (ou a Sprint, enquanto a Corrida está pendente). */
 export function mainSessions(data: SeasonData): Session[] {
-  const byRound = new Map<number, Session>();
-  for (const s of data.sessions) {
-    const cur = byRound.get(s.round);
-    if (!cur || (cur.isSprint && !s.isSprint)) byRound.set(s.round, s);
-  }
-  return [...byRound.values()];
+  return weekends(data.sessions).map((w) => (w.race ?? w.sprint)!);
 }

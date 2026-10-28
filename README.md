@@ -111,7 +111,8 @@ src/
     ├── license.ts         # como o status da Superlicença aparece no card (testado com o Vitest)
     ├── season.ts          # modelo derivado da temporada
     ├── teams.ts           # cores e nomes curtos das equipes
-    └── types.ts           # tipos das respostas da API
+    ├── types.ts           # tipos das respostas da API
+    └── weekend.ts         # Sessões agrupadas por Etapa (testado com o Vitest)
 ```
 
 Ao adicionar uma equipe nova na liga, inclua a cor dela em `src/lib/teams.ts` e em `src/app/globals.css`
