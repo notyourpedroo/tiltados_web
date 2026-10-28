@@ -6,7 +6,7 @@ import { formatDate } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { weekendOf, mainSessions, type SeasonData, type SessionResult } from "@/lib/season";
 
-export const metadata: Metadata = { title: "Corridas" };
+export const metadata: Metadata = { title: "Etapas" };
 
 export default function RacesPage({ params }: PageProps<"/[season]/corridas">) {
   return (
@@ -35,8 +35,8 @@ async function Races({ season }: { season: string }) {
 
   return (
     <>
-      <PageTitle eyebrow={`Temporada ${data.season}`} title="Resultados das corridas">
-        Vencedor, pole e volta mais rápida de cada etapa. Toque em uma corrida para ver a
+      <PageTitle eyebrow={`Temporada ${data.season}`} title="Resultados das etapas">
+        Vencedor, pole e volta mais rápida de cada etapa. Toque em uma etapa para ver a
         classificação completa.
       </PageTitle>
 
@@ -44,7 +44,7 @@ async function Races({ season }: { season: string }) {
         <thead>
           <tr>
             <th className={`${th} w-12`}>R</th>
-            <th className={th}>Grande Prêmio</th>
+            <th className={th}>Etapa</th>
             <th className={th}>Data</th>
             <th className={th}>Vencedor</th>
             <th className={th}>Pole</th>
