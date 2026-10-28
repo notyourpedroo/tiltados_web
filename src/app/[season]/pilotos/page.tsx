@@ -25,8 +25,7 @@ async function Drivers({ season }: { season: string }) {
   return (
     <>
       <PageTitle eyebrow={`Temporada ${data.season}`} title="Classificação de pilotos">
-        Desempate por vitórias em GP e depois por pódios. “Sprints” conta vitórias em
-        corridas sprint.
+        Desempate por vitórias em GP e depois por pódios. “Sprints” conta vitórias em sprints.
       </PageTitle>
 
       <DriverStandingsTable data={data} />

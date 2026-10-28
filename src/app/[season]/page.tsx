@@ -233,7 +233,7 @@ async function Overview({ season }: { season: string }) {
 
       <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatTile label="Etapas" value={rounds} sub={plural(data.sessions.filter((s) => s.isSprint).length, "sprint", "sprints")} />
-        <StatTile label="Vencedores diferentes" value={winners.size} sub="em corridas principais" />
+        <StatTile label="Vencedores diferentes" value={winners.size} sub="em corridas" />
         <StatTile label="Mais poles" value={poles.best} sub={poles.names.join(", ")} />
         <StatTile label="Mais voltas rápidas" value={fastest.best} sub={fastest.names.join(", ")} />
       </div>

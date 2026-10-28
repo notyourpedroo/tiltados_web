@@ -165,7 +165,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
         <StatTile
           label="Chegada média"
           value={avgFinish ? avgFinish.toFixed(1).replace(".", ",") : "—"}
-          sub="em corridas principais"
+          sub="em corridas"
         />
         <StatTile
           label="Posições ganhas"
