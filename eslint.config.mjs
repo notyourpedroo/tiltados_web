@@ -21,17 +21,33 @@ const ACCENT_FILL = colorRule(
   "bg-accent é só da faixa do topo e do bloco do logotipo, no SiteHeader (design-system/README.md, Cor).",
 );
 
+// Termos _Avoid_ do GLOSSARY.md que nunca têm outro sentido nos textos da tela. Os
+// ambíguos (GP, prova, licença) ficam para a revisão (CODING_STANDARDS.md, Vocabulário).
+const AVOID_TERMS = "/\\b(carteira|gancho|odds|teto|rodada|ban)\\b/i";
+const AVOID_MESSAGE = "Termo marcado como _Avoid_ no GLOSSARY.md: use o termo do glossário.";
+const VOCABULARY = [
+  ...colorRule(AVOID_TERMS, AVOID_MESSAGE),
+  { selector: `JSXText[value=${AVOID_TERMS}]`, message: AVOID_MESSAGE },
+];
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
     files: ["src/**/*.{ts,tsx}"],
-    rules: { "no-restricted-syntax": ["error", ...HEX, ...MUTED_ON_SURFACE_2, ...ACCENT_FILL] },
+    rules: {
+      "no-restricted-syntax": ["error", ...HEX, ...MUTED_ON_SURFACE_2, ...ACCENT_FILL, ...VOCABULARY],
+    },
   },
   {
     // A faixa do topo e o bloco do logotipo são os únicos fundos em accent.
     files: ["src/components/SiteHeader.tsx"],
-    rules: { "no-restricted-syntax": ["error", ...HEX, ...MUTED_ON_SURFACE_2] },
+    rules: { "no-restricted-syntax": ["error", ...HEX, ...MUTED_ON_SURFACE_2, ...VOCABULARY] },
+  },
+  {
+    // Testes citam strings da API, inclusive as que saíram de uso ("Suspenso (Ban)").
+    files: ["src/**/*.test.ts"],
+    rules: { "no-restricted-syntax": ["error", ...HEX, ...MUTED_ON_SURFACE_2, ...ACCENT_FILL] },
   },
   // Override default ignores of eslint-config-next.
   globalIgnores([
