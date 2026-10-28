@@ -5,7 +5,7 @@ import { PageTitle, Skeleton, Table, TeamMark, td, th, tr } from "@/components/u
 import { formatDate } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import type { SeasonData, SessionResult } from "@/lib/season";
-import { weekends } from "@/lib/weekend";
+import { mainSession, weekends } from "@/lib/weekend";
 
 export const metadata: Metadata = { title: "Etapas" };
 
@@ -54,9 +54,9 @@ async function Races({ season }: { season: string }) {
           </tr>
         </thead>
         <tbody>
-          {rounds.map(({ round, race, sprint }) => {
-            // Sem Corrida registrada, a Etapa abre pela Sprint.
-            const main = (race ?? sprint)!;
+          {rounds.map((weekend) => {
+            const { round, race, sprint } = weekend;
+            const main = mainSession(weekend);
             const res = race ? data.results[race.id] : [];
             const winner = res[0];
             const pole = res.find((r) => r.grid === 1);

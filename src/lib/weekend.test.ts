@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import type { Session } from "./season";
-import { weekends } from "./weekend";
+import { mainSession, weekends } from "./weekend";
 
 function session(id: number, round: number, isSprint: boolean): Session {
   return {
@@ -22,7 +22,7 @@ describe("Etapas", () => {
     expect(weekends([sprint, race])).toEqual([{ round: 1, race, sprint }]);
   });
 
-  test("Etapa só com a Sprint registrada fica sem Corrida, depois das Etapas anteriores", () => {
+  test("Etapa só com a Sprint registrada fica sem Corrida e é representada pela Sprint", () => {
     const race1 = session(1, 1, false);
     const sprint2 = session(2, 2, true);
 
@@ -32,5 +32,7 @@ describe("Etapas", () => {
     expect(second.round).toBe(2);
     expect(second.race).toBeUndefined();
     expect(second.sprint).toBe(sprint2);
+    expect(mainSession(first)).toBe(race1);
+    expect(mainSession(second)).toBe(sprint2);
   });
 });
