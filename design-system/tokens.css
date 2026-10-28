@@ -1,4 +1,4 @@
-/* Tiltados F1 — gerado a partir de tokens.json (não edite à mão). */
+/* Tiltados F1 — espelha tokens.json e src/app/globals.css; tokens.test.ts confere as cores. */
 :root, [data-theme="dark"] {
   color-scheme: dark;
   --bg: #101017;
