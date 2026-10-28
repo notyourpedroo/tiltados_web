@@ -4,7 +4,8 @@ import { Suspense } from "react";
 import { PageTitle, Skeleton, Table, TeamMark, td, th, tr } from "@/components/ui";
 import { formatDate } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
-import { weekendOf, mainSessions, type SeasonData, type SessionResult } from "@/lib/season";
+import type { SeasonData, SessionResult } from "@/lib/season";
+import { weekends } from "@/lib/weekend";
 
 export const metadata: Metadata = { title: "Etapas" };
 
@@ -31,7 +32,7 @@ function DriverChip({ data, result }: { data: SeasonData; result?: SessionResult
 
 async function Races({ season }: { season: string }) {
   const data = await loadSeason(season);
-  const rounds = mainSessions(data);
+  const rounds = weekends(data.sessions);
 
   return (
     <>
@@ -53,15 +54,16 @@ async function Races({ season }: { season: string }) {
           </tr>
         </thead>
         <tbody>
-          {rounds.map((main) => {
-            const sprint = weekendOf(data, main).find((s) => s.isSprint && s.id !== main.id);
-            const res = data.results[main.id];
+          {rounds.map(({ round, race, sprint }) => {
+            // Sem Corrida registrada, a Etapa abre pela Sprint.
+            const main = (race ?? sprint)!;
+            const res = race ? data.results[race.id] : [];
             const winner = res[0];
             const pole = res.find((r) => r.grid === 1);
             const fastest = res.find((r) => r.fastestLap);
             return (
-              <tr key={main.id} className={tr}>
-                <td className={`${td} tabular font-bold text-muted`}>{main.round}</td>
+              <tr key={round} className={tr}>
+                <td className={`${td} tabular font-bold text-muted`}>{round}</td>
                 <td className={td}>
                   <Link
                     href={`/${data.season}/corridas/${main.id}`}
@@ -74,22 +76,30 @@ async function Races({ season }: { season: string }) {
                 <td className={`${td} tabular whitespace-nowrap text-text-2`}>
                   {formatDate(main.date)}
                 </td>
-                <td className={td}>
-                  <DriverChip data={data} result={winner} />
-                </td>
-                <td className={td}>
-                  <DriverChip data={data} result={pole} />
-                </td>
-                <td className={td}>
-                  {fastest ? (
-                    <span className="flex items-center gap-2 whitespace-nowrap">
-                      <DriverChip data={data} result={fastest} />
-                      <span className="tabular text-xs text-purple">{fastest.bestLap}</span>
-                    </span>
-                  ) : (
-                    <span className="text-muted">—</span>
-                  )}
-                </td>
+                {race ? (
+                  <>
+                    <td className={td}>
+                      <DriverChip data={data} result={winner} />
+                    </td>
+                    <td className={td}>
+                      <DriverChip data={data} result={pole} />
+                    </td>
+                    <td className={td}>
+                      {fastest ? (
+                        <span className="flex items-center gap-2 whitespace-nowrap">
+                          <DriverChip data={data} result={fastest} />
+                          <span className="tabular text-xs text-purple">{fastest.bestLap}</span>
+                        </span>
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )}
+                    </td>
+                  </>
+                ) : (
+                  <td colSpan={3} className={`${td} text-muted`}>
+                    Corrida pendente
+                  </td>
+                )}
                 <td className={td}>
                   {sprint ? (
                     <Link
