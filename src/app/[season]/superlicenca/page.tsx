@@ -17,18 +17,10 @@ import {
 } from "@/components/ui";
 import { getPunishments, getSuperLicense } from "@/lib/api";
 import { formatDate, plural } from "@/lib/format";
+import { describeLicense } from "@/lib/license";
 import { teamStyle } from "@/lib/teams";
-import type { LicenseStatus } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Superlicença" };
-
-// Cores de status reservadas (tokens status-* em globals.css), sempre com ícone + rótulo.
-const STATUS: Record<LicenseStatus, { label: string; icon: string; color: string }> = {
-  Regular: { label: "Regular", icon: "✓", color: "var(--status-regular)" },
-  Atencao: { label: "Atenção", icon: "!", color: "var(--status-atencao)" },
-  "Alerta Critico": { label: "Alerta crítico", icon: "‼", color: "var(--status-alerta)" },
-  "Suspenso (Ban)": { label: "Suspenso", icon: "⛔", color: "var(--status-suspenso)" },
-};
 
 export default function SuperLicensePage({ params }: PageProps<"/[season]/superlicenca">) {
   return (
@@ -49,14 +41,15 @@ async function SuperLicense({ season }: { season: string }) {
   return (
     <>
       <PageTitle eyebrow="Temporada 2026" title="Superlicença">
-        Cada piloto começa com 12 pontos. Infrações descontam pontos da carteira: com 8 ou
+        Cada piloto começa com 12 pontos. Infrações descontam pontos da Superlicença: com 8 ou
         menos o piloto entra em atenção, com 4 ou menos em alerta crítico, e ao zerar é
-        suspenso.
+        suspenso da próxima Corrida. Depois de cumprir a Suspensão, o saldo segue zerado, e a
+        próxima punição gera uma nova.
       </PageTitle>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {licenses.map((l) => {
-          const status = STATUS[l.status] ?? STATUS.Regular;
+          const status = describeLicense(l.status);
           const team = teamStyle(l.team_name);
           const pct = Math.max(0, l.remaining_points / l.initial_points) * 100;
           return (
@@ -93,7 +86,8 @@ async function SuperLicense({ season }: { season: string }) {
                   style={{ width: `${pct}%`, backgroundColor: status.color }}
                 />
               </div>
-              <p className="mt-3 flex items-center gap-2 text-sm">
+              {/* Rótulo longo (Suspensão cumprida): a contagem de punições desce inteira de linha. */}
+              <p className="mt-3 flex flex-wrap items-center gap-2 text-sm">
                 <span
                   aria-hidden
                   className="flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-black text-on-fill"
@@ -102,7 +96,7 @@ async function SuperLicense({ season }: { season: string }) {
                   {status.icon}
                 </span>
                 <span className="font-bold">{status.label}</span>
-                <span className="ml-auto text-muted">
+                <span className="ml-auto whitespace-nowrap text-muted">
                   {l.punishments_count
                     ? plural(l.punishments_count, "punição", "punições")
                     : "sem punições"}

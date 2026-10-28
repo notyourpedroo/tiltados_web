@@ -36,6 +36,7 @@
   --status-atencao: #fab219;
   --status-alerta: #ec835a;
   --status-suspenso: #d03b3b;
+  --status-cumprida: #a0616a;
 
   /* Cores das equipes (oficiais da F1). Racing Bulls um pouco mais clara para não
      se confundir com a Red Bull no gráfico. */
@@ -140,6 +141,7 @@
   --color-status-atencao: var(--status-atencao);
   --color-status-alerta: var(--status-alerta);
   --color-status-suspenso: var(--status-suspenso);
+  --color-status-cumprida: var(--status-cumprida);
   --font-sans: var(--font-titillium);
 }
 

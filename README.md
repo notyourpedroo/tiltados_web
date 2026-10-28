@@ -90,6 +90,7 @@ src/
 └── lib/
     ├── api.ts             # chamadas à Tiltados API (com cache)
     ├── chance.ts          # como a Chance de título aparece na tela (testado com o Vitest)
+    ├── license.ts         # como o status da Superlicença aparece no card (testado com o Vitest)
     ├── season.ts          # modelo derivado da temporada
     ├── teams.ts           # cores e nomes curtos das equipes
     └── types.ts           # tipos das respostas da API

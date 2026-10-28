@@ -75,7 +75,10 @@ export type LicenseStatus =
   | "Regular"
   | "Atencao"
   | "Alerta Critico"
-  | "Suspenso (Ban)";
+  /** Suspensão a cumprir: fica fora da próxima Corrida. */
+  | "Suspenso"
+  /** Saldo segue zerado, mas já correu: a próxima punição gera nova Suspensão. */
+  | "Suspensao cumprida";
 
 /** Situação no título pela matemática (Pontos máximos contra os pontos do líder). */
 export type TitleStatus = "Campeao" | "Na disputa" | "Eliminado";

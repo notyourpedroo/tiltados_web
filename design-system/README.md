@@ -22,7 +22,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 - Pódio: `gold`, `silver` e `bronze` coloram o número da posição (1, 2, 3) e o rótulo "Líder do campeonato". Quando a medalha vira fundo (resumo da temporada), use `gold-fill`, `silver-fill`, `bronze-fill` com `on-fill` por cima, iguais nos dois temas.
 - `gain` (▲) e `loss` (▼) só para posições ganhas e perdidas e pontos deduzidos; a seta ou o sinal sempre acompanham a cor.
 - `purple` é exclusivo da volta mais rápida.
-- Status da Superlicença usam `status-regular`, `status-atencao`, `status-alerta`, `status-suspenso`, sempre com ícone (✓, !, ‼, ⛔) e o rótulo escrito. O trilho do medidor é a própria cor a 20% (`color-mix`). Nunca reaproveite essas cores para outra coisa.
+- Status da Superlicença usam `status-regular`, `status-atencao`, `status-alerta`, `status-suspenso`, `status-cumprida`, sempre com ícone (✓, !, ‼, ⛔, ↩) e o rótulo escrito. Um status que o site não conhece usa `muted` com "?" (3,45:1 com `on-fill` por cima, só ícone) e o texto da API como rótulo. O trilho do medidor é a própria cor a 20% (`color-mix`). Nunca reaproveite essas cores para outra coisa.
 - Toda cor sai de um token: no código, nenhum hex fora de `globals.css`.
 - Equipes usam `team-*`: barrinha vertical de 4px ao lado do nome, faixa de 4px no topo dos cards e a linha no gráfico. Equipe nova sem cor cadastrada cai em `team-other`.
 
