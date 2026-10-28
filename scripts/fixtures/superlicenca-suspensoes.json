@@ -1,0 +1,48 @@
+{
+  "/load/2026/super-license": [
+    {
+      "driver_id": 2,
+      "driver_name": "Gabriel",
+      "team_id": 7,
+      "team_name": "Visa Cash App Racing Bulls",
+      "initial_points": 12,
+      "deducted_points": 12,
+      "remaining_points": 0,
+      "punishments_count": 4,
+      "status": "Suspenso"
+    },
+    {
+      "driver_id": 5,
+      "driver_name": "Matheus",
+      "team_id": 7,
+      "team_name": "Visa Cash App Racing Bulls",
+      "initial_points": 12,
+      "deducted_points": 12,
+      "remaining_points": 0,
+      "punishments_count": 3,
+      "status": "Suspensao cumprida"
+    },
+    {
+      "driver_id": 8,
+      "driver_name": "Douglas",
+      "team_id": 6,
+      "team_name": "Mercedes-AMG Petronas",
+      "initial_points": 12,
+      "deducted_points": 7,
+      "remaining_points": 5,
+      "punishments_count": 2,
+      "status": "Atencao"
+    },
+    {
+      "driver_id": 3,
+      "driver_name": "Bryan",
+      "team_id": 2,
+      "team_name": "Scuderia Ferrari HP",
+      "initial_points": 12,
+      "deducted_points": 0,
+      "remaining_points": 12,
+      "punishments_count": 0,
+      "status": "Regular"
+    }
+  ]
+}

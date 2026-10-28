@@ -55,6 +55,23 @@ A variável de ambiente tem prioridade sobre o `.env.local`:
 $env:TILTADOS_API_URL = "http://127.0.0.1:8000"; npm run dev
 ```
 
+### Simulando estados que ainda não aconteceram
+
+Para ver na tela um caso que os dados reais ainda não têm (piloto Suspenso, Suspensão cumprida, Campeão
+antes da última Sessão), suba a API simulada na frente da API local. Ela responde com o JSON da fixture
+nas rotas que a fixture lista e repassa o resto:
+
+```powershell
+# terminal 2, na pasta do site (a API local continua no terminal 1)
+node scripts/mock-api.mjs scripts/fixtures/superlicenca-suspensoes.json
+
+# terminal 3
+$env:TILTADOS_API_URL = "http://127.0.0.1:8010"; npm run dev -- --port 3002
+```
+
+Cada fixture em `scripts/fixtures/` é um objeto `{ "/rota": resposta }`. Para criar uma, copie a resposta
+real da rota e altere os campos.
+
 As rotas, o formato das respostas e as regras estão no README da API ("Endpoints Disponíveis", "Regras de
 Negócio" e "Exemplos de Uso e Respostas"); o código parte do `main.py`.
 
