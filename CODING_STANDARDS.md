@@ -10,7 +10,7 @@ Regras de julgamento para a revisão. As regras mecânicas ficam no ESLint (`esl
 
 ## Vocabulário
 
-- Textos da tela, nomes de teste e de issue usam os termos do `GLOSSARY.md` (Etapa, Sessão, Corrida, Chance de título, Motivo...), evitando os sinônimos marcados como _Avoid_. Identificadores que espelham a API (`prediction`, `race`) podem manter o nome da rota.
+- Textos da tela, nomes de teste e de issue usam os termos do `GLOSSARY.md` (Etapa, Sessão, Corrida, Chance de título, Motivo...), evitando os sinônimos marcados como _Avoid_. O ESLint barra os inequívocos (carteira, gancho, ban...); confira os ambíguos, como "GP" no sentido de Etapa e "licença" no lugar de Superlicença. Identificadores que espelham a API (`prediction`, `race`) podem manter o nome da rota.
 
 ## Documentação
 
