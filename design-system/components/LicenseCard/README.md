@@ -9,7 +9,8 @@ Card da Superlicença de um piloto: saldo de pontos, medidor e status.
 - Linha de status: círculo de 20px na cor do status com o ícone em `on-fill`, o rótulo em bold e o número de punições à direita.
 
 ## Faça
-- Status sempre com ícone e rótulo escrito: ✓ Regular (9 a 12), ! Atenção (5 a 8), ‼ Alerta crítico (1 a 4), ⛔ Suspenso (0 ou menos).
+- Status sempre com ícone e rótulo escrito: ✓ Regular (9 a 12), ! Atenção (5 a 8), ‼ Alerta crítico (1 a 4), ⛔ Suspenso (0 ou menos, Suspensão a cumprir).
+- Status que o site não conhece aparece neutro: ícone "?", cor `muted` e o texto da API como rótulo, nunca como Regular.
 - Plural pelo helper: "1 punição", "2 punições", "sem punições".
 
-Fonte: `src/app/[season]/superlicenca/page.tsx` · prévia estática com os dados de 2026.
+Fonte: `src/app/[season]/superlicenca/page.tsx` e `src/lib/license.ts` · prévia estática com os dados de 2026 e um exemplo hipotético de Suspensão, porque ninguém zerou a Superlicença.

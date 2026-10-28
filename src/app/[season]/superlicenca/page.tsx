@@ -17,18 +17,10 @@ import {
 } from "@/components/ui";
 import { getPunishments, getSuperLicense } from "@/lib/api";
 import { formatDate, plural } from "@/lib/format";
+import { describeLicense } from "@/lib/license";
 import { teamStyle } from "@/lib/teams";
-import type { LicenseStatus } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Superlicença" };
-
-// Cores de status reservadas (tokens status-* em globals.css), sempre com ícone + rótulo.
-const STATUS: Record<LicenseStatus, { label: string; icon: string; color: string }> = {
-  Regular: { label: "Regular", icon: "✓", color: "var(--status-regular)" },
-  Atencao: { label: "Atenção", icon: "!", color: "var(--status-atencao)" },
-  "Alerta Critico": { label: "Alerta crítico", icon: "‼", color: "var(--status-alerta)" },
-  "Suspenso (Ban)": { label: "Suspenso", icon: "⛔", color: "var(--status-suspenso)" },
-};
 
 export default function SuperLicensePage({ params }: PageProps<"/[season]/superlicenca">) {
   return (
@@ -56,7 +48,7 @@ async function SuperLicense({ season }: { season: string }) {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {licenses.map((l) => {
-          const status = STATUS[l.status] ?? STATUS.Regular;
+          const status = describeLicense(l.status);
           const team = teamStyle(l.team_name);
           const pct = Math.max(0, l.remaining_points / l.initial_points) * 100;
           return (
