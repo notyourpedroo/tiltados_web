@@ -44,5 +44,4 @@ next-env.d.ts
 !.env.example
 
 # arquivos locais de agentes/IA (não versionados)
-AGENTS.md
 /.claude/
