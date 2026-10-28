@@ -198,7 +198,7 @@ async function Overview({ season }: { season: string }) {
         {last && (
           <Card className="flex flex-col p-6 lg:col-span-2">
             <p className="text-sm font-bold uppercase tracking-widest text-muted">
-              Última corrida · R{last.round}
+              {last.isSprint ? "Última sprint" : "Última corrida"} · R{last.round}
             </p>
             <p className="mt-1 text-2xl font-black uppercase leading-tight">{last.gpName}</p>
             <p className="text-sm text-text-2">
