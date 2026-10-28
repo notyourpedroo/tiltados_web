@@ -55,7 +55,8 @@ A variável de ambiente tem prioridade sobre o `.env.local`:
 $env:TILTADOS_API_URL = "http://127.0.0.1:8000"; npm run dev
 ```
 
-As rotas e o formato das respostas estão no código da API: `main.py` e `scripts/{temporada}/`.
+As rotas, o formato das respostas e as regras estão no README da API ("Endpoints Disponíveis", "Regras de
+Negócio" e "Exemplos de Uso e Respostas"); o código parte do `main.py`.
 
 ## Como os dados são buscados
 
