@@ -41,9 +41,10 @@ async function SuperLicense({ season }: { season: string }) {
   return (
     <>
       <PageTitle eyebrow="Temporada 2026" title="Superlicença">
-        Cada piloto começa com 12 pontos. Infrações descontam pontos da carteira: com 8 ou
+        Cada piloto começa com 12 pontos. Infrações descontam pontos da Superlicença: com 8 ou
         menos o piloto entra em atenção, com 4 ou menos em alerta crítico, e ao zerar é
-        suspenso.
+        suspenso da próxima Corrida. Depois de cumprir a Suspensão, o saldo segue zerado, e a
+        próxima punição gera uma nova.
       </PageTitle>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -85,7 +86,8 @@ async function SuperLicense({ season }: { season: string }) {
                   style={{ width: `${pct}%`, backgroundColor: status.color }}
                 />
               </div>
-              <p className="mt-3 flex items-center gap-2 text-sm">
+              {/* Rótulo longo (Suspensão cumprida): a contagem de punições desce inteira de linha. */}
+              <p className="mt-3 flex flex-wrap items-center gap-2 text-sm">
                 <span
                   aria-hidden
                   className="flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-black text-on-fill"
@@ -94,7 +96,7 @@ async function SuperLicense({ season }: { season: string }) {
                   {status.icon}
                 </span>
                 <span className="font-bold">{status.label}</span>
-                <span className="ml-auto text-muted">
+                <span className="ml-auto whitespace-nowrap text-muted">
                   {l.punishments_count
                     ? plural(l.punishments_count, "punição", "punições")
                     : "sem punições"}

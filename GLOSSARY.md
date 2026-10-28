@@ -61,7 +61,7 @@ A próxima Corrida que um piloto perde por ter a Superlicença zerada; cumprida,
 _Avoid_: ban, gancho
 
 **Suspensão a cumprir**:
-A Suspensão de um piloto cuja Superlicença zerou e que ainda não teve uma Corrida disputada depois da Sessão da punição que a zerou. Uma Sprint não cumpre a Suspensão.
+A Suspensão de um piloto cuja Superlicença zerou e que ainda não teve uma Corrida disputada depois da Sessão da punição que a zerou. Uma Sprint não cumpre a Suspensão. É a mesma na Superlicença e na Chance de título.
 
 **Suspensão cumprida**:
 A Suspensão de um piloto que já teve uma Corrida disputada depois da Sessão da punição que zerou a Superlicença. O saldo continua zerado, então a próxima punição gera uma nova Suspensão a cumprir.

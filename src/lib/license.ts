@@ -13,6 +13,7 @@ const VIEWS: Record<LicenseStatus, LicenseView> = {
   Atencao: { label: "Atenção", icon: "!", color: "var(--status-atencao)" },
   "Alerta Critico": { label: "Alerta crítico", icon: "‼", color: "var(--status-alerta)" },
   Suspenso: { label: "Suspenso", icon: "⛔", color: "var(--status-suspenso)" },
+  "Suspensao cumprida": { label: "Suspensão cumprida", icon: "↩", color: "var(--status-cumprida)" },
 };
 
 /**
