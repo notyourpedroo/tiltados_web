@@ -11,7 +11,7 @@ Há dois papéis:
 
 1. **Issue**: pegue uma issue `ready-for-agent` sem bloqueador aberto (consulta de fronteira em `docs/agents/issue-tracker.md`). Um bloqueador só fecha quando o PR dele entra na `main`, então o trabalho sempre parte do `origin/main`.
 2. **Branch**: um branch novo `tipo/descricao-curta` a partir do `origin/main` atualizado, para cada issue. Num worktree, o branch do agente é renomeado (`docs/agents/worktrees.md`).
-3. **Commits**: Conventional Commits em português sem acentos; o hook `commit-msg` confere o formato.
+3. **Commits**: Conventional Commits em português sem acentos; o hook `commit-msg` confere o formato. O merge é por rebase, então cada commit entra na `main` como está: correções de revisão viram commits próprios com mensagem que se explica sozinha, e nunca um merge da `main` dentro do branch.
 4. **Antes do PR**: `npm run lint`, `npm run typecheck` e `npm test` passam.
 5. **PR**: `git push -u origin <branch>` e `gh pr create --base main`. O título segue Conventional Commits; o corpo segue a skill `pr` e traz `Closes #<issue>`, para o merge fechar a issue.
 
@@ -30,7 +30,7 @@ A skill `mattpocock-skills:code-review`, apontada para o merge-base com a `main`
 
 ## Sessão principal: merge
 
-- **Tudo conferido**: `gh pr merge <pr> --merge --delete-branch`. O merge commit segue o padrão do histórico, e a issue fecha pelo `Closes`. Depois, remova o worktree do implementador (`docs/agents/worktrees.md`).
-- **Branch desatualizado**: `gh pr update-branch <pr>` e espere o CI passar de novo antes do merge.
+- **Tudo conferido**: `gh pr merge <pr> --rebase --delete-branch`. Os commits do PR entram na `main` em linha, sem merge commit, e a issue fecha pelo `Closes`. Depois, remova o worktree do implementador (`docs/agents/worktrees.md`).
+- **Branch desatualizado**: `gh pr update-branch <pr> --rebase` e espere o CI passar de novo antes do merge.
 - **Algum item falhou**: comente no PR cada achado, com arquivo e o critério afetado, e devolva o PR ao implementador para corrigir no mesmo branch. A revisão recomeça do zero depois da correção.
 - **Dúvida que só o usuário resolve** (critério ambíguo, mudança fora do escopo que parece desejada): deixe o PR aberto, explique no PR e pergunte ao usuário. Na dúvida, o PR espera.
