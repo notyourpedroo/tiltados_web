@@ -22,7 +22,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 - Pódio: `gold`, `silver` e `bronze` coloram o número da posição (1, 2, 3) e o rótulo "Líder do campeonato". Quando a medalha vira fundo (resumo da temporada), use `gold-fill`, `silver-fill`, `bronze-fill` com `on-fill` por cima, iguais nos dois temas.
 - `gain` (▲) e `loss` (▼) só para posições ganhas e perdidas e pontos deduzidos; a seta ou o sinal sempre acompanham a cor.
 - `purple` é exclusivo da volta mais rápida.
-- Status da Superlicença usam `status-regular`, `status-atencao`, `status-alerta`, `status-suspenso`, `status-cumprida`, sempre com ícone (✓, !, ‼, ⛔, ↩) e o rótulo escrito. Um status que o site não conhece usa `muted` com "?" (com `on-fill` por cima: 5,00:1 no tema escuro e 3,45:1 no claro, então só ícone) e o texto da API como rótulo. O trilho do medidor é a própria cor a 20% (`color-mix`). Nunca reaproveite essas cores para outra coisa.
+- Status da Superlicença usam `status-regular`, `status-atencao`, `status-alerta`, `status-suspenso`, `status-cumprida`, sempre com ícone (✓, !, ‼, ⛔, ↩) e o rótulo escrito. Um status que o site não conhece usa `muted` com "?" (com `on-fill` por cima: 5,00:1 no tema escuro e 3,11:1 no claro, então só ícone) e o texto da API como rótulo. O trilho do medidor é a própria cor a 20% (`color-mix`). Nunca reaproveite essas cores para outra coisa.
 - Toda cor sai de um token: no código, nenhum hex fora de `globals.css`.
 - Equipes usam `team-*`: barrinha vertical de 4px ao lado do nome, faixa de 4px no topo dos cards e a linha no gráfico. Equipe nova sem cor cadastrada cai em `team-other`.
 
@@ -66,7 +66,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 
 - O anel de foco do gráfico é de 2px em `text-2`, com `radius-lg`.
 - Contraste mínimo nos dois temas, conferido pelo `tokens.test.ts` a partir do `tokens.json`: `text` 12:1 ou mais sobre `bg`, `surface` e `surface-2`; `text-2` 7:1 ou mais sobre os mesmos três; `muted` 4,5:1 ou mais sobre `bg` e `surface`; cada `team-*` 3:1 ou mais sobre `surface` (linhas e marcas, não texto); `series-rest` 1,5:1 ou mais sobre `surface`, só para a linha aparecer.
-- Pares que ficam abaixo de 4,5:1 e foram mantidos como estão no código: `accent` como texto no tema escuro (3,81:1 sobre `bg`) e `muted` sobre `surface-2` (4,16 e 4,46).
+- Pares que ficam abaixo de 4,5:1 e foram mantidos como estão no código: `accent` como texto sobre `bg` (3,81:1 no tema escuro e 4,48:1 no claro) e `muted` sobre `surface-2` (4,16 e 4,43).
 - Cor nunca é o único sinal: posições ganhas e perdidas têm seta, status têm ícone e rótulo, o companheiro de equipe no gráfico tem tracejado.
 
 ## Componentes
