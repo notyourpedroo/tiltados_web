@@ -1,6 +1,9 @@
 // Contas das equipes numa temporada, a partir dos dados já carregados (não busca
 // nada na API). A equipe de um resultado é a registrada naquele resultado, não a
-// do cadastro do piloto: quem trocou de equipe conta para as duas.
+// do cadastro do piloto: quem trocou de equipe conta para as duas, cada uma no
+// seu período.
+import type { ChartSeries, ChartSession } from "@/components/ProgressionChart";
+import { chartSessions } from "./chart";
 import type { SeasonData } from "./season";
 
 /** Dados da temporada de que o perfil da equipe precisa. */
@@ -60,4 +63,51 @@ export function teamProfile(data: TeamSeasonData, teamId: number): TeamProfile {
     if (has(1) && has(2)) stats.oneTwos++;
   }
   return { stats };
+}
+
+/**
+ * Evolução do campeonato de construtores: as Sessões e uma série por equipe, na
+ * ordem da classificação de construtores, com os pontos acumulados e a posição
+ * após cada Sessão.
+ */
+export function constructorsProgression(data: SeasonData): {
+  sessions: ChartSession[];
+  series: ChartSeries[];
+} {
+  const series: ChartSeries[] = data.teamStandings.map((st) => {
+    const team = data.teams[st.team_id];
+    return {
+      id: st.team_id,
+      name: team?.short ?? st.team_name,
+      color: team?.color ?? "var(--team-other)",
+      dashed: false,
+      cumulative: [],
+      positions: [],
+    };
+  });
+  // Desempate da classificação de construtores: pontos, vitórias em Corridas,
+  // pódios e, persistindo o empate, a ordem da classificação final.
+  const tally = series.map((_, finalIndex) => ({ finalIndex, points: 0, wins: 0, podiums: 0 }));
+  const indexOf = new Map(series.map((s, i) => [s.id, i]));
+
+  data.sessions.forEach((session, i) => {
+    for (const r of data.results[session.id] ?? []) {
+      const t = indexOf.get(r.teamId);
+      if (t === undefined) continue;
+      tally[t].points += r.points;
+      if (r.position === 1 && !session.isSprint) tally[t].wins += 1;
+      if (r.position <= 3) tally[t].podiums += 1;
+    }
+    series.forEach((s, t) => s.cumulative.push(tally[t].points));
+    const ranking = [...tally].sort(
+      (a, b) =>
+        b.points - a.points ||
+        b.wins - a.wins ||
+        b.podiums - a.podiums ||
+        a.finalIndex - b.finalIndex,
+    );
+    ranking.forEach((t, pos) => (series[t.finalIndex].positions[i] = pos + 1));
+  });
+
+  return { sessions: chartSessions(data.sessions), series };
 }

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import type { Session, SessionResult } from "./season";
-import { teamProfile } from "./team-season";
+import type { SeasonData, Session, SessionResult, Team } from "./season";
+import { constructorsProgression, teamProfile } from "./team-season";
 
 const RACE_POINTS = [25, 18, 15, 12, 10, 8];
 const SPRINT_POINTS = [8, 7, 6, 5, 4, 3];
@@ -8,12 +8,17 @@ const SPRINT_POINTS = [8, 7, 6, 5, 4, 3];
 const FERRARI = 1;
 const MCLAREN = 2;
 const WILLIAMS = 3;
+const HAAS = 4;
+
+function team(id: number, name: string): Team {
+  return { id, name, short: name, color: `var(--team-${id})` };
+}
 
 function session(id: number, round: number, isSprint = false): Session {
   return {
     id,
-    name: isSprint ? "GP de Teste (SPRINT)" : "GP de Teste",
-    gpName: "GP de Teste",
+    name: isSprint ? `GP de Teste ${round} (SPRINT)` : `GP de Teste ${round}`,
+    gpName: `GP de Teste ${round}`,
     date: "2026-10-26",
     location: "Autódromo",
     isSprint,
@@ -43,11 +48,28 @@ function result(
   };
 }
 
-/** Temporada com as Sessões na ordem dada e os resultados de cada uma. */
-function seasonOf(...entries: [Session, SessionResult[]][]) {
+/**
+ * Temporada mínima: equipes na ordem da classificação de construtores final e
+ * as Sessões na ordem dada, com os resultados de cada uma.
+ */
+function season(teams: Team[], ...entries: [Session, SessionResult[]][]): SeasonData {
   return {
+    season: "2026",
+    teams: Object.fromEntries(teams.map((t) => [t.id, t])),
+    drivers: {},
     sessions: entries.map(([s]) => s),
     results: Object.fromEntries(entries.map(([s, list]) => [s.id, list])),
+    driverStandings: [],
+    teamStandings: teams.map((t, i) => ({
+      position: i + 1,
+      team_id: t.id,
+      team_name: t.name,
+      points: 0,
+      wins: 0,
+      podiums: 0,
+    })),
+    progression: [],
+    punishments: [],
   };
 }
 
@@ -55,7 +77,8 @@ describe("Perfil da equipe", () => {
   test("piloto que troca de equipe soma para cada equipe só os pontos que fez por ela", () => {
     const r1 = session(1, 1);
     const r2 = session(2, 2);
-    const data = seasonOf(
+    const data = season(
+      [],
       [r1, [result(r1, 10, FERRARI, 1), result(r1, 11, MCLAREN, 2), result(r1, 12, MCLAREN, 3)]],
       [r2, [result(r2, 11, FERRARI, 1), result(r2, 10, FERRARI, 2), result(r2, 12, MCLAREN, 4)]],
     );
@@ -68,7 +91,8 @@ describe("Perfil da equipe", () => {
     const sprint = session(1, 1, true);
     const race = session(2, 1);
     const race2 = session(3, 2);
-    const data = seasonOf(
+    const data = season(
+      [],
       [sprint, [result(sprint, 10, FERRARI, 1), result(sprint, 11, FERRARI, 2)]],
       [race, [result(race, 10, FERRARI, 1), result(race, 11, FERRARI, 2)]],
       [race2, [result(race2, 20, MCLAREN, 1), result(race2, 11, FERRARI, 2), result(race2, 10, FERRARI, 3)]],
@@ -82,7 +106,8 @@ describe("Perfil da equipe", () => {
   test("pódios, poles e voltas mais rápidas contam Corrida e Sprint, de cada piloto da equipe", () => {
     const sprint = session(1, 1, true);
     const race = session(2, 1);
-    const data = seasonOf(
+    const data = season(
+      [],
       [
         sprint,
         [
@@ -111,7 +136,8 @@ describe("Perfil da equipe", () => {
     const sprint = session(1, 1, true);
     const race = session(2, 1);
     const race2 = session(3, 2);
-    const data = seasonOf(
+    const data = season(
+      [],
       [sprint, [result(sprint, 20, MCLAREN, 1), result(sprint, 10, FERRARI, 2), result(sprint, 11, FERRARI, 5)]],
       [race, [result(race, 20, MCLAREN, 1), result(race, 11, FERRARI, 2)]],
       [race2, [result(race2, 20, MCLAREN, 1), result(race2, 10, FERRARI, 3)]],
@@ -124,7 +150,8 @@ describe("Perfil da equipe", () => {
     const sprint = session(1, 1, true);
     const race = session(2, 1);
     const race2 = session(3, 2);
-    const data = seasonOf(
+    const data = season(
+      [],
       // Sprint: os dois pontuam (6º ainda pontua).
       [sprint, [result(sprint, 10, FERRARI, 1), result(sprint, 11, FERRARI, 6)]],
       // Corrida: só um pontua.
@@ -138,10 +165,154 @@ describe("Perfil da equipe", () => {
 
   test("equipe sem Sessão disputada tem as estatísticas zeradas e fica sem melhor resultado", () => {
     const race = session(1, 1);
-    const withSessions = seasonOf([race, [result(race, 10, FERRARI, 1), result(race, 20, MCLAREN, 2)]]);
+    const withSessions = season([], [race, [result(race, 10, FERRARI, 1), result(race, 20, MCLAREN, 2)]]);
     const empty = { stats: { points: 0, wins: 0, oneTwos: 0, podiums: 0, poles: 0, fastestLaps: 0, best: null, bothScored: 0 } };
 
     expect(teamProfile(withSessions, WILLIAMS)).toEqual(empty);
-    expect(teamProfile(seasonOf(), WILLIAMS)).toEqual(empty);
+    expect(teamProfile(season([]), WILLIAMS)).toEqual(empty);
+  });
+});
+
+describe("Evolução dos construtores", () => {
+  test("soma os pontos de cada equipe após cada Sessão, na ordem da classificação de construtores", () => {
+    const ferrari = team(FERRARI, "Ferrari");
+    const mclaren = team(MCLAREN, "McLaren");
+    const sprint = session(10, 1, true);
+    const race = session(11, 1);
+    const race2 = session(12, 2);
+    const data = season(
+      [ferrari, mclaren],
+      [sprint, [result(sprint, 100, FERRARI, 1), result(sprint, 200, MCLAREN, 2), result(sprint, 101, FERRARI, 3)]],
+      [race, [result(race, 200, MCLAREN, 1), result(race, 201, MCLAREN, 2), result(race, 100, FERRARI, 3)]],
+      [race2, [result(race2, 101, FERRARI, 1), result(race2, 100, FERRARI, 2), result(race2, 200, MCLAREN, 3)]],
+    );
+
+    const { sessions, series } = constructorsProgression(data);
+
+    expect(sessions).toEqual([
+      { label: "Teste 1", round: 1, isSprint: true },
+      { label: "Teste 1", round: 1, isSprint: false },
+      { label: "Teste 2", round: 2, isSprint: false },
+    ]);
+    expect(series.map((s) => [s.id, s.name, s.color, s.dashed])).toEqual([
+      [1, "Ferrari", "var(--team-1)", false],
+      [2, "McLaren", "var(--team-2)", false],
+    ]);
+    expect(series[0].cumulative).toEqual([14, 29, 72]);
+    expect(series[1].cumulative).toEqual([7, 50, 65]);
+  });
+
+  test("empate em pontos é decidido pelas vitórias em Corridas", () => {
+    const ferrari = team(FERRARI, "Ferrari");
+    const mclaren = team(MCLAREN, "McLaren");
+    const race = session(10, 1);
+    const race2 = session(11, 2);
+    const data = season(
+      [ferrari, mclaren],
+      // 25 a 25: a McLaren venceu a Corrida, a Ferrari não.
+      [race, [result(race, 200, MCLAREN, 1), result(race, 100, FERRARI, 3), result(race, 101, FERRARI, 5)]],
+      [race2, [result(race2, 100, FERRARI, 1)]],
+    );
+
+    const { series } = constructorsProgression(data);
+
+    expect(series[0].cumulative).toEqual([25, 50]);
+    expect(series[1].cumulative).toEqual([25, 25]);
+    expect(series[0].positions).toEqual([2, 1]);
+    expect(series[1].positions).toEqual([1, 2]);
+  });
+
+  test("empate em pontos e em vitórias é decidido pelos pódios, e vencer a Sprint não é vitória", () => {
+    const ferrari = team(FERRARI, "Ferrari");
+    const mclaren = team(MCLAREN, "McLaren");
+    const sprint = session(10, 1, true);
+    const race = session(11, 1);
+    const data = season(
+      [ferrari, mclaren],
+      // 13 a 13 numa Sprint: a Ferrari venceu (1 pódio), a McLaren fez 2º e 3º (2 pódios).
+      [
+        sprint,
+        [
+          result(sprint, 100, FERRARI, 1),
+          result(sprint, 200, MCLAREN, 2),
+          result(sprint, 201, MCLAREN, 3),
+          result(sprint, 101, FERRARI, 4),
+        ],
+      ],
+      [race, [result(race, 100, FERRARI, 1)]],
+    );
+
+    const { series } = constructorsProgression(data);
+
+    expect(series[0].cumulative).toEqual([13, 38]);
+    expect(series[1].cumulative).toEqual([13, 13]);
+    expect(series[0].positions).toEqual([2, 1]);
+    expect(series[1].positions).toEqual([1, 2]);
+  });
+
+  test("empate em pontos, vitórias e pódios fica na ordem da classificação final", () => {
+    const mclaren = team(MCLAREN, "McLaren");
+    const ferrari = team(FERRARI, "Ferrari");
+    const haas = team(HAAS, "Haas");
+    const sprint = session(10, 1, true);
+    const race = session(11, 1);
+    const data = season(
+      [mclaren, ferrari, haas],
+      // Ferrari e McLaren: 11 pontos, nenhuma vitória e um pódio cada.
+      [
+        sprint,
+        [
+          result(sprint, 300, HAAS, 1),
+          result(sprint, 100, FERRARI, 2),
+          result(sprint, 200, MCLAREN, 3),
+          result(sprint, 201, MCLAREN, 4),
+          result(sprint, 101, FERRARI, 5),
+        ],
+      ],
+      [race, [result(race, 200, MCLAREN, 1)]],
+    );
+
+    const { series } = constructorsProgression(data);
+
+    expect(series.map((s) => s.name)).toEqual(["McLaren", "Ferrari", "Haas"]);
+    expect(series.map((s) => s.cumulative)).toEqual([
+      [11, 36],
+      [11, 11],
+      [8, 8],
+    ]);
+    expect(series.map((s) => s.positions)).toEqual([
+      [1, 1],
+      [2, 2],
+      [3, 3],
+    ]);
+  });
+
+  test("piloto que troca de equipe soma para a equipe registrada em cada resultado", () => {
+    const ferrari = team(FERRARI, "Ferrari");
+    const mclaren = team(MCLAREN, "McLaren");
+    const race = session(10, 1);
+    const race2 = session(11, 2);
+    const data = season(
+      [mclaren, ferrari],
+      [race, [result(race, 100, FERRARI, 1), result(race, 200, MCLAREN, 2)]],
+      // O piloto 100 passa para a McLaren, a equipe dele no cadastro.
+      [race2, [result(race2, 100, MCLAREN, 1), result(race2, 101, FERRARI, 2)]],
+    );
+    data.drivers = {
+      100: { id: 100, name: "Matheus", teamId: MCLAREN },
+      101: { id: 101, name: "Gabriel", teamId: FERRARI },
+      200: { id: 200, name: "Lucas", teamId: MCLAREN },
+    };
+
+    const { series } = constructorsProgression(data);
+
+    expect(series.map((s) => [s.name, s.cumulative])).toEqual([
+      ["McLaren", [18, 43]],
+      ["Ferrari", [25, 43]],
+    ]);
+    expect(series.map((s) => s.positions)).toEqual([
+      [2, 1],
+      [1, 2],
+    ]);
   });
 });
