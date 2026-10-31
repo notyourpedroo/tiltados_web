@@ -204,6 +204,34 @@ export interface ChampionshipChartsProps {
 }
 
 /** Padrões de página */
+/** Sessão da temporada (Session em src/lib/season.ts). */
+export interface Session {
+  id: number;
+  name: string;
+  /** Nome do GP sem o sufixo "(SPRINT)". */
+  gpName: string;
+  date: string;
+  location: string;
+  isSprint: boolean;
+  /** Número da etapa (fim de semana), começando em 1. */
+  round: number;
+}
+/** Uma célula da temporada em resumo: uma Sessão disputada. */
+export interface SeasonStripCell {
+  session: Session;
+  /** Número da célula: a posição de chegada (piloto) ou os pontos (equipe). */
+  value: number;
+  /** Posição que dá a medalha: 1º, 2º e 3º viram ouro, prata e bronze. */
+  position: number;
+  /** Pontos na Sessão: com pontos a célula fica em surface-2, sem em bg. */
+  points: number;
+  /** Dica da célula, ex.: "GP de Mônaco — 1º" ou "GP de Mônaco — 43 pontos". */
+  title: string;
+}
+export interface SeasonStripProps {
+  season: string;
+  cells: SeasonStripCell[];
+}
 export interface TeammateDuelSide {
   /** Nome do piloto, com link quando leva a outro perfil. */
   name: ReactNode;

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { TitleChanceCard } from "@/components/chance";
 import { HideOnError } from "@/components/HideOnError";
+import { SeasonStrip } from "@/components/SeasonStrip";
 import { TeammateDuel } from "@/components/TeammateDuel";
 import {
   Card,
@@ -73,12 +74,6 @@ async function DriverTitleChance({ driverId }: { driverId: number }) {
     />
   );
 }
-
-const CELL_STYLE: Record<number, string> = {
-  1: "bg-gold-fill text-on-fill",
-  2: "bg-silver-fill text-on-fill",
-  3: "bg-bronze-fill text-on-fill",
-};
 
 async function DriverProfile({ season, driverId }: { season: string; driverId: string }) {
   const data = await loadSeason(season);
@@ -185,26 +180,16 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
 
       <section className="mt-10">
         <SectionTitle>Temporada em resumo</SectionTitle>
-        <Card className="p-4">
-          <ol className="flex flex-wrap gap-1.5">
-            {races.map(({ s, r }) => (
-              <li key={s.id}>
-                <Link
-                  href={`/${data.season}/corridas/${s.id}`}
-                  title={`${s.name} — ${ordinal(r.position)}`}
-                  className={`tabular flex h-10 w-10 flex-col items-center justify-center rounded-md text-sm font-black transition-transform hover:scale-110 ${
-                    CELL_STYLE[r.position] ?? (r.points ? "bg-surface-2 text-text" : "bg-bg text-muted")
-                  }`}
-                >
-                  {r.position}
-                  <span className="text-[8px] font-bold leading-none opacity-70">
-                    {s.isSprint ? "SPR" : `R${s.round}`}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </Card>
+        <SeasonStrip
+          season={data.season}
+          cells={races.map(({ s, r }) => ({
+            session: s,
+            value: r.position,
+            position: r.position,
+            points: r.points,
+            title: `${s.name} — ${ordinal(r.position)}`,
+          }))}
+        />
       </section>
 
       {(duels.size > 0 || license) && (
