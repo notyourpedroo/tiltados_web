@@ -7,7 +7,7 @@ import { chartSessions } from "./chart";
 import type { SeasonData, Session } from "./season";
 
 /** Dados da temporada de que o perfil da equipe precisa. */
-export type TeamSeasonData = Pick<SeasonData, "sessions" | "results">;
+export type TeamSeasonData = Pick<SeasonData, "sessions" | "results" | "drivers">;
 
 export interface TeamStats {
   points: number;
@@ -38,10 +38,36 @@ export interface TeamSession {
   total: number;
 }
 
+/** Piloto da equipe: disputou ao menos uma Sessão por ela. */
+export interface TeamDriver {
+  id: number;
+  /** Pontos que o piloto fez por esta equipe, e só por ela. */
+  points: number;
+  /** Da Dupla: a equipe do piloto no cadastro é esta. */
+  lineup: boolean;
+}
+
+/** Quem chegou na frente nas Sessões em que dois Pilotos da equipe correram juntos por ela. */
+export interface TeamDuel {
+  /** Os dois pilotos, na ordem da lista de Pilotos da equipe, com quantas vezes cada um chegou na frente. */
+  drivers: [TeamDuelSide, TeamDuelSide];
+  /** Sessões em que os dois correram pela equipe. */
+  sessions: number;
+}
+
+export interface TeamDuelSide {
+  id: number;
+  ahead: number;
+}
+
 export interface TeamProfile {
   stats: TeamStats;
   /** Sessões disputadas pela equipe, em ordem. */
   sessions: TeamSession[];
+  /** Pilotos da equipe, do maior pontuador para o menor. */
+  drivers: TeamDriver[];
+  /** Um duelo por par que correu junto, do par com mais Sessões juntos para o com menos. */
+  duels: TeamDuel[];
 }
 
 /** Perfil da equipe na temporada. */
@@ -75,7 +101,13 @@ export function teamProfile(data: TeamSeasonData, teamId: number): TeamProfile {
     if (has(1)) stats.wins++;
     if (has(1) && has(2)) stats.oneTwos++;
   }
-  return { stats, sessions: teamSessions(data, teamId) };
+  const drivers = teamDrivers(data, teamId);
+  return {
+    stats,
+    sessions: teamSessions(data, teamId),
+    drivers,
+    duels: teamDuels(data, teamId, drivers),
+  };
 }
 
 /** Sessões disputadas pela equipe, com os pontos dela em cada uma e o acumulado. */
@@ -93,6 +125,49 @@ function teamSessions(data: TeamSeasonData, teamId: number): TeamSession[] {
     sessions.push({ session, drivers, points, total });
   }
   return sessions;
+}
+
+function teamDrivers(data: TeamSeasonData, teamId: number): TeamDriver[] {
+  const byId = new Map<number, TeamDriver>();
+  for (const s of data.sessions) {
+    for (const r of data.results[s.id] ?? []) {
+      if (r.teamId !== teamId) continue;
+      const d = byId.get(r.driverId) ?? {
+        id: r.driverId,
+        points: 0,
+        lineup: data.drivers[r.driverId]?.teamId === teamId,
+      };
+      d.points += r.points;
+      byId.set(r.driverId, d);
+    }
+  }
+  return [...byId.values()].sort((a, b) => b.points - a.points);
+}
+
+function teamDuels(data: TeamSeasonData, teamId: number, drivers: TeamDriver[]): TeamDuel[] {
+  const duels: TeamDuel[] = [];
+  const pairs = new Map<string, TeamDuel>();
+  drivers.forEach((a, i) =>
+    drivers.slice(i + 1).forEach((b) => {
+      const duel: TeamDuel = { drivers: [{ id: a.id, ahead: 0 }, { id: b.id, ahead: 0 }], sessions: 0 };
+      pairs.set(`${a.id}-${b.id}`, duel);
+      duels.push(duel);
+    }),
+  );
+  const order = new Map(drivers.map((d, i) => [d.id, i]));
+  for (const s of data.sessions) {
+    const own = (data.results[s.id] ?? [])
+      .filter((r) => r.teamId === teamId)
+      .sort((a, b) => order.get(a.driverId)! - order.get(b.driverId)!);
+    own.forEach((a, i) =>
+      own.slice(i + 1).forEach((b) => {
+        const duel = pairs.get(`${a.driverId}-${b.driverId}`)!;
+        duel.sessions++;
+        duel.drivers[a.position < b.position ? 0 : 1].ahead++;
+      }),
+    );
+  }
+  return duels.filter((d) => d.sessions > 0).sort((a, b) => b.sessions - a.sessions);
 }
 
 /**
