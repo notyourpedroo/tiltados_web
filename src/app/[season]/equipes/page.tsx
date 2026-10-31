@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { ChampionshipCharts } from "@/components/ChampionshipCharts";
 import { TeamStandingsTable } from "@/components/standings";
 import { Card, PageTitle, SectionTitle, Skeleton, TeamLogo } from "@/components/ui";
 import { ordinal } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
+import { constructorsProgression } from "@/lib/team-season";
 import { teamStyle } from "@/lib/teams";
 
 export const metadata: Metadata = { title: "Equipes" };
@@ -21,6 +23,7 @@ export default function TeamsPage({ params }: PageProps<"/[season]/equipes">) {
 
 async function Teams({ season }: { season: string }) {
   const data = await loadSeason(season);
+  const chart = constructorsProgression(data);
 
   // Pontos que cada piloto somou por cada equipe (há trocas de equipe no meio da temporada).
   const contributions = new Map<number, Map<number, number>>();
@@ -112,6 +115,8 @@ async function Teams({ season }: { season: string }) {
           })}
         </div>
       </section>
+
+      <ChampionshipCharts kind="team" sessions={chart.sessions} series={chart.series} />
     </>
   );
 }

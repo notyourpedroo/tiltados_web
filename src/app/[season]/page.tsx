@@ -241,7 +241,7 @@ async function Overview({ season }: { season: string }) {
         <StatTile label="Mais voltas rápidas" value={fastest.best} sub={fastest.names.join(", ")} />
       </div>
 
-      <ChampionshipCharts sessions={chart.sessions} series={chart.series} />
+      <ChampionshipCharts kind="driver" sessions={chart.sessions} series={chart.series} />
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <section>

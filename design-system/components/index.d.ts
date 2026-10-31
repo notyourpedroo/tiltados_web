@@ -156,9 +156,9 @@ export interface ChartSession {
 export interface ChartSeries {
   id: number;
   name: string;
-  /** Cor team-* da equipe atual. */
+  /** Cor team-* da equipe (a atual, no caso de um piloto). */
   color: string;
-  /** Companheiro atrás na classificação: linha tracejada. */
+  /** Piloto com companheiro à frente na classificação: linha tracejada. */
   dashed: boolean;
   /** Pontos acumulados após cada sessão. */
   cumulative: number[];
@@ -166,8 +166,11 @@ export interface ChartSeries {
   positions: number[];
 }
 export type ChartMode = "points" | "position";
+/** Pilotos (chartData) ou equipes (constructorsProgression); muda o texto acessível e a dica. */
+export type ChartKind = "driver" | "team";
 export interface ProgressionChartProps {
   mode: ChartMode;
+  kind: ChartKind;
   sessions: ChartSession[];
   series: ChartSeries[];
   /** Ids em destaque (até 3), de useHighlight(series). */
@@ -175,6 +178,7 @@ export interface ProgressionChartProps {
   onToggle: (id: number) => void;
 }
 export interface ChampionshipChartsProps {
+  kind: ChartKind;
   sessions: ChartSession[];
   series: ChartSeries[];
 }

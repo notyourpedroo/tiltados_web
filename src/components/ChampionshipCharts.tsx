@@ -3,6 +3,7 @@
 import {
   ProgressionChart,
   useHighlight,
+  type ChartKind,
   type ChartMode,
   type ChartSeries,
   type ChartSession,
@@ -14,14 +15,18 @@ const MODES: { mode: ChartMode; title: string }[] = [
   { mode: "position", title: "Posição" },
 ];
 
+const HINT_SUBJECT: Record<ChartKind, string> = { driver: "pilotos", team: "equipes" };
+
 /**
- * Gráficos de evolução do campeonato. Destacar um piloto em um gráfico destaca
- * nos demais, para acompanhar a mesma pessoa nas duas visões.
+ * Gráficos de evolução do campeonato, de pilotos ou de construtores. Destacar uma
+ * linha em um gráfico destaca nos demais, para acompanhar a mesma nas duas visões.
  */
 export function ChampionshipCharts({
+  kind,
   sessions,
   series,
 }: {
+  kind: ChartKind;
   sessions: ChartSession[];
   series: ChartSeries[];
 }) {
@@ -37,13 +42,14 @@ export function ChampionshipCharts({
           <Card className="p-4 sm:p-6">
             <ProgressionChart
               mode={mode}
+              kind={kind}
               sessions={sessions}
               series={series}
               selected={selected}
               onToggle={toggle}
             />
             <p className="mt-2 text-xs text-muted">
-              Toque nos nomes para destacar até 3 pilotos (vale para os dois gráficos). A
+              Toque nos nomes para destacar até 3 {HINT_SUBJECT[kind]} (vale para os dois gráficos). A
               tabela de classificação traz os valores exatos.
             </p>
           </Card>
