@@ -43,14 +43,14 @@
 
 [data-theme="light"] {
   color-scheme: light;
-  --bg: #f2f2f5;
-  --surface: #ffffff;
-  --surface-2: #ececf1;
-  --line: #dcdce3;
+  --bg: #e4e5eb;
+  --surface: #f1f2f5;
+  --surface-2: #dfe0e7;
+  --line: #cfd0d9;
   --stripe: rgb(0 0 0 / 0.035);
-  --text: #15151e;
-  --text-2: #4b4b58;
-  --muted: #6b6b78;
+  --text: #1e1e28;
+  --text-2: #444451;
+  --muted: #646471;
   --accent: #d10500;
   --gold: #8a6000;
   --silver: #5f6672;
@@ -63,7 +63,7 @@
   --bronze-fill: #d29a6c;
   --on-fill: #15151e;
   --on-accent: #ffffff;
-  --series-rest: #c9c9d3;
+  --series-rest: #bebfca;
   --status-regular: #0ca30c;
   --status-atencao: #fab219;
   --status-alerta: #ec835a;
@@ -72,7 +72,7 @@
   --team-racing-bulls: #5b86f0;
   --team-red-bull: #1f4c9c;
   --team-ferrari: #e8002d;
-  --team-mclaren: #e06c00;
+  --team-mclaren: #da6900;
   --team-mercedes: #00877a;
   --team-alpine: #0093cc;
   --team-sauber: #2e8b2e;
