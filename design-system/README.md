@@ -65,6 +65,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 ## Acessibilidade
 
 - O anel de foco do gráfico é de 2px em `text-2`, com `radius-lg`.
+- Contraste mínimo nos dois temas, conferido pelo `tokens.test.ts` a partir do `tokens.json`: `text` 12:1 ou mais sobre `bg`, `surface` e `surface-2`; `text-2` 7:1 ou mais sobre os mesmos três; `muted` 4,5:1 ou mais sobre `bg` e `surface`; cada `team-*` 3:1 ou mais sobre `surface` (linhas e marcas, não texto); `series-rest` 1,5:1 ou mais sobre `surface`, só para a linha aparecer.
 - Pares que ficam abaixo de 4,5:1 e foram mantidos como estão no código: `accent` como texto no tema escuro (3,81:1 sobre `bg`) e `muted` sobre `surface-2` (4,16 e 4,46).
 - Cor nunca é o único sinal: posições ganhas e perdidas têm seta, status têm ícone e rótulo, o companheiro de equipe no gráfico tem tracejado.
 
