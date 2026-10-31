@@ -207,14 +207,16 @@ export interface LicenseCardProps {
   /** Linha da rota de Superlicença da API (ApiSuperLicense em src/lib/types.ts). */
   license: unknown;
 }
-export interface TeamDriverRow {
+/** Piloto da equipe: disputou ao menos uma Sessão por ela (TeamDriver em src/lib/team-season.ts). */
+export interface TeamDriver {
   id: number;
-  name: string;
-  /** Pontos que o piloto fez pela equipe, e só por ela. */
+  /** Pontos que o piloto fez por esta equipe, e só por ela. */
   points: number;
-  /** Da Dupla (a equipe do piloto no cadastro): fica em destaque. */
+  /** Da Dupla: a equipe do piloto no cadastro é esta. Fica em destaque. */
   inDupla: boolean;
 }
+/** Piloto da equipe com o nome a exibir. */
+export type TeamDriverRow = TeamDriver & { name: string };
 export interface TeamDriversProps {
   season: string;
   /** Pilotos da equipe, do maior pontuador para o menor (teamProfile em src/lib/team-season.ts). */

@@ -1,14 +1,9 @@
 import Link from "next/link";
+import type { TeamDriver } from "@/lib/team-season";
 import { Card } from "./ui";
 
-export interface TeamDriverRow {
-  id: number;
-  name: string;
-  /** Pontos que o piloto fez pela equipe, e só por ela. */
-  points: number;
-  /** Da Dupla (a equipe do piloto no cadastro): fica em destaque. */
-  inDupla: boolean;
-}
+/** Piloto da equipe com o nome a exibir. */
+export type TeamDriverRow = TeamDriver & { name: string };
 
 /**
  * Pilotos da equipe na temporada, do maior pontuador para o menor, com os pontos
