@@ -232,7 +232,7 @@ export interface SeasonStripProps {
   season: string;
   cells: SeasonStripCell[];
 }
-export interface TeammateDuelSide {
+export interface DuelSide {
   /** Nome do piloto, com link quando leva a outro perfil. */
   name: ReactNode;
   /** Vezes em que chegou na frente do outro. */
@@ -242,12 +242,32 @@ export interface TeammateDuelProps {
   /** "Duelo com companheiro de equipe" (piloto) ou "Duelo entre companheiros de equipe" (equipe). */
   label: string;
   /** Primeiro piloto: a barra mostra a parte dele. */
-  first: TeammateDuelSide;
-  second: TeammateDuelSide;
+  first: DuelSide;
+  second: DuelSide;
+}
+/** Status da Superlicença como a API escreve (LicenseStatus em src/lib/types.ts). */
+export type LicenseStatus =
+  | "Regular"
+  | "Atencao"
+  | "Alerta Critico"
+  /** Suspensão a cumprir: fica fora da próxima Corrida. */
+  | "Suspenso"
+  /** Saldo segue zerado, mas já correu: a próxima punição gera nova Suspensão. */
+  | "Suspensao cumprida";
+/** Linha da rota de Superlicença da API (ApiSuperLicense em src/lib/types.ts). */
+export interface ApiSuperLicense {
+  driver_id: number;
+  driver_name: string;
+  team_id: number;
+  team_name: string;
+  initial_points: number;
+  deducted_points: number;
+  remaining_points: number;
+  punishments_count: number;
+  status: LicenseStatus;
 }
 export interface LicenseCardProps {
-  /** Linha da rota de Superlicença da API (ApiSuperLicense em src/lib/types.ts). */
-  license: unknown;
+  license: ApiSuperLicense;
 }
 /** Piloto da equipe: disputou ao menos uma Sessão por ela (TeamDriver em src/lib/team-season.ts). */
 export interface TeamDriver {
