@@ -109,13 +109,16 @@ export function TeamStandingsTable({
                 <Position value={t.position} />
               </td>
               <td className={td}>
-                <span className="flex items-center gap-3">
+                <Link
+                  href={`/${data.season}/equipes/${t.team_id}`}
+                  className="flex items-center gap-3 hover:underline"
+                >
                   <TeamBar color={style.color} />
                   {style.logo && <TeamLogo logo={style.logo} size={24} />}
                   <span className="text-base font-bold leading-tight">
                     {compact ? style.short : t.team_name}
                   </span>
-                </span>
+                </Link>
               </td>
               {!compact && <td className={`${td} tabular text-right`}>{t.wins}</td>}
               <td className={`${td} tabular text-right`}>{t.podiums}</td>
