@@ -110,7 +110,7 @@ src/
     ├── chance.ts          # como a Chance de título aparece na tela (testado com o Vitest)
     ├── license.ts         # como o status da Superlicença aparece no card (testado com o Vitest)
     ├── season.ts          # modelo derivado da temporada
-    ├── teams.ts           # cores e nomes curtos das equipes
+    ├── teams.ts           # cores, logos e Carros das equipes, e o Jogo de cada temporada (testado com o Vitest)
     ├── types.ts           # tipos das respostas da API
     └── weekend.ts         # Sessões agrupadas por Etapa (testado com o Vitest)
 ```
@@ -121,3 +121,9 @@ usada no tema claro) e `{equipe}-white.webp` (branca, usada no tema escuro), obt
 (`media.formula1.com/.../common/f1/{ano}/{equipe}/{ano}{equipe}logo[white].webp`). A branca da Kick
 Sauber vem da pasta de 2024, porque a de 2025 é igual à colorida. Equipes sem logo mostram a barrinha na
 cor da equipe.
+
+Os Carros ficam em `public/cars/{ano do Carro}/{equipe}.webp`: as renderizações laterais da mesma CDN
+(`.../common/f1/{ano}/{equipe}/{ano}{equipe}carright.png`, em 1200 px), convertidas para WebP com
+transparência. Numa temporada nova, registre o Jogo e o ano dos Carros em `SEASON_GAMES` e as equipes com
+Carro daquele ano em `CARS`, ambos em `src/lib/teams.ts`; o teste do módulo confere que os arquivos existem.
+Detalhes em `design-system/assets/Carros.md`.

@@ -60,6 +60,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 
 - Não há biblioteca de ícones. Os poucos ícones são SVG inline de traço 2px e pontas arredondadas, na cor do texto (sol, lua e monitor no botão de tema). Setas e marcas são caracteres: ▲ ▼ ✓ ! ‼ ⛔ ⏱ →.
 - Logos de equipe (grupo Equipes): a versão branca no tema escuro e a colorida no tema claro, trocadas por CSS (`.only-dark` e `.only-light`). Tamanhos usados: 14px sob o nome do piloto, 18 a 20px em tabelas, 24 a 44px em cards. Sempre ao lado do nome da equipe em texto. Equipe sem logo mostra a barrinha `team-*`.
+- Carros das equipes (grupo Carros): a renderização lateral do carro da equipe no Jogo da temporada, a mesma imagem nos dois temas. Só onde se "abre" um piloto ou uma equipe (card do líder, perfis, Chance de título); até 320px nos cards grandes. Equipe fora do Jogo fica sem Carro.
 - O ícone do site (grupo Site) é o logo da F1, igual ao do site oficial.
 
 ## Acessibilidade
@@ -75,7 +76,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 ## Componentes
 
 - As fichas mostram prévias estáticas fiéis aos componentes React do site, com as mesmas medidas, os tokens reais e dados da temporada 2026. O código de verdade está em `src/components/` e nas páginas indicadas em cada ficha; `components/index.d.ts` traz as propriedades.
-- Estrutura (SiteHeader, ThemeToggle, PageTitle, SectionTitle, MoreLink, Card, Table, Skeleton), Dados (Position, Gained, StatTile, TeamBar, TeamLogo, SprintBadge, FastestLapBadge), Classificação, Gráficos e Padrões de página (cards que vivem dentro das páginas).
+- Estrutura (SiteHeader, ThemeToggle, PageTitle, SectionTitle, MoreLink, Card, Table, Skeleton), Dados (Position, Gained, StatTile, TeamBar, TeamLogo, TeamCar, SprintBadge, FastestLapBadge), Classificação, Gráficos e Padrões de página (cards que vivem dentro das páginas).
 - A fonte Titillium Web vem do Google Fonts; não há arquivo de fonte neste sistema.
 
 ## Arquivos desta pasta
@@ -86,7 +87,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 - `components/<Nome>/preview.html`: prévia estática do componente, com dados reais de 2026. Abra direto no navegador; `?theme=light` mostra o tema claro.
 - `components/index.d.ts`: propriedades dos componentes, copiadas de `src/components/`.
 - `components/bundle.css`: estilos compartilhados das prévias.
-- `assets/Equipes.md` e `assets/Site.md`: descrição das logos (`public/teams/`) e dos ícones (`src/app/`).
+- `assets/Equipes.md`, `assets/Carros.md` e `assets/Site.md`: descrição das logos (`public/teams/`), dos Carros (`public/cars/`) e dos ícones (`src/app/`).
 - `index.html`: todas as prévias numa página só, com troca de tema.
 
 Quando uma cor, fonte ou componente mudar no código, atualize esta pasta junto para ela continuar descrevendo o site.

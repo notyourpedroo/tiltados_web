@@ -31,6 +31,9 @@ body {
 [data-theme="light"] .only-dark { display: none; }
 .team-logo { object-fit: contain; flex-shrink: 0; }
 
+/* Carro: a mesma imagem nos dois temas, encolhe até caber */
+.team-car { object-fit: contain; width: 100%; height: auto; }
+
 /* Card */
 .card {
   position: relative;

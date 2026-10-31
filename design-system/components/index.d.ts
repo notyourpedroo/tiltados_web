@@ -72,6 +72,13 @@ export interface TeamLogoProps {
   size?: number;
   className?: string;
 }
+export interface TeamCarProps {
+  /** Carro da equipe no Jogo da temporada, de `teamCar(nome, temporada)`: /cars/<ano do Carro>/<slug>.webp. Sem Carro, não desenha nada. */
+  car?: string;
+  /** Largura máxima em px; a imagem encolhe até caber. Padrão: 320. */
+  width?: number;
+  className?: string;
+}
 export interface TeamMarkProps {
   /** Logo da equipe ou, sem logo, a barrinha na cor dela. */
   team?: { color: string; logo?: TeamLogoSrc };
