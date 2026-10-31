@@ -8,5 +8,6 @@ Classificação de construtores: posição, equipe com barrinha e logo, vitória
 
 ## Faça
 - Barrinha da equipe, logo de 24px e nome em `table-name`.
+- A célula da equipe (barrinha, logo e nome) é um link para o perfil da equipe, sublinhado no hover.
 
 Fonte: `src/components/standings.tsx` · prévia estática.
