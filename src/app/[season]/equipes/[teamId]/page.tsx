@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { TitleChanceCard } from "@/components/chance";
 import { HideOnError } from "@/components/HideOnError";
 import { LicenseCard } from "@/components/LicenseCard";
+import { SeasonStrip } from "@/components/SeasonStrip";
 import { TeamDrivers } from "@/components/TeamDrivers";
 import { TeammateDuel } from "@/components/TeammateDuel";
 import {
@@ -178,12 +179,6 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
   );
 }
 
-const CELL_STYLE: Record<number, string> = {
-  1: "bg-gold-fill text-on-fill",
-  2: "bg-silver-fill text-on-fill",
-  3: "bg-bronze-fill text-on-fill",
-};
-
 /**
  * Temporada em resumo e Resultados: a equipe Sessão a Sessão, com os pilotos
  * que correram por ela em cada uma.
@@ -202,26 +197,16 @@ function TeamSessions({ data, sessions }: { data: SeasonData; sessions: TeamSess
     <>
       <section className="mt-10">
         <SectionTitle>Temporada em resumo</SectionTitle>
-        <Card className="p-4">
-          <ol className="flex flex-wrap gap-1.5">
-            {sessions.map(({ session: s, drivers, points }) => (
-              <li key={s.id}>
-                <Link
-                  href={`/${data.season}/corridas/${s.id}`}
-                  title={`${s.name} — ${plural(points, "ponto", "pontos")}`}
-                  className={`tabular flex h-10 w-10 flex-col items-center justify-center rounded-md text-sm font-black transition-transform hover:scale-110 ${
-                    CELL_STYLE[drivers[0].position] ?? (points ? "bg-surface-2 text-text" : "bg-bg text-muted")
-                  }`}
-                >
-                  {points}
-                  <span className="text-[8px] font-bold leading-none opacity-70">
-                    {s.isSprint ? "SPR" : `R${s.round}`}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </Card>
+        <SeasonStrip
+          season={data.season}
+          cells={sessions.map(({ session: s, drivers, points }) => ({
+            session: s,
+            value: points,
+            position: drivers[0].position,
+            points,
+            title: `${s.name} — ${plural(points, "ponto", "pontos")}`,
+          }))}
+        />
       </section>
 
       <section className="mt-10">
