@@ -188,3 +188,35 @@ export interface ChampionshipChartsProps {
   sessions: ChartSession[];
   series: ChartSeries[];
 }
+
+/** Padrões de página */
+export interface TeammateDuelSide {
+  /** Nome do piloto, com link quando leva a outro perfil. */
+  name: ReactNode;
+  /** Vezes em que chegou na frente do outro. */
+  ahead: number;
+}
+export interface TeammateDuelProps {
+  /** "Duelo com companheiro de equipe" (piloto) ou "Duelo entre companheiros de equipe" (equipe). */
+  label: string;
+  /** Primeiro piloto: a barra mostra a parte dele. */
+  first: TeammateDuelSide;
+  second: TeammateDuelSide;
+}
+export interface LicenseCardProps {
+  /** Linha da rota de Superlicença da API (ApiSuperLicense em src/lib/types.ts). */
+  license: unknown;
+}
+export interface TeamDriverRow {
+  id: number;
+  name: string;
+  /** Pontos que o piloto fez pela equipe, e só por ela. */
+  points: number;
+  /** Da Dupla (a equipe do piloto no cadastro): fica em destaque. */
+  lineup: boolean;
+}
+export interface TeamDriversProps {
+  season: string;
+  /** Pilotos da equipe, do maior pontuador para o menor (teamProfile em src/lib/team-season.ts). */
+  drivers: TeamDriverRow[];
+}
