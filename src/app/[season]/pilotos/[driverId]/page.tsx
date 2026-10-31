@@ -16,6 +16,7 @@ import {
   StatTile,
   Table,
   TeamBar,
+  TeamCar,
   TeamLogo,
   td,
   th,
@@ -27,7 +28,7 @@ import { shortGpName } from "@/lib/chart";
 import { formatDate, ordinal, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason, type Session, type SessionResult } from "@/lib/season";
-import { teamStyle } from "@/lib/teams";
+import { teamCar, teamStyle } from "@/lib/teams";
 import { isSeason } from "@/lib/types";
 
 export async function generateStaticParams({
@@ -93,6 +94,8 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
   const standing = data.driverStandings.find((d) => d.driver_id === id);
   if (!standing) notFound();
   const team = teamStyle(standing.team_name);
+  // Carro da equipe do cadastro, a mesma do logo e do nome no cabeçalho.
+  const car = teamCar(standing.team_name, data.season);
   const license =
     data.season === "2026"
       ? (await getSuperLicense()).find((l) => l.driver_id === id)
@@ -140,6 +143,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
             {standing.driver_name}
           </span>
         }
+        aside={car && <TeamCar car={car} width={320} className="sm:min-w-0 sm:flex-1" />}
       >
         <span className="flex items-center gap-2">
           {team.logo && <TeamLogo logo={team.logo} size={32} />}
