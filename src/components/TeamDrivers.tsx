@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { TeamDriver } from "@/lib/team-season";
-import { Card } from "./ui";
+import { Badge, Card } from "./ui";
 
 /** Piloto da equipe com o nome a exibir. */
 export type TeamDriverRow = TeamDriver & { name: string };
@@ -25,11 +25,7 @@ export function TeamDrivers({ season, drivers }: { season: string; drivers: Team
             >
               {d.name}
             </Link>
-            {d.inDupla && (
-              <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-text-2">
-                Dupla
-              </span>
-            )}
+            {d.inDupla && <Badge>Dupla</Badge>}
             <span className="tabular ml-auto font-bold">
               {d.points} <span className="text-xs font-normal text-muted">pts</span>
             </span>

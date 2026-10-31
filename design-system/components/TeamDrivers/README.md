@@ -8,7 +8,7 @@ Lista dos Pilotos da equipe no perfil da equipe: todo piloto que disputou ao men
 - Ordem: do maior pontuador para o menor.
 
 ## Faça
-- A Dupla (os pilotos que a equipe tem no cadastro) fica em destaque: nome em 18px `text` e o selo "Dupla" no padrão do SprintBadge (`surface-2`, `text-2`, `badge`, `radius-sm`).
+- A Dupla (os pilotos que a equipe tem no cadastro) fica em destaque: nome em 18px `text` e o selo "Dupla" no `Badge` neutro de `ui.tsx`, o mesmo do SprintBadge (`surface-2`, `text-2`, `badge`, `radius-sm`).
 - Quem só passou pela equipe aparece com o nome em `text-2`, sem selo, e com os pontos que fez por ela, nunca os da temporada inteira.
 - Equipe sem Sessão disputada não mostra a lista nem os duelos: a página mostra um só aviso, "Nenhuma Sessão disputada ainda", no lugar dos pilotos, duelos, temporada em resumo e Resultados.
 

@@ -217,20 +217,27 @@ export function StatTile({
   );
 }
 
-/** Estilo dos selos neutros: Sprint e piloto com posição. */
-const BADGE =
-  "rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-text-2";
+/** Selo neutro (Sprint, piloto com posição, Dupla): surface-2, text-2, caixa alta. */
+export function Badge({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return (
+    <span
+      className={`rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-text-2 ${className}`}
+    >
+      {children}
+    </span>
+  );
+}
 
 export function SprintBadge() {
-  return <span className={BADGE}>Sprint</span>;
+  return <Badge>Sprint</Badge>;
 }
 
 /** Selo de um piloto com a posição dele numa Sessão, ex.: "Matheus 2º". */
 export function DriverPositionBadge({ name, position }: { name: string; position: number }) {
   return (
-    <span className={`${BADGE} whitespace-nowrap`}>
+    <Badge className="whitespace-nowrap">
       {name} <span className="tabular text-text">{ordinal(position)}</span>
-    </span>
+    </Badge>
   );
 }
 
