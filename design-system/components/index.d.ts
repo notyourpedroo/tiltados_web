@@ -213,7 +213,7 @@ export interface TeamDriverRow {
   /** Pontos que o piloto fez pela equipe, e só por ela. */
   points: number;
   /** Da Dupla (a equipe do piloto no cadastro): fica em destaque. */
-  lineup: boolean;
+  inDupla: boolean;
 }
 export interface TeamDriversProps {
   season: string;

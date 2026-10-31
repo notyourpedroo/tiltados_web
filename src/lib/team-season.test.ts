@@ -291,12 +291,12 @@ describe("Pilotos da equipe e duelos", () => {
       12: { id: 12, name: "Lucas", teamId: MCLAREN },
     };
 
-    expect(teamProfile(data, FERRARI).drivers.map((d) => [d.id, d.lineup])).toEqual([
+    expect(teamProfile(data, FERRARI).drivers.map((d) => [d.id, d.inDupla])).toEqual([
       [10, true],
       [11, true],
       [12, false],
     ]);
-    expect(teamProfile(data, MCLAREN).drivers.map((d) => [d.id, d.lineup])).toEqual([
+    expect(teamProfile(data, MCLAREN).drivers.map((d) => [d.id, d.inDupla])).toEqual([
       [12, true],
       [11, false],
     ]);

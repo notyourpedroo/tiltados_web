@@ -7,7 +7,7 @@ export interface TeamDriverRow {
   /** Pontos que o piloto fez pela equipe, e só por ela. */
   points: number;
   /** Da Dupla (a equipe do piloto no cadastro): fica em destaque. */
-  lineup: boolean;
+  inDupla: boolean;
 }
 
 /**
@@ -26,11 +26,11 @@ export function TeamDrivers({ season, drivers }: { season: string; drivers: Team
           >
             <Link
               href={`/${season}/pilotos/${d.id}`}
-              className={`font-black hover:underline ${d.lineup ? "text-lg text-text" : "text-text-2"}`}
+              className={`font-black hover:underline ${d.inDupla ? "text-lg text-text" : "text-text-2"}`}
             >
               {d.name}
             </Link>
-            {d.lineup && (
+            {d.inDupla && (
               <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-text-2">
                 Dupla
               </span>

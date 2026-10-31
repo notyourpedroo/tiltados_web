@@ -44,7 +44,7 @@ export interface TeamDriver {
   /** Pontos que o piloto fez por esta equipe, e só por ela. */
   points: number;
   /** Da Dupla: a equipe do piloto no cadastro é esta. */
-  lineup: boolean;
+  inDupla: boolean;
 }
 
 /** Quem chegou na frente nas Sessões em que dois Pilotos da equipe correram juntos por ela. */
@@ -135,7 +135,7 @@ function teamDrivers(data: TeamSeasonData, teamId: number): TeamDriver[] {
       const d = byId.get(r.driverId) ?? {
         id: r.driverId,
         points: 0,
-        lineup: data.drivers[r.driverId]?.teamId === teamId,
+        inDupla: data.drivers[r.driverId]?.teamId === teamId,
       };
       d.points += r.points;
       byId.set(r.driverId, d);
