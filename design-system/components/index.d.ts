@@ -21,8 +21,8 @@ export interface PageTitleProps {
   title: ReactNode;
   /** Subtítulo em text-2. */
   children?: ReactNode;
-  /** À direita do título, alinhado à base, a partir de 640px; abaixo dele no celular. Ex.: TeamCar no perfil do piloto. */
-  aside?: ReactNode;
+  /** Carro da equipe, de `teamCar(nome, temporada)`, no arranjo do WithTeamCar. Ex.: perfil do piloto. Sem Carro, o título fica como sempre. */
+  car?: string;
 }
 export interface SectionTitleProps {
   children: ReactNode;
@@ -80,6 +80,12 @@ export interface TeamCarProps {
   /** Largura máxima em px; a imagem encolhe até caber. Padrão: 320. */
   width?: number;
   className?: string;
+}
+export interface WithTeamCarProps {
+  /** Carro da equipe, de `teamCar(nome, temporada)`: à direita do nome, até 320px e alinhado à base, a partir de 640px; abaixo dele no celular. Sem Carro, só o nome. */
+  car?: string;
+  /** O bloco do nome (rótulo, nome, equipe). */
+  children: ReactNode;
 }
 export interface TeamMarkProps {
   /** Logo da equipe ou, sem logo, a barrinha na cor dela. */
