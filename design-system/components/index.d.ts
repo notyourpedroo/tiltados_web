@@ -21,6 +21,8 @@ export interface PageTitleProps {
   title: ReactNode;
   /** Subtítulo em text-2. */
   children?: ReactNode;
+  /** À direita do título, alinhado à base, a partir de 640px; abaixo dele no celular. Ex.: TeamCar no perfil do piloto. */
+  aside?: ReactNode;
 }
 export interface SectionTitleProps {
   children: ReactNode;
