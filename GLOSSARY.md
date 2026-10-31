@@ -60,6 +60,20 @@ _Avoid_: previsão, odds, probabilidade de campeão
 A frase que explica por que um piloto ou equipe tem a sua Chance de título. No dia a dia, só "Motivo".
 _Avoid_: justificativa, explicação
 
+## Equipes
+
+**Piloto da equipe**:
+Numa temporada, todo piloto que disputou ao menos uma Sessão pela equipe. Quem troca de equipe no meio da temporada é piloto das duas, e cada uma conta só os pontos que ele fez por ela.
+_Avoid_: dupla (para falar de todos os pilotos que passaram pela equipe)
+
+**Dupla**:
+Os pilotos que a equipe tem no cadastro da liga. Numa temporada encerrada, é a dupla com que ela terminou.
+_Avoid_: pilotos atuais, line-up
+
+**Dobradinha**:
+O 1º e o 2º lugar de uma Corrida feitos por pilotos da mesma equipe. Uma Sprint não conta.
+_Avoid_: 1-2, dobrada
+
 ## Superlicença
 
 **Superlicença**:
