@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  KIND_TEXT,
   ProgressionChart,
   useHighlight,
   type ChartKind,
@@ -14,8 +15,6 @@ const MODES: { mode: ChartMode; title: string }[] = [
   { mode: "points", title: "Pontos" },
   { mode: "position", title: "Posição" },
 ];
-
-const HINT_SUBJECT: Record<ChartKind, string> = { driver: "pilotos", team: "equipes" };
 
 /**
  * Gráficos de evolução do campeonato, de pilotos ou de construtores. Destacar uma
@@ -49,7 +48,7 @@ export function ChampionshipCharts({
               onToggle={toggle}
             />
             <p className="mt-2 text-xs text-muted">
-              Toque nos nomes para destacar até 3 {HINT_SUBJECT[kind]} (vale para os dois gráficos). A
+              Toque nos nomes para destacar até 3 {KIND_TEXT[kind].subject} (vale para os dois gráficos). A
               tabela de classificação traz os valores exatos.
             </p>
           </Card>

@@ -33,9 +33,10 @@ const DASH = "6 4";
 const HEIGHT = 340;
 const M = { top: 16, right: 104, bottom: 32, left: 40 };
 
-const KIND_TEXT: Record<ChartKind, { each: string; highlight: string }> = {
-  driver: { each: "cada piloto", highlight: "Pilotos em destaque (até 3)" },
-  team: { each: "cada equipe", highlight: "Equipes em destaque (até 3)" },
+/** Textos que mudam com o tipo de linha: o acessível do gráfico, o dos chips e a dica. */
+export const KIND_TEXT: Record<ChartKind, { each: string; highlight: string; subject: string }> = {
+  driver: { each: "cada piloto", highlight: "Pilotos em destaque (até 3)", subject: "pilotos" },
+  team: { each: "cada equipe", highlight: "Equipes em destaque (até 3)", subject: "equipes" },
 };
 
 function ariaLabel(mode: ChartMode, kind: ChartKind) {
