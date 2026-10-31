@@ -11,9 +11,9 @@ export interface ChartSession {
 export interface ChartSeries {
   id: number;
   name: string;
-  /** Cor da equipe atual do piloto. */
+  /** Cor da equipe (a atual, no caso de um piloto). */
   color: string;
-  /** Companheiro de equipe atrás na classificação: mesma cor, linha tracejada. */
+  /** Piloto com companheiro de equipe à frente na classificação: mesma cor, linha tracejada. */
   dashed: boolean;
   /** Pontos acumulados após cada sessão. */
   cumulative: number[];
@@ -23,17 +23,27 @@ export interface ChartSeries {
 
 export type ChartMode = "points" | "position";
 
-// Até 3 pilotos em destaque, na cor da equipe; o resto fica cinza ao fundo.
+/** De quem são as linhas: pilotos (campeonato de pilotos) ou equipes (de construtores). */
+export type ChartKind = "driver" | "team";
+
+// Até 3 pilotos ou equipes em destaque, na cor da equipe; o resto fica cinza ao fundo.
 const MAX_HIGHLIGHT = 3;
 const REST = "var(--series-rest)";
 const DASH = "6 4";
 const HEIGHT = 340;
 const M = { top: 16, right: 104, bottom: 32, left: 40 };
 
-const MODE_TEXT: Record<ChartMode, { aria: string }> = {
-  points: { aria: "Pontos acumulados de cada piloto ao longo da temporada." },
-  position: { aria: "Posição de cada piloto no campeonato ao longo da temporada." },
+const KIND_TEXT: Record<ChartKind, { each: string; highlight: string }> = {
+  driver: { each: "cada piloto", highlight: "Pilotos em destaque (até 3)" },
+  team: { each: "cada equipe", highlight: "Equipes em destaque (até 3)" },
 };
+
+function ariaLabel(mode: ChartMode, kind: ChartKind) {
+  const { each } = KIND_TEXT[kind];
+  return mode === "points"
+    ? `Pontos acumulados de ${each} ao longo da temporada.`
+    : `Posição de ${each} no campeonato ao longo da temporada.`;
+}
 
 /** Amostra de traço usada na legenda e no tooltip (espelha a linha do gráfico). */
 function LineKey({ color, dashed }: { color: string; dashed: boolean }) {
@@ -60,9 +70,9 @@ function niceStep(max: number, target = 5) {
   return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * pow;
 }
 
-/** Seleção de pilotos em destaque, compartilhada entre os gráficos de uma página. */
+/** Seleção de pilotos ou equipes em destaque, compartilhada entre os gráficos de uma página. */
 export function useHighlight(series: ChartSeries[]) {
-  // Pilotos em destaque, do mais antigo para o mais recente.
+  // Destaques, do mais antigo para o mais recente.
   const [selected, setSelected] = useState<number[]>(() =>
     series.slice(0, MAX_HIGHLIGHT).map((s) => s.id),
   );
@@ -78,12 +88,14 @@ export function useHighlight(series: ChartSeries[]) {
 
 export function ProgressionChart({
   mode,
+  kind,
   sessions,
   series,
   selected,
   onToggle,
 }: {
   mode: ChartMode;
+  kind: ChartKind;
   sessions: ChartSession[];
   series: ChartSeries[];
   selected: number[];
@@ -181,7 +193,7 @@ export function ProgressionChart({
         <svg
           viewBox={`0 0 ${width} ${HEIGHT}`}
           role="img"
-          aria-label={`${MODE_TEXT[mode].aria} Use as setas para navegar pelas etapas.`}
+          aria-label={`${ariaLabel(mode, kind)} Use as setas para navegar pelas etapas.`}
           tabIndex={0}
           onKeyDown={onKey}
           onBlur={() => setHover(null)}
@@ -324,7 +336,7 @@ export function ProgressionChart({
         )}
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Pilotos em destaque (até 3)">
+      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={KIND_TEXT[kind].highlight}>
         {series.map((s) => {
           const on = isOn(s.id);
           return (

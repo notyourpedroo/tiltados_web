@@ -30,7 +30,7 @@ async function Drivers({ season }: { season: string }) {
 
       <DriverStandingsTable data={data} />
 
-      <ChampionshipCharts sessions={sessions} series={series} />
+      <ChampionshipCharts kind="driver" sessions={sessions} series={series} />
     </>
   );
 }
