@@ -5,6 +5,7 @@ Linha de um piloto ou equipe na página Chance de título (`/2026/titulo`), com 
 ## Composição
 - Item de lista dentro de um Card, separado por borda `line`; padding `space-4`.
 - Cabeçalho: TeamMark, nome em 18px 900 (link para o piloto), equipe curta em `muted` a partir de 640px e a Chance de título à direita em 24px 900 (`tabular`).
+- Carro da equipe (TeamCar, 100px de largura, cerca de 25px de altura) à direita do nome, logo antes da porcentagem (ou do selo, com o título decidido), a partir de 640px; abaixo disso some, como a equipe curta. Nos pilotos é o Carro da equipe dele; nos construtores, o da própria equipe.
 - ChanceBar: 6px em `radius-full`, trilho `surface-2` e barra no tom do status (`role="meter"`, 0 a 100).
 - Linha de apoio: ChanceBadge e "403 pts → 528 máx." em `text-2` (pontos atuais e Pontos máximos).
 - Motivo em 14px `text-2`, quebrando linha.
@@ -18,7 +19,8 @@ Linha de um piloto ou equipe na página Chance de título (`/2026/titulo`), com 
 ## Faça
 - Porcentagem no padrão brasileiro ("87,3%", "100%"). Quem está Na disputa com 0 ou 100 arredondados aparece como "< 0,1%" ou "> 99,9%".
 - Eliminados esmaecem pela cor: nome e porcentagem em `text-2`. Nada de opacidade, que derruba o contraste.
-- Título decidido (ninguém Na disputa no campeonato): a seção ganha "Título decidido" em `gold` ao lado do título, a barra e a porcentagem somem, o selo sobe para a direita e o Motivo vira o conteúdo principal em 16px 600 `text`.
+- Título decidido (ninguém Na disputa no campeonato): a seção ganha "Título decidido" em `gold` ao lado do título, a barra e a porcentagem somem, o selo sobe para a direita e o Motivo vira o conteúdo principal em 16px 600 `text`. O Carro continua na linha, ao lado do selo.
+- Equipe sem Carro no Jogo da temporada: a linha fica como antes, sem espaço vazio no lugar do Carro.
 
 ## Evite
 - `accent` em selo ou barra: ele é reservado para faixa, logotipo, aba ativa e sobretítulos.
