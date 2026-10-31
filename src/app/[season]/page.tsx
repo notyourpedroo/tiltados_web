@@ -13,6 +13,7 @@ import {
   StatTile,
   TeamLogo,
   TeamMark,
+  WithTeamCar,
 } from "@/components/ui";
 import { getDriverPrediction } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
@@ -20,7 +21,7 @@ import { chartData } from "@/lib/chart";
 import { formatDate, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { mainSessions, type SeasonData, type SessionResult } from "@/lib/season";
-import { teamStyle } from "@/lib/teams";
+import { teamCar, teamStyle } from "@/lib/teams";
 
 export default function SeasonPage({ params }: PageProps<"/[season]">) {
   return (
@@ -158,18 +159,20 @@ async function Overview({ season }: { season: string }) {
               className="absolute inset-y-0 left-0 w-1.5"
               style={{ backgroundColor: leaderTeam.color }}
             />
-            <LeaderHeading season={data.season} finished={finished} driverId={leader.driver_id}>
-              <Link
-                href={`/${data.season}/pilotos/${leader.driver_id}`}
-                className="mt-1 block text-5xl font-black uppercase leading-none tracking-tight hover:underline sm:text-6xl"
-              >
-                {leader.driver_name}
-              </Link>
-              <p className="mt-3 flex items-center gap-2 text-text-2">
-                {leaderTeam.logo && <TeamLogo logo={leaderTeam.logo} size={28} />}
-                {leader.team_name}
-              </p>
-            </LeaderHeading>
+            <WithTeamCar car={teamCar(leader.team_name, data.season)}>
+              <LeaderHeading season={data.season} finished={finished} driverId={leader.driver_id}>
+                <Link
+                  href={`/${data.season}/pilotos/${leader.driver_id}`}
+                  className="mt-1 block text-5xl font-black uppercase leading-none tracking-tight hover:underline sm:text-6xl"
+                >
+                  {leader.driver_name}
+                </Link>
+                <p className="mt-3 flex items-center gap-2 text-text-2">
+                  {leaderTeam.logo && <TeamLogo logo={leaderTeam.logo} size={28} />}
+                  {leader.team_name}
+                </p>
+              </LeaderHeading>
+            </WithTeamCar>
             <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
               <div>
                 <p className="text-4xl font-black">{leader.points}</p>

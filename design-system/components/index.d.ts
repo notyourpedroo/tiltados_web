@@ -21,6 +21,8 @@ export interface PageTitleProps {
   title: ReactNode;
   /** Subtítulo em text-2. */
   children?: ReactNode;
+  /** Carro da equipe, de `teamCar(nome, temporada)`, no arranjo do WithTeamCar. Ex.: perfil do piloto. Sem Carro, o título fica como sempre. */
+  car?: string;
 }
 export interface SectionTitleProps {
   children: ReactNode;
@@ -72,6 +74,19 @@ export interface TeamLogoProps {
   size?: number;
   className?: string;
 }
+export interface TeamCarProps {
+  /** Carro da equipe no Jogo da temporada, de `teamCar(nome, temporada)`: /cars/<ano do Carro>/<slug>.webp. Sem Carro, não desenha nada. */
+  car?: string;
+  /** Largura máxima em px; a imagem encolhe até caber. Padrão: 320. */
+  width?: number;
+  className?: string;
+}
+export interface WithTeamCarProps {
+  /** Carro da equipe, de `teamCar(nome, temporada)`: à direita do nome, até 320px e alinhado à base, a partir de 640px; abaixo dele no celular. Sem Carro, só o nome. */
+  car?: string;
+  /** O bloco do nome (rótulo, nome, equipe). */
+  children: ReactNode;
+}
 export interface TeamMarkProps {
   /** Logo da equipe ou, sem logo, a barrinha na cor dela. */
   team?: { color: string; logo?: TeamLogoSrc };
@@ -109,6 +124,8 @@ export interface ChanceRowProps {
   mark: ReactNode;
   /** Equipe atual, para pilotos. */
   team?: ReactNode;
+  /** Carro da equipe no Jogo da temporada, de `teamCar(nome, temporada)`. Aparece a partir de 640px; sem Carro, a linha fica como antes. */
+  car?: string;
   points: number;
   maxPoints: number;
   /** Motivo da Chance de título. */

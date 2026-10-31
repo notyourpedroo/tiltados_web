@@ -6,7 +6,7 @@ import { ChanceRow } from "@/components/chance";
 import { Card, PageTitle, SectionTitle, Skeleton, TeamMark } from "@/components/ui";
 import { getDriverPrediction, getTeamPrediction } from "@/lib/api";
 import { describeTitleRace } from "@/lib/chance";
-import { teamStyle } from "@/lib/teams";
+import { teamCar, teamStyle } from "@/lib/teams";
 
 export const metadata: Metadata = { title: "Chance de título" };
 
@@ -59,6 +59,7 @@ async function TitleChance({ season }: { season: string }) {
                     </Link>
                   }
                   team={team.short}
+                  car={teamCar(d.team_name, season)}
                   points={d.points}
                   maxPoints={d.max_points}
                   reason={d.probability_reason}
@@ -80,6 +81,7 @@ async function TitleChance({ season }: { season: string }) {
                 view={t.view}
                 mark={<TeamMark team={teamStyle(t.team_name)} />}
                 name={t.team_name}
+                car={teamCar(t.team_name, season)}
                 points={t.points}
                 maxPoints={t.max_points}
                 reason={t.probability_reason}

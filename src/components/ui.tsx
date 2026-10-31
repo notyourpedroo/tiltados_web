@@ -7,22 +7,27 @@ export function PageTitle({
   eyebrow,
   title,
   children,
+  car,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
   children?: ReactNode;
+  /** Carro da equipe, de `teamCar`, ao lado do título (ex.: perfil do piloto). */
+  car?: string;
 }) {
   return (
     <div className="mb-8">
-      {eyebrow && (
-        <p className="mb-1 text-sm font-bold uppercase tracking-widest text-accent">
-          {eyebrow}
-        </p>
-      )}
-      <h1 className="text-3xl font-black uppercase leading-none tracking-tight sm:text-5xl">
-        {title}
-      </h1>
-      {children && <div className="mt-3 text-text-2">{children}</div>}
+      <WithTeamCar car={car}>
+        {eyebrow && (
+          <p className="mb-1 text-sm font-bold uppercase tracking-widest text-accent">
+            {eyebrow}
+          </p>
+        )}
+        <h1 className="text-3xl font-black uppercase leading-none tracking-tight sm:text-5xl">
+          {title}
+        </h1>
+        {children && <div className="mt-3 text-text-2">{children}</div>}
+      </WithTeamCar>
     </div>
   );
 }
@@ -108,6 +113,50 @@ export function TeamLogo({
       {img(logo.dark, "only-dark")}
       {img(logo.light, "only-light")}
     </>
+  );
+}
+
+/**
+ * Carro da equipe no Jogo da temporada (o endereço vem de `teamCar`). Decorativo
+ * e igual nos dois temas; sem Carro, não desenha nada. Ocupa a largura disponível
+ * até `width`, então encolhe em telas estreitas.
+ */
+export function TeamCar({
+  car,
+  width = 320,
+  className = "",
+}: {
+  car?: string;
+  width?: number;
+  className?: string;
+}) {
+  if (!car) return null;
+  return (
+    <Image
+      src={car}
+      alt=""
+      width={width}
+      // As renderizações têm cerca de 1200×260; a altura real vem do arquivo.
+      height={Math.round(width * 0.22)}
+      unoptimized
+      className={`object-contain ${className}`}
+      style={{ width: "100%", maxWidth: width, height: "auto" }}
+    />
+  );
+}
+
+/**
+ * Nome à esquerda e o Carro grande (até 320 px) à direita, alinhado à base, a
+ * partir de 640 px; no celular, o Carro desce para baixo do nome. Sem Carro,
+ * só o nome, sem espaço reservado. Usado no card do líder e no PageTitle.
+ */
+export function WithTeamCar({ car, children }: { car?: string; children: ReactNode }) {
+  if (!car) return <>{children}</>;
+  return (
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+      <div className="sm:shrink-0">{children}</div>
+      <TeamCar car={car} width={320} className="sm:min-w-0 sm:flex-1" />
+    </div>
   );
 }
 
