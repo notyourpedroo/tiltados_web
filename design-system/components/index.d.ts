@@ -118,6 +118,8 @@ export interface ChanceRowProps {
   mark: ReactNode;
   /** Equipe atual, para pilotos. */
   team?: ReactNode;
+  /** Carro da equipe no Jogo da temporada, de `teamCar(nome, temporada)`. Aparece a partir de 640px; sem Carro, a linha fica como antes. */
+  car?: string;
   points: number;
   maxPoints: number;
   /** Motivo da Chance de título. */
