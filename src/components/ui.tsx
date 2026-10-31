@@ -7,33 +7,27 @@ export function PageTitle({
   eyebrow,
   title,
   children,
-  aside,
+  car,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
   children?: ReactNode;
-  /** Fica à direita do título no desktop e desce para baixo dele no celular (ex.: TeamCar). */
-  aside?: ReactNode;
+  /** Carro da equipe, de `teamCar`, ao lado do título (ex.: perfil do piloto). */
+  car?: string;
 }) {
-  const heading = (
-    <>
-      {eyebrow && (
-        <p className="mb-1 text-sm font-bold uppercase tracking-widest text-accent">
-          {eyebrow}
-        </p>
-      )}
-      <h1 className="text-3xl font-black uppercase leading-none tracking-tight sm:text-5xl">
-        {title}
-      </h1>
-      {children && <div className="mt-3 text-text-2">{children}</div>}
-    </>
-  );
-  if (!aside) return <div className="mb-8">{heading}</div>;
-  // O mesmo arranjo do card do líder: ao lado no desktop, abaixo no celular.
   return (
-    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
-      <div className="sm:shrink-0">{heading}</div>
-      {aside}
+    <div className="mb-8">
+      <WithTeamCar car={car}>
+        {eyebrow && (
+          <p className="mb-1 text-sm font-bold uppercase tracking-widest text-accent">
+            {eyebrow}
+          </p>
+        )}
+        <h1 className="text-3xl font-black uppercase leading-none tracking-tight sm:text-5xl">
+          {title}
+        </h1>
+        {children && <div className="mt-3 text-text-2">{children}</div>}
+      </WithTeamCar>
     </div>
   );
 }
@@ -148,6 +142,21 @@ export function TeamCar({
       className={`object-contain ${className}`}
       style={{ width: "100%", maxWidth: width, height: "auto" }}
     />
+  );
+}
+
+/**
+ * Nome à esquerda e o Carro grande (até 320 px) à direita, alinhado à base, a
+ * partir de 640 px; no celular, o Carro desce para baixo do nome. Sem Carro,
+ * só o nome, sem espaço reservado. Usado no card do líder e no PageTitle.
+ */
+export function WithTeamCar({ car, children }: { car?: string; children: ReactNode }) {
+  if (!car) return <>{children}</>;
+  return (
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+      <div className="sm:shrink-0">{children}</div>
+      <TeamCar car={car} width={320} className="sm:min-w-0 sm:flex-1" />
+    </div>
   );
 }
 
