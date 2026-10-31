@@ -16,7 +16,6 @@ import {
   StatTile,
   Table,
   TeamBar,
-  TeamCar,
   TeamLogo,
   td,
   th,
@@ -143,7 +142,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
             {standing.driver_name}
           </span>
         }
-        aside={car && <TeamCar car={car} width={320} className="sm:min-w-0 sm:flex-1" />}
+        car={car}
       >
         <span className="flex items-center gap-2">
           {team.logo && <TeamLogo logo={team.logo} size={32} />}
