@@ -13,4 +13,4 @@ Card da Superlicença de um piloto: saldo de pontos, medidor e status.
 - Status que o site não conhece aparece neutro: ícone "?", cor `muted` e o texto da API como rótulo, nunca como Regular.
 - Plural pelo helper: "1 punição", "2 punições", "sem punições".
 
-Fonte: `src/app/[season]/superlicenca/page.tsx` e `src/lib/license.ts` · prévia estática com os dados de 2026 e um exemplo hipotético de Suspensão, porque ninguém zerou a Superlicença.
+Fonte: `src/components/LicenseCard.tsx` e `src/lib/license.ts`, usado na página Superlicença (`src/app/[season]/superlicenca/page.tsx`) e, para cada Piloto da equipe, no perfil da equipe em 2026 (`src/app/[season]/equipes/[teamId]/page.tsx`) · prévia estática com os dados de 2026 e um exemplo hipotético de Suspensão, porque ninguém zerou a Superlicença.
