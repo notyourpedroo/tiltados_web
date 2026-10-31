@@ -92,6 +92,12 @@ export interface TeamMarkProps {
   team?: { color: string; logo?: TeamLogoSrc };
   size?: number;
 }
+/** Selo neutro, base do SprintBadge, do DriverPositionBadge e do selo Dupla. */
+export interface BadgeProps {
+  children: ReactNode;
+  /** Extras, ex.: "whitespace-nowrap". */
+  className?: string;
+}
 /** Sem propriedades. */
 export type SprintBadgeProps = Record<string, never>;
 /** Sem propriedades. */
