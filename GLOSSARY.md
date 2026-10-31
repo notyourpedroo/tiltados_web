@@ -2,6 +2,16 @@
 
 Site da liga de F1 entre amigos: mostra os resultados, as classificações, a Superlicença e as chances de título de cada temporada. Os termos seguem o glossário da Tiltados API, de onde vêm os dados.
 
+## Temporada
+
+**Jogo**:
+A edição do jogo de F1 em que a liga disputa uma temporada (ex.: F1 24 em 2025, F1 25 em 2026).
+_Avoid_: game, versão
+
+**Carro**:
+O carro de uma equipe no Jogo da temporada, que é o carro real da F1 do ano do Jogo, não o do ano da temporada. Uma equipe que não existe no Jogo não tem Carro.
+_Avoid_: carro do ano
+
 ## Calendário
 
 **Etapa**:
