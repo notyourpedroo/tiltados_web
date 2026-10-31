@@ -45,7 +45,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 
 - Cards com `radius-xl` e borda em `line`; nada de sombra para separar cards. A única sombra é `shadow-tooltip`.
 - Controles de escolha (temporada, Sprint/Corrida, chips de piloto, botão de tema) são pílulas com `radius-full` e borda em `line`; o item ativo inverte para fundo `text` e texto `bg`.
-- Selos (Sprint, VMR) com `radius-sm`; células do resumo da temporada com `radius-md`.
+- Selos (Sprint, VMR, piloto com posição) com `radius-sm`; células do resumo da temporada com `radius-md`.
 - Cards de destaque (líder, pódio, equipes) levam a textura `stripe`: traços diagonais a -60°, 2px a cada 8px. Eles marcam o card com uma faixa da cor da equipe (4px), no topo ou à esquerda.
 - O logotipo é tipográfico: TILTADOS em `wordmark` e `on-accent` sobre um bloco `accent` inclinado −12°, seguido de F1 em `text-2`. Não existe arquivo de logo próprio da liga.
 
@@ -75,7 +75,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 ## Componentes
 
 - As fichas mostram prévias estáticas fiéis aos componentes React do site, com as mesmas medidas, os tokens reais e dados da temporada 2026. O código de verdade está em `src/components/` e nas páginas indicadas em cada ficha; `components/index.d.ts` traz as propriedades.
-- Estrutura (SiteHeader, ThemeToggle, PageTitle, SectionTitle, MoreLink, Card, Table, Skeleton), Dados (Position, Gained, StatTile, TeamBar, TeamLogo, SprintBadge, FastestLapBadge), Classificação, Gráficos e Padrões de página (cards que vivem dentro das páginas).
+- Estrutura (SiteHeader, ThemeToggle, PageTitle, SectionTitle, MoreLink, Card, Table, Skeleton), Dados (Position, Gained, StatTile, TeamBar, TeamLogo, SprintBadge, FastestLapBadge, DriverPositionBadge), Classificação, Gráficos e Padrões de página (cards que vivem dentro das páginas).
 - A fonte Titillium Web vem do Google Fonts; não há arquivo de fonte neste sistema.
 
 ## Arquivos desta pasta

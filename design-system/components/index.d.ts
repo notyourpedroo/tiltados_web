@@ -81,6 +81,12 @@ export interface TeamMarkProps {
 export type SprintBadgeProps = Record<string, never>;
 /** Sem propriedades. */
 export type FastestLapBadgeProps = Record<string, never>;
+export interface DriverPositionBadgeProps {
+  /** Primeiro nome do piloto. */
+  name: string;
+  /** Posição de chegada na Sessão; o selo escreve o ordinal ("2º"). */
+  position: number;
+}
 
 /** Chance de título (src/components/chance.tsx) */
 export interface ChanceView {
@@ -139,9 +145,9 @@ export interface ChartSession {
 export interface ChartSeries {
   id: number;
   name: string;
-  /** Cor team-* da equipe atual. */
+  /** Cor team-* da equipe (a atual, no caso de um piloto). */
   color: string;
-  /** Companheiro atrás na classificação: linha tracejada. */
+  /** Piloto com companheiro à frente na classificação: linha tracejada. */
   dashed: boolean;
   /** Pontos acumulados após cada sessão. */
   cumulative: number[];
@@ -149,8 +155,11 @@ export interface ChartSeries {
   positions: number[];
 }
 export type ChartMode = "points" | "position";
+/** Pilotos (chartData) ou equipes (constructorsProgression); muda o texto acessível e a dica. */
+export type ChartKind = "driver" | "team";
 export interface ProgressionChartProps {
   mode: ChartMode;
+  kind: ChartKind;
   sessions: ChartSession[];
   series: ChartSeries[];
   /** Ids em destaque (até 3), de useHighlight(series). */
@@ -158,6 +167,39 @@ export interface ProgressionChartProps {
   onToggle: (id: number) => void;
 }
 export interface ChampionshipChartsProps {
+  kind: ChartKind;
   sessions: ChartSession[];
   series: ChartSeries[];
+}
+
+/** Padrões de página */
+export interface TeammateDuelSide {
+  /** Nome do piloto, com link quando leva a outro perfil. */
+  name: ReactNode;
+  /** Vezes em que chegou na frente do outro. */
+  ahead: number;
+}
+export interface TeammateDuelProps {
+  /** "Duelo com companheiro de equipe" (piloto) ou "Duelo entre companheiros de equipe" (equipe). */
+  label: string;
+  /** Primeiro piloto: a barra mostra a parte dele. */
+  first: TeammateDuelSide;
+  second: TeammateDuelSide;
+}
+export interface LicenseCardProps {
+  /** Linha da rota de Superlicença da API (ApiSuperLicense em src/lib/types.ts). */
+  license: unknown;
+}
+export interface TeamDriverRow {
+  id: number;
+  name: string;
+  /** Pontos que o piloto fez pela equipe, e só por ela. */
+  points: number;
+  /** Da Dupla (a equipe do piloto no cadastro): fica em destaque. */
+  lineup: boolean;
+}
+export interface TeamDriversProps {
+  season: string;
+  /** Pilotos da equipe, do maior pontuador para o menor (teamProfile em src/lib/team-season.ts). */
+  drivers: TeamDriverRow[];
 }

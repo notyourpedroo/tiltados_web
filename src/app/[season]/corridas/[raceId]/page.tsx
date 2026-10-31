@@ -149,7 +149,12 @@ async function Race({ season, raceId }: { season: string; raceId: string }) {
               >
                 {name(r.driverId)}
               </Link>
-              <p className="text-sm text-text-2">{team?.name}</p>
+              <Link
+                href={`/${data.season}/equipes/${r.teamId}`}
+                className="block w-fit text-sm text-text-2 hover:underline"
+              >
+                {team?.name}
+              </Link>
               <p className="tabular mt-3 text-sm text-muted">
                 Largou em {r.grid}º · +{r.points} pts
               </p>
@@ -195,10 +200,13 @@ async function Race({ season, raceId }: { season: string; raceId: string }) {
                   </Link>
                 </td>
                 <td className={`${td} hidden text-text-2 sm:table-cell`}>
-                  <span className="flex items-center gap-2">
+                  <Link
+                    href={`/${data.season}/equipes/${r.teamId}`}
+                    className="flex items-center gap-2 hover:underline"
+                  >
                     {team?.logo && <TeamLogo logo={team.logo} />}
                     {team?.name}
-                  </span>
+                  </Link>
                 </td>
                 <td className={`${td} tabular text-right text-text-2`}>{r.grid}</td>
                 <td className={`${td} text-right`}>

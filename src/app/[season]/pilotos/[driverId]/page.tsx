@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ChanceBadge, ChanceBar } from "@/components/chance";
 import { HideOnError } from "@/components/HideOnError";
+import { TeammateDuel } from "@/components/TeammateDuel";
 import {
   Card,
   FastestLapBadge,
@@ -141,10 +142,13 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           </span>
         }
       >
-        <span className="flex items-center gap-2">
+        <Link
+          href={`/${data.season}/equipes/${standing.team_id}`}
+          className="inline-flex items-center gap-2 hover:underline"
+        >
           {team.logo && <TeamLogo logo={team.logo} size={32} />}
           {standing.team_name}
-        </span>
+        </Link>
       </PageTitle>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -210,33 +214,21 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
 
       {(duels.size > 0 || license) && (
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          {[...duels].map(([otherId, d]) => {
-            const totalDuels = d.ahead + d.behind;
-            return (
-              <Card key={otherId} className="p-5">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted">
-                  Duelo com companheiro de equipe
-                </p>
-                <div className="mt-2 flex items-baseline justify-between gap-2 text-lg font-black">
-                  <span>{standing.driver_name} <span className="tabular">{d.ahead}</span></span>
-                  <span className="text-muted">×</span>
-                  <span>
-                    <span className="tabular">{d.behind}</span>{" "}
-                    <Link href={`/${data.season}/pilotos/${otherId}`} className="hover:underline">
-                      {data.drivers[otherId]?.name}
-                    </Link>
-                  </span>
-                </div>
-                <div className="mt-3 flex h-2 gap-0.5 overflow-hidden rounded-full" aria-hidden>
-                  <div className="bg-text" style={{ width: `${(d.ahead / totalDuels) * 100}%` }} />
-                  <div className="flex-1 bg-surface-2" />
-                </div>
-                <p className="mt-2 text-xs text-muted">
-                  Quem chegou na frente, em {plural(totalDuels, "sessão", "sessões")} juntos
-                </p>
-              </Card>
-            );
-          })}
+          {[...duels].map(([otherId, d]) => (
+            <TeammateDuel
+              key={otherId}
+              label="Duelo com companheiro de equipe"
+              first={{ name: standing.driver_name, ahead: d.ahead }}
+              second={{
+                name: (
+                  <Link href={`/${data.season}/pilotos/${otherId}`} className="hover:underline">
+                    {data.drivers[otherId]?.name}
+                  </Link>
+                ),
+                ahead: d.behind,
+              }}
+            />
+          ))}
           {license && (
             <Card className="p-5">
               <p className="text-xs font-bold uppercase tracking-wider text-muted">Superlicença</p>

@@ -14,7 +14,8 @@ Feito com Next.js 16 (App Router, Cache Components), TypeScript e Tailwind CSS 4
 | `/{temporada}/corridas/{race_id}` | Classificação completa da sessão, pódio, posições ganhas e punições |
 | `/{temporada}/pilotos` | Classificação de pilotos e gráfico de pontos acumulados |
 | `/{temporada}/pilotos/{driver_id}` | Perfil do piloto: estatísticas, resumo da temporada, duelo com companheiro e resultados |
-| `/{temporada}/equipes` | Campeonato de construtores e contribuição de cada piloto |
+| `/{temporada}/equipes` | Campeonato de construtores, contribuição de cada piloto e evolução do campeonato de construtores |
+| `/{temporada}/equipes/{team_id}` | Perfil da equipe: posição no campeonato de construtores, estatísticas da temporada, em 2026 a Chance de título de construtores, Pilotos da equipe com os duelos entre eles, em 2026 a Superlicença de cada um, temporada em resumo e Resultados Sessão a Sessão |
 | `/2026/titulo` | Chance de título de pilotos e construtores, com o status e o Motivo de cada um |
 | `/2026/superlicenca` | Saldo da Superlicença e punições registradas |
 
@@ -110,6 +111,7 @@ src/
     ├── chance.ts          # como a Chance de título aparece na tela (testado com o Vitest)
     ├── license.ts         # como o status da Superlicença aparece no card (testado com o Vitest)
     ├── season.ts          # modelo derivado da temporada
+    ├── team-season.ts     # perfil da equipe e evolução do campeonato de construtores (testado com o Vitest)
     ├── teams.ts           # cores e nomes curtos das equipes
     ├── types.ts           # tipos das respostas da API
     └── weekend.ts         # Sessões agrupadas por Etapa (testado com o Vitest)
