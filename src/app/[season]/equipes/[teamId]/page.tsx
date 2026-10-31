@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ChanceBadge, ChanceBar } from "@/components/chance";
+import { TitleChanceCard } from "@/components/chance";
 import { HideOnError } from "@/components/HideOnError";
 import { LicenseCard } from "@/components/LicenseCard";
 import { TeamDrivers } from "@/components/TeamDrivers";
@@ -66,22 +66,12 @@ export default function TeamPage({ params }: PageProps<"/[season]/equipes/[teamI
 async function TeamTitleChance({ teamId }: { teamId: number }) {
   const row = (await getTeamPrediction()).find((p) => p.team_id === teamId);
   if (!row) return null;
-  const view = describeChance(row, "team");
-
   return (
-    <Card className="mt-4 p-5">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-bold uppercase tracking-wider text-muted">
-          Chance de título de construtores
-        </p>
-        <ChanceBadge view={view} />
-      </div>
-      <p className="tabular mt-1 text-2xl font-black">{view.text}</p>
-      <div className="mt-2">
-        <ChanceBar view={view} label={`Chance de título de construtores: ${view.text}`} />
-      </div>
-      <p className="mt-3 text-sm text-text-2">{row.probability_reason}</p>
-    </Card>
+    <TitleChanceCard
+      title="Chance de título de construtores"
+      view={describeChance(row, "team")}
+      reason={row.probability_reason}
+    />
   );
 }
 

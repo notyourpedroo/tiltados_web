@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { TeamCar } from "@/components/ui";
+import { Card, TeamCar } from "@/components/ui";
 import type { BadgeTone, ChanceView } from "@/lib/chance";
 
 // Campeão no dourado das medalhas (gold-fill com on-fill), Na disputa invertido como
@@ -48,6 +48,35 @@ export function ChanceBar({ view, label }: { view: ChanceView; label: string }) 
         style={{ width: `${view.bar}%` }}
       />
     </div>
+  );
+}
+
+/**
+ * Card da Chance de título no perfil do piloto ou da equipe: rótulo e selo, a
+ * porcentagem, a barra e o Motivo. Fica 16px abaixo da grade de estatísticas.
+ */
+export function TitleChanceCard({
+  title,
+  view,
+  reason,
+}: {
+  /** "Chance de título" (piloto) ou "Chance de título de construtores" (equipe). */
+  title: string;
+  view: ChanceView;
+  reason: string;
+}) {
+  return (
+    <Card className="mt-4 p-5">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted">{title}</p>
+        <ChanceBadge view={view} />
+      </div>
+      <p className="tabular mt-1 text-2xl font-black">{view.text}</p>
+      <div className="mt-2">
+        <ChanceBar view={view} label={`${title}: ${view.text}`} />
+      </div>
+      <p className="mt-3 text-sm text-text-2">{reason}</p>
+    </Card>
   );
 }
 

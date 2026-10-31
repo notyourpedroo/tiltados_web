@@ -1,0 +1,29 @@
+<!-- @dsCard group="Padrões de página" height=180 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../bundle.css">
+<script>document.documentElement.dataset.theme = new URLSearchParams(location.search).get("theme") || "dark";</script>
+<title>TitleChanceCard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap">
+<style>
+.chance-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.chance-label { margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.chance-pct { margin: 4px 0 0; font-size: 24px; line-height: 32px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.chance-bar { margin-top: 8px; height: 6px; border-radius: var(--radius-full); background: var(--surface-2); overflow: hidden; }
+.chance-bar > div { height: 100%; border-radius: var(--radius-full); background: var(--text); }
+.chance-reason { margin: 12px 0 0; font-size: 14px; line-height: 20px; color: var(--text-2); }
+.badge-chance { display: inline-flex; border-radius: var(--radius-sm); padding: 2px 6px; font-size: 10px; line-height: 14px; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; background: var(--text); color: var(--bg); }
+</style>
+</head>
+<body>
+<div class="demo"><div class="card" style="padding:var(--space-5)">
+  <div class="chance-head"><p class="chance-label">Chance de título</p><span class="badge-chance">Na disputa</span></div>
+  <p class="chance-pct">&gt; 99,9%</p>
+  <div class="chance-bar" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="> 99,9%" aria-label="Chance de título: > 99,9%"><div style="width:100%"></div></div>
+  <p class="chance-reason">Ainda não é Campeão pela matemática, mas nunca terminou abaixo do 6º em Corridas de 2026; repetindo isso nas 5 Sessões pendentes, Yohan tira no máximo 85 dos 89 pontos de vantagem.</p>
+</div></div>
+</body>
+</html>

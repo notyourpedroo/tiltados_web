@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ChanceBadge, ChanceBar } from "@/components/chance";
+import { TitleChanceCard } from "@/components/chance";
 import { HideOnError } from "@/components/HideOnError";
 import { TeammateDuel } from "@/components/TeammateDuel";
 import {
@@ -65,20 +65,12 @@ export default function DriverPage({ params }: PageProps<"/[season]/pilotos/[dri
 async function DriverTitleChance({ driverId }: { driverId: number }) {
   const row = (await getDriverPrediction()).find((p) => p.driver_id === driverId);
   if (!row) return null;
-  const view = describeChance(row, "driver");
-
   return (
-    <Card className="mt-4 p-5">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-bold uppercase tracking-wider text-muted">Chance de título</p>
-        <ChanceBadge view={view} />
-      </div>
-      <p className="tabular mt-1 text-2xl font-black">{view.text}</p>
-      <div className="mt-2">
-        <ChanceBar view={view} label={`Chance de título: ${view.text}`} />
-      </div>
-      <p className="mt-3 text-sm text-text-2">{row.probability_reason}</p>
-    </Card>
+    <TitleChanceCard
+      title="Chance de título"
+      view={describeChance(row, "driver")}
+      reason={row.probability_reason}
+    />
   );
 }
 
