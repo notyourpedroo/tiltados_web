@@ -54,13 +54,16 @@ async function Teams({ season }: { season: string }) {
                   style={{ backgroundColor: style.color }}
                 />
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3">
+                  <Link
+                    href={`/${data.season}/equipes/${t.team_id}`}
+                    className="flex items-center gap-3 hover:underline"
+                  >
                     {style.logo && <TeamLogo logo={style.logo} size={44} />}
                     <div>
                       <p className="text-sm font-bold text-muted">{ordinal(t.position)}</p>
                       <p className="text-xl font-black uppercase leading-tight">{t.team_name}</p>
                     </div>
-                  </div>
+                  </Link>
                   <p className="text-right">
                     <span className="block text-3xl font-black leading-none">{t.points}</span>
                     <span className="text-xs font-bold uppercase tracking-wider text-muted">pts</span>

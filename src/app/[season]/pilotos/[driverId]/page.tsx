@@ -141,10 +141,13 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           </span>
         }
       >
-        <span className="flex items-center gap-2">
+        <Link
+          href={`/${data.season}/equipes/${standing.team_id}`}
+          className="inline-flex items-center gap-2 hover:underline"
+        >
           {team.logo && <TeamLogo logo={team.logo} size={32} />}
           {standing.team_name}
-        </span>
+        </Link>
       </PageTitle>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
