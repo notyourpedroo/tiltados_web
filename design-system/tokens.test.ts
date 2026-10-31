@@ -4,7 +4,8 @@ import { describe, expect, test } from "vitest";
 
 // As cores existem em três cópias: tokens.json (fonte do design system), tokens.css
 // (as mesmas variáveis para as prévias) e src/app/globals.css (a fonte usada pelo site).
-// Este teste confere que as três dizem o mesmo valor, tema por tema.
+// Este teste confere que as três dizem o mesmo valor, tema por tema, e que os pares
+// documentados no design system mantêm o contraste mínimo nos dois temas.
 
 type Theme = "dark" | "light";
 type Palette = Record<string, string>;
@@ -68,6 +69,50 @@ describe("Tokens de cor", () => {
             ? Object.fromEntries(Object.entries(json).filter(([name]) => json[name] !== jsonPalette("dark")[name]))
             : json;
         expect(palette).toEqual(expected);
+      });
+    }
+  }
+});
+
+/** Razão de contraste WCAG 2 entre duas cores `#rrggbb`. */
+function contrast(a: string, b: string): number {
+  const luminance = (hex: string) => {
+    const [r, g, bl] = [1, 3, 5].map((i) => {
+      const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+  };
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+// Mínimos do design system (README, seção Acessibilidade). Ficam de fora os pares já
+// documentados como exceção: accent como texto no tema escuro e muted sobre surface-2.
+const neutrals = ["bg", "surface", "surface-2"];
+const teams = Object.keys(jsonPalette("dark")).filter((name) => name.startsWith("team-"));
+const minimums: { fg: string; bg: string; min: number }[] = [
+  ...neutrals.map((bg) => ({ fg: "text", bg, min: 12 })),
+  ...neutrals.map((bg) => ({ fg: "text-2", bg, min: 7 })),
+  ...["bg", "surface"].map((bg) => ({ fg: "muted", bg, min: 4.5 })),
+  // Cores de equipe são linhas e marcas, não texto.
+  ...teams.map((fg) => ({ fg, bg: "surface", min: 3 })),
+  // Linhas sem destaque: só precisam aparecer, sem competir com as destacadas.
+  { fg: "series-rest", bg: "surface", min: 1.5 },
+];
+
+describe("Contraste dos tokens de cor", () => {
+  test("a razão segue a fórmula WCAG", () => {
+    expect(contrast("#000000", "#ffffff")).toBeCloseTo(21, 2);
+    expect(contrast("#ffffff", "#000000")).toBeCloseTo(21, 2);
+    expect(contrast("#777777", "#ffffff")).toBeCloseTo(4.48, 2);
+  });
+
+  for (const theme of ["dark", "light"] as const) {
+    for (const { fg, bg, min } of minimums) {
+      test(`${fg} sobre ${bg} no tema ${theme} tem ${String(min).replace(".", ",")}:1 ou mais`, () => {
+        const palette = jsonPalette(theme);
+        expect(contrast(palette[fg], palette[bg])).toBeGreaterThanOrEqual(min);
       });
     }
   }
