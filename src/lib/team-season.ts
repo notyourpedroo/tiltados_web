@@ -4,7 +4,7 @@
 // seu período.
 import type { ChartSeries, ChartSession } from "@/components/ProgressionChart";
 import { chartSessions } from "./chart";
-import type { SeasonData } from "./season";
+import type { SeasonData, Session } from "./season";
 
 /** Dados da temporada de que o perfil da equipe precisa. */
 export type TeamSeasonData = Pick<SeasonData, "sessions" | "results">;
@@ -27,8 +27,21 @@ export interface TeamStats {
   bothScored: number;
 }
 
+/** Uma Sessão disputada pela equipe. */
+export interface TeamSession {
+  session: Session;
+  /** Pilotos que correram pela equipe na Sessão, em ordem de chegada. */
+  drivers: { driverId: number; position: number }[];
+  /** Pontos da equipe na Sessão. */
+  points: number;
+  /** Pontos acumulados pela equipe até esta Sessão, inclusive. */
+  total: number;
+}
+
 export interface TeamProfile {
   stats: TeamStats;
+  /** Sessões disputadas pela equipe, em ordem. */
+  sessions: TeamSession[];
 }
 
 /** Perfil da equipe na temporada. */
@@ -62,7 +75,24 @@ export function teamProfile(data: TeamSeasonData, teamId: number): TeamProfile {
     if (has(1)) stats.wins++;
     if (has(1) && has(2)) stats.oneTwos++;
   }
-  return { stats };
+  return { stats, sessions: teamSessions(data, teamId) };
+}
+
+/** Sessões disputadas pela equipe, com os pontos dela em cada uma e o acumulado. */
+function teamSessions(data: TeamSeasonData, teamId: number): TeamSession[] {
+  const sessions: TeamSession[] = [];
+  let total = 0;
+  for (const session of data.sessions) {
+    const own = (data.results[session.id] ?? []).filter((r) => r.teamId === teamId);
+    if (!own.length) continue;
+    const points = own.reduce((sum, r) => sum + r.points, 0);
+    total += points;
+    const drivers = own
+      .map((r) => ({ driverId: r.driverId, position: r.position }))
+      .sort((a, b) => a.position - b.position);
+    sessions.push({ session, drivers, points, total });
+  }
+  return sessions;
 }
 
 /**
