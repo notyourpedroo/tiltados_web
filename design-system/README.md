@@ -65,8 +65,11 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 ## Acessibilidade
 
 - O anel de foco do gráfico é de 2px em `text-2`, com `radius-lg`.
-- Contraste mínimo nos dois temas, conferido pelo `tokens.test.ts` a partir do `tokens.json`: `text` 12:1 ou mais sobre `bg`, `surface` e `surface-2`; `text-2` 7:1 ou mais sobre os mesmos três; `muted` 4,5:1 ou mais sobre `bg` e `surface`; cada `team-*` 3:1 ou mais sobre `surface` (linhas e marcas, não texto); `series-rest` 1,5:1 ou mais sobre `surface`, só para a linha aparecer.
-- Pares que ficam abaixo de 4,5:1 e foram mantidos como estão no código: `accent` como texto sobre `bg` (3,81:1 no tema escuro e 4,48:1 no claro) e `muted` sobre `surface-2` (4,16 e 4,43).
+- Contraste mínimo nos dois temas, conferido pelo `tokens.test.ts` a partir do `tokens.json`: `text` 12:1 ou mais sobre `bg`, `surface` e `surface-2`; `text-2` 7:1 ou mais sobre os mesmos três; `muted` 4,5:1 ou mais sobre `bg` e `surface`; `accent` e `gold` como texto 4,5:1 ou mais sobre `bg` e `surface` (fora `accent` no tema escuro); cada `team-*` 3:1 ou mais sobre `surface` (linhas e marcas, não texto); `series-rest` 1,5:1 ou mais sobre `surface`, só para a linha aparecer.
+- Pares que ficam abaixo de 4,5:1 e foram mantidos como estão no código:
+  - `accent` como texto no tema escuro (3,81:1 sobre `bg` e 3,40:1 sobre `surface`): só em sobretítulos curtos.
+  - `bronze`, `gain` e `loss` sobre `bg` no claro (4,39, 4,38 e 4,31): ficam só em cards e tabelas, onde passam de 4,5:1.
+  - No hover (`surface-2`): `muted` (4,16 no escuro e 4,43 no claro) e os textos coloridos. No claro: `silver` 4,40, `purple` 4,33, `accent` 4,27, `gold` 4,25, `bronze` 4,12, `gain` 4,11 e `loss` 4,04. No escuro: `purple` 4,18 e `accent` 3,04.
 - Cor nunca é o único sinal: posições ganhas e perdidas têm seta, status têm ícone e rótulo, o companheiro de equipe no gráfico tem tracejado.
 
 ## Componentes

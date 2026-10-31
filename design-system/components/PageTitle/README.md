@@ -14,6 +14,6 @@ Uma vez no topo de cada página, antes de qualquer conteúdo.
 - `eyebrow` em `accent`, 14px bold, espaçado; título em `page-title` (30px no celular, 48px no desktop), `space-8` abaixo.
 
 ## Evite
-- Sobretítulo longo: sobre `bg`, o `accent` como texto fica em 3,81:1 no tema escuro e 4,48:1 no claro.
+- Sobretítulo longo: no tema escuro o `accent` como texto fica em 3,81:1 sobre `bg`.
 
 Fonte: `src/components/ui.tsx` · prévia estática.
