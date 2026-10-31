@@ -81,6 +81,12 @@ export interface TeamMarkProps {
 export type SprintBadgeProps = Record<string, never>;
 /** Sem propriedades. */
 export type FastestLapBadgeProps = Record<string, never>;
+export interface DriverPositionBadgeProps {
+  /** Primeiro nome do piloto. */
+  name: string;
+  /** Posição de chegada na Sessão; o selo escreve o ordinal ("2º"). */
+  position: number;
+}
 
 /** Chance de título (src/components/chance.tsx) */
 export interface ChanceView {

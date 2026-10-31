@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ordinal } from "@/lib/format";
 import type { TeamLogo as TeamLogoSrc } from "@/lib/teams";
 import type { ReactNode } from "react";
 
@@ -167,10 +168,19 @@ export function StatTile({
   );
 }
 
+/** Estilo dos selos neutros: Sprint e piloto com posição. */
+const BADGE =
+  "rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-text-2";
+
 export function SprintBadge() {
+  return <span className={BADGE}>Sprint</span>;
+}
+
+/** Selo de um piloto com a posição dele numa Sessão, ex.: "Matheus 2º". */
+export function DriverPositionBadge({ name, position }: { name: string; position: number }) {
   return (
-    <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-text-2">
-      Sprint
+    <span className={`${BADGE} whitespace-nowrap`}>
+      {name} <span className="tabular text-text">{ordinal(position)}</span>
     </span>
   );
 }
