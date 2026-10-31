@@ -246,6 +246,111 @@ describe("Perfil da equipe", () => {
   });
 });
 
+describe("Pilotos da equipe e duelos", () => {
+  test("piloto que troca de equipe é Piloto das duas, cada uma com só os pontos que ele fez por ela", () => {
+    const r1 = session(1, 1);
+    const sprint = session(2, 2, true);
+    const r2 = session(3, 2);
+    const data = season(
+      [],
+      [r1, [result(r1, 10, FERRARI, 1), result(r1, 11, MCLAREN, 2), result(r1, 12, FERRARI, 3)]],
+      // O piloto 11 passa da McLaren para a Ferrari; o 12 vai para a McLaren.
+      [sprint, [result(sprint, 11, FERRARI, 1), result(sprint, 12, MCLAREN, 2), result(sprint, 10, FERRARI, 3)]],
+      [r2, [result(r2, 12, MCLAREN, 1), result(r2, 10, FERRARI, 2), result(r2, 11, FERRARI, 4)]],
+    );
+
+    const ferrari = teamProfile(data, FERRARI);
+    const mclaren = teamProfile(data, MCLAREN);
+
+    expect(ferrari.drivers.map((d) => [d.id, d.points])).toEqual([
+      [10, 25 + 6 + 18],
+      [11, 8 + 12],
+      [12, 15],
+    ]);
+    expect(mclaren.drivers.map((d) => [d.id, d.points])).toEqual([
+      [12, 7 + 25],
+      [11, 18],
+    ]);
+    const sum = (p: typeof ferrari) => p.drivers.reduce((total, d) => total + d.points, 0);
+    expect(sum(ferrari)).toBe(ferrari.stats.points);
+    expect(sum(mclaren)).toBe(mclaren.stats.points);
+  });
+
+  test("só os pilotos que a equipe tem no cadastro vêm marcados como Dupla", () => {
+    const r1 = session(1, 1);
+    const r2 = session(2, 2);
+    const data = season(
+      [],
+      [r1, [result(r1, 10, FERRARI, 1), result(r1, 12, FERRARI, 2), result(r1, 11, MCLAREN, 3)]],
+      // Depois da troca, o 11 corre pela Ferrari e o 12 pela McLaren, como no cadastro.
+      [r2, [result(r2, 11, FERRARI, 1), result(r2, 12, MCLAREN, 2), result(r2, 10, FERRARI, 3)]],
+    );
+    data.drivers = {
+      10: { id: 10, name: "Matheus", teamId: FERRARI },
+      11: { id: 11, name: "Gabriel", teamId: FERRARI },
+      12: { id: 12, name: "Lucas", teamId: MCLAREN },
+    };
+
+    expect(teamProfile(data, FERRARI).drivers.map((d) => [d.id, d.lineup])).toEqual([
+      [10, true],
+      [11, true],
+      [12, false],
+    ]);
+    expect(teamProfile(data, MCLAREN).drivers.map((d) => [d.id, d.lineup])).toEqual([
+      [12, true],
+      [11, false],
+    ]);
+  });
+
+  test("equipe com três pilotos tem um duelo por par que correu junto por ela, do par com mais Sessões juntos para o com menos", () => {
+    const r1 = session(1, 1);
+    const r2 = session(2, 2);
+    const sprint = session(3, 3, true);
+    const r3 = session(4, 3);
+    const r4 = session(5, 4);
+    const data = season(
+      [],
+      [r1, [result(r1, 10, FERRARI, 1), result(r1, 12, MCLAREN, 2), result(r1, 11, FERRARI, 3)]],
+      [r2, [result(r2, 11, FERRARI, 1), result(r2, 10, FERRARI, 2)]],
+      [sprint, [result(sprint, 10, FERRARI, 4), result(sprint, 11, FERRARI, 5)]],
+      // O 12 entra na Ferrari no lugar do 11, que vai para a McLaren: os dois nunca correm juntos por ela.
+      [r3, [result(r3, 12, FERRARI, 1), result(r3, 11, MCLAREN, 2), result(r3, 10, FERRARI, 6)]],
+      [r4, [result(r4, 12, FERRARI, 1), result(r4, 10, FERRARI, 2), result(r4, 11, MCLAREN, 3)]],
+    );
+
+    const { drivers, duels } = teamProfile(data, FERRARI);
+
+    expect(drivers.map((d) => [d.id, d.points])).toEqual([
+      [10, 25 + 18 + 5 + 8 + 18],
+      [12, 25 + 25],
+      [11, 15 + 25 + 4],
+    ]);
+    expect(duels).toEqual([
+      { drivers: [{ id: 10, ahead: 2 }, { id: 11, ahead: 1 }], sessions: 3 },
+      { drivers: [{ id: 10, ahead: 0 }, { id: 12, ahead: 2 }], sessions: 2 },
+    ]);
+  });
+
+  test("equipe sem Sessão disputada fica sem Pilotos da equipe e sem duelos, mesmo com Dupla no cadastro", () => {
+    const race = session(1, 1);
+    const data = season([], [race, [result(race, 10, FERRARI, 1), result(race, 20, MCLAREN, 2)]]);
+    data.drivers = { 30: { id: 30, name: "Lucas", teamId: WILLIAMS } };
+
+    const { drivers, duels } = teamProfile(data, WILLIAMS);
+
+    expect(drivers).toEqual([]);
+    expect(duels).toEqual([]);
+    expect(teamProfile(season([]), WILLIAMS)).toMatchObject({ drivers: [], duels: [] });
+  });
+
+  test("piloto sozinho pela equipe não tem duelo", () => {
+    const race = session(1, 1);
+    const data = season([], [race, [result(race, 10, FERRARI, 1), result(race, 20, MCLAREN, 2)]]);
+
+    expect(teamProfile(data, FERRARI).duels).toEqual([]);
+  });
+});
+
 describe("Evolução dos construtores", () => {
   test("soma os pontos de cada equipe após cada Sessão, na ordem da classificação de construtores", () => {
     const ferrari = team(FERRARI, "Ferrari");
