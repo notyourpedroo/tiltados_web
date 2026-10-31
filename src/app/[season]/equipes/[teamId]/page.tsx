@@ -136,7 +136,7 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
         <StatTile
           label="Dois nos pontos"
           value={stats.bothScored}
-          sub={stats.bothScored === 1 ? "sessão" : "sessões"}
+          sub={`de ${plural(sessions.length, "sessão disputada", "sessões disputadas")}`}
         />
       </div>
 
