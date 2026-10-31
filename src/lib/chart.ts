@@ -1,9 +1,18 @@
 import type { ChartSeries, ChartSession } from "@/components/ProgressionChart";
-import type { SeasonData } from "./season";
+import type { SeasonData, Session } from "./season";
 
 /** "GP da China" → "China". */
 export function shortGpName(gpName: string): string {
   return gpName.replace(/^GP (da|de|do|dos|das) /, "");
+}
+
+/** Sessões disputadas no formato do eixo X do gráfico de evolução. */
+export function chartSessions(sessions: Session[]): ChartSession[] {
+  return sessions.map((s) => ({
+    label: shortGpName(s.gpName),
+    round: s.round,
+    isSprint: s.isSprint,
+  }));
 }
 
 /** Dados do gráfico de evolução do campeonato, na ordem da classificação. */
@@ -12,11 +21,7 @@ export function chartData(data: SeasonData): {
   series: ChartSeries[];
 } {
   return {
-    sessions: data.sessions.map((s) => ({
-      label: shortGpName(s.gpName),
-      round: s.round,
-      isSprint: s.isSprint,
-    })),
+    sessions: chartSessions(data.sessions),
     series: data.progression.map((p, i) => {
       const teamId = data.drivers[p.driverId]?.teamId;
       // Tracejado se um companheiro de equipe estiver à frente na classificação.
