@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ChanceBadge, ChanceBar } from "@/components/chance";
 import { HideOnError } from "@/components/HideOnError";
+import { LicenseCard } from "@/components/LicenseCard";
+import { TeamDrivers } from "@/components/TeamDrivers";
+import { TeammateDuel } from "@/components/TeammateDuel";
 import {
   Card,
   DriverPositionBadge,
@@ -19,7 +22,7 @@ import {
   th,
   tr,
 } from "@/components/ui";
-import { getTeamPrediction } from "@/lib/api";
+import { getSuperLicense, getTeamPrediction } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { shortGpName } from "@/lib/chart";
 import { formatDate, ordinal, plural } from "@/lib/format";
@@ -87,7 +90,23 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
   const standing = data.teamStandings.find((t) => String(t.team_id) === teamId);
   if (!standing) notFound();
   const style = teamStyle(standing.team_name);
-  const { stats, sessions } = teamProfile(data, standing.team_id);
+  const { stats, sessions, drivers, duels } = teamProfile(data, standing.team_id);
+  const driverName = (id: number) =>
+    data.drivers[id]?.name ??
+    data.driverStandings.find((d) => d.driver_id === id)?.driver_name ??
+    "";
+  const driverLink = (id: number) => (
+    <Link href={`/${data.season}/pilotos/${id}`} className="hover:underline">
+      {driverName(id)}
+    </Link>
+  );
+  // Superlicença de cada Piloto da equipe que aparece na rota, na ordem da lista.
+  const licenses =
+    data.season === "2026"
+      ? await getSuperLicense().then((all) =>
+          drivers.flatMap((d) => all.filter((l) => l.driver_id === d.id)),
+        )
+      : [];
 
   return (
     <>
@@ -129,6 +148,39 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
             <TeamTitleChance teamId={standing.team_id} />
           </Suspense>
         </HideOnError>
+      )}
+
+      {drivers.length > 0 && (
+        <section className="mt-10">
+          <SectionTitle>Pilotos da equipe</SectionTitle>
+          <TeamDrivers
+            season={data.season}
+            drivers={drivers.map((d) => ({ ...d, name: driverName(d.id) }))}
+          />
+          {duels.length > 0 && (
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {duels.map(({ drivers: [a, b] }) => (
+                <TeammateDuel
+                  key={`${a.id}-${b.id}`}
+                  label="Duelo entre companheiros de equipe"
+                  first={{ name: driverLink(a.id), ahead: a.ahead }}
+                  second={{ name: driverLink(b.id), ahead: b.ahead }}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {licenses.length > 0 && (
+        <section className="mt-10">
+          <SectionTitle>Superlicença</SectionTitle>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {licenses.map((l) => (
+              <LicenseCard key={l.driver_id} license={l} />
+            ))}
+          </div>
+        </section>
       )}
 
       <TeamSessions data={data} sessions={sessions} />
