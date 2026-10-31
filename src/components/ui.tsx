@@ -7,13 +7,16 @@ export function PageTitle({
   eyebrow,
   title,
   children,
+  aside,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
   children?: ReactNode;
+  /** Fica à direita do título no desktop e desce para baixo dele no celular (ex.: TeamCar). */
+  aside?: ReactNode;
 }) {
-  return (
-    <div className="mb-8">
+  const heading = (
+    <>
       {eyebrow && (
         <p className="mb-1 text-sm font-bold uppercase tracking-widest text-accent">
           {eyebrow}
@@ -23,6 +26,14 @@ export function PageTitle({
         {title}
       </h1>
       {children && <div className="mt-3 text-text-2">{children}</div>}
+    </>
+  );
+  if (!aside) return <div className="mb-8">{heading}</div>;
+  // O mesmo arranjo do card do líder: ao lado no desktop, abaixo no celular.
+  return (
+    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+      <div className="sm:shrink-0">{heading}</div>
+      {aside}
     </div>
   );
 }
