@@ -111,6 +111,35 @@ export function TeamLogo({
   );
 }
 
+/**
+ * Carro da equipe no Jogo da temporada (o endereço vem de `teamCar`). Decorativo
+ * e igual nos dois temas; sem Carro, não desenha nada. Ocupa a largura disponível
+ * até `width`, então encolhe em telas estreitas.
+ */
+export function TeamCar({
+  car,
+  width = 320,
+  className = "",
+}: {
+  car?: string;
+  width?: number;
+  className?: string;
+}) {
+  if (!car) return null;
+  return (
+    <Image
+      src={car}
+      alt=""
+      width={width}
+      // As renderizações têm cerca de 1200×260; a altura real vem do arquivo.
+      height={Math.round(width * 0.22)}
+      unoptimized
+      className={`object-contain ${className}`}
+      style={{ width: "100%", maxWidth: width, height: "auto" }}
+    />
+  );
+}
+
 /** Logo da equipe ou, para equipes sem logo, a barrinha na cor dela. */
 export function TeamMark({
   team,
