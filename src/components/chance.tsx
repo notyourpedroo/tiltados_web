@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { TeamCar } from "@/components/ui";
 import type { BadgeTone, ChanceView } from "@/lib/chance";
 
 // Campeão no dourado das medalhas (gold-fill com on-fill), Na disputa invertido como
@@ -56,6 +57,7 @@ export function ChanceRow({
   name,
   mark,
   team,
+  car,
   points,
   maxPoints,
   reason,
@@ -68,6 +70,8 @@ export function ChanceRow({
   mark: ReactNode;
   /** Equipe atual, para pilotos. */
   team?: ReactNode;
+  /** Carro da equipe no Jogo da temporada, de `teamCar`. */
+  car?: string;
   points: number;
   maxPoints: number;
   reason: string;
@@ -92,7 +96,13 @@ export function ChanceRow({
         {mark}
         <span className={`min-w-0 truncate text-lg font-black ${tone}`}>{name}</span>
         {team && <span className="hidden text-sm text-muted sm:inline">{team}</span>}
-        <span className="ml-auto">
+        <span className="ml-auto flex shrink-0 items-center gap-3">
+          {/* Carro numa coluna de 100 px junto ao número, só a partir de 640 px; sem Carro, nada ocupa o lugar. */}
+          {car && (
+            <span className="hidden w-25 sm:block">
+              <TeamCar car={car} width={100} />
+            </span>
+          )}
           {decided ? (
             <ChanceBadge view={view} />
           ) : (
