@@ -146,6 +146,14 @@ export interface ChanceRowProps {
   decided: boolean;
 }
 
+export interface TitleChanceCardProps {
+  /** "Chance de título" (piloto) ou "Chance de título de construtores" (equipe). */
+  title: string;
+  view: ChanceView;
+  /** Motivo da Chance de título. */
+  reason: string;
+}
+
 /** Classificação */
 export interface DriverStandingsTableProps {
   /** Temporada derivada (SeasonData, de getSeason em src/lib/season.ts). */

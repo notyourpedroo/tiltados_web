@@ -1,6 +1,6 @@
 # ChanceRow
 
-Linha de um piloto ou equipe na página Chance de título (`/2026/titulo`), com as peças ChanceBadge (selo de status) e ChanceBar (medidor), que também aparecem no bloco da página do piloto.
+Linha de um piloto ou equipe na página Chance de título (`/2026/titulo`), com as peças ChanceBadge (selo de status) e ChanceBar (medidor), que também compõem o TitleChanceCard dos perfis do piloto e da equipe.
 
 ## Composição
 - Item de lista dentro de um Card, separado por borda `line`; padding `space-4`.
