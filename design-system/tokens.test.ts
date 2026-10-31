@@ -87,19 +87,30 @@ function contrast(a: string, b: string): number {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-// Mínimos do design system (README, seção Acessibilidade). Ficam de fora os pares já
-// documentados como exceção: accent como texto no tema escuro e muted sobre surface-2.
+// Mínimos do design system (README, seção Acessibilidade). Ficam fora da lista os pares
+// documentados abaixo de 4,5:1: muted e os textos coloridos sobre surface-2 (hover).
+// accent como texto no tema escuro entra na lista, mas como exceção explícita.
 const neutrals = ["bg", "surface", "surface-2"];
 const teams = Object.keys(jsonPalette("dark")).filter((name) => name.startsWith("team-"));
 const minimums: { fg: string; bg: string; min: number }[] = [
   ...neutrals.map((bg) => ({ fg: "text", bg, min: 12 })),
   ...neutrals.map((bg) => ({ fg: "text-2", bg, min: 7 })),
   ...["bg", "surface"].map((bg) => ({ fg: "muted", bg, min: 4.5 })),
+  // Texto colorido direto no fundo da página e no card: sobretítulos, "Líder do
+  // campeonato", "Título decidido".
+  ...["accent", "gold"].flatMap((fg) => ["bg", "surface"].map((bg) => ({ fg, bg, min: 4.5 }))),
   // Cores de equipe são linhas e marcas, não texto.
   ...teams.map((fg) => ({ fg, bg: "surface", min: 3 })),
   // Linhas sem destaque: só precisam aparecer, sem competir com as destacadas.
   { fg: "series-rest", bg: "surface", min: 1.5 },
 ];
+
+/** Pares abaixo do mínimo mantidos de propósito, documentados no README (Acessibilidade). */
+const exceptions: Record<Theme, string[]> = {
+  // accent como texto: 3,81:1 sobre bg e 3,40:1 sobre surface; só em sobretítulos curtos.
+  dark: ["accent sobre bg", "accent sobre surface"],
+  light: [],
+};
 
 describe("Contraste dos tokens de cor", () => {
   test("a razão segue a fórmula WCAG", () => {
@@ -110,7 +121,8 @@ describe("Contraste dos tokens de cor", () => {
 
   for (const theme of ["dark", "light"] as const) {
     for (const { fg, bg, min } of minimums) {
-      test(`${fg} sobre ${bg} no tema ${theme} tem ${String(min).replace(".", ",")}:1 ou mais`, () => {
+      const known = exceptions[theme].includes(`${fg} sobre ${bg}`);
+      test.skipIf(known)(`${fg} sobre ${bg} no tema ${theme} tem ${String(min).replace(".", ",")}:1 ou mais`, () => {
         const palette = jsonPalette(theme);
         expect(contrast(palette[fg], palette[bg])).toBeGreaterThanOrEqual(min);
       });

@@ -57,7 +57,7 @@
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
-    --bg: #e4e5eb;
+    --bg: #e6e7ec;
     --surface: #f1f2f5;
     --surface-2: #dfe0e7;
     --line: #cfd0d9;
@@ -89,7 +89,7 @@
 /* …ou escolhido explicitamente pelo botão de tema. */
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #e4e5eb;
+  --bg: #e6e7ec;
   --surface: #f1f2f5;
   --surface-2: #dfe0e7;
   --line: #cfd0d9;
