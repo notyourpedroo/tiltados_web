@@ -8,7 +8,7 @@ Carro da equipe: o carro dela no Jogo da temporada (em 2026, o F1 25, com os car
 - `className`: para encaixar o Carro no layout (ex.: `flex-1 min-w-0` ao lado do nome).
 
 ## Faça
-- Use onde se "abre" um piloto ou uma equipe: card do líder (inclusive como Campeão), cabeçalho do perfil do piloto e da equipe, linhas da Chance de título.
+- Use onde se "abre" um piloto ou uma equipe: card do líder (inclusive como Campeão), cabeçalho do perfil do piloto, linhas da Chance de título (ChanceRow).
 - Tamanhos: até 320px nos cards grandes, ao lado do nome no desktop e abaixo dele no celular; cerca de 100px nas linhas da Chance de título.
 - Sempre com o nome da equipe em texto por perto: o Carro é decorativo (`alt=""`).
 - Peça o endereço sempre a `teamCar`: ela sabe o Jogo de cada temporada e nunca devolve o Carro de outro ano.
