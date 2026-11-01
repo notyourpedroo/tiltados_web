@@ -71,7 +71,8 @@ $env:TILTADOS_API_URL = "http://127.0.0.1:8010"; npm run dev -- --port 3002
 ```
 
 Cada fixture em `scripts/fixtures/` é um objeto `{ "/rota": resposta }`. Para criar uma, copie a resposta
-real da rota e altere os campos.
+real da rota e altere os campos. Ao trocar de fixture, reinicie também o `npm run dev`: com o `cacheComponents`,
+o servidor de dev guarda as respostas da API e continua mostrando as da fixture anterior.
 
 As rotas, o formato das respostas e as regras estão no README da API ("Endpoints Disponíveis", "Regras de
 Negócio" e "Exemplos de Uso e Respostas"); o código parte do `main.py`.
