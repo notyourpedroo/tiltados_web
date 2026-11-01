@@ -5,4 +5,4 @@ Ficam em `public/cars/<ano do Carro>/<slug>.webp`, com o mesmo slug das logos (`
 - 2024: Red Bull, Ferrari, Alpine, McLaren e Kick Sauber.
 - 2025: essas cinco mais Mercedes e Racing Bulls.
 
-A mesma imagem serve aos dois temas, sem versão clara e escura. Use só onde se "abre" um piloto ou uma equipe (card do líder, cabeçalhos dos perfis do piloto e da equipe, linhas da Chance de título), sempre com o nome da equipe em texto por perto: o Carro é decorativo. Os cards da página Equipes, as tabelas, os resultados e a Superlicença ficam só com o logo. Equipe fora do Jogo da temporada não tem Carro e não ganha o de outro ano.
+A mesma imagem serve aos dois temas, sem versão clara e escura. Onde o Carro aparece, e onde fica só o logo, está na ficha do TeamCar (`components/TeamCar/README.md`). Equipe fora do Jogo da temporada não tem Carro e não ganha o de outro ano.

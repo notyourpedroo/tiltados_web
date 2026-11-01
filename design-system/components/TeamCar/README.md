@@ -8,10 +8,10 @@ Carro da equipe: o carro dela no Jogo da temporada (em 2026, o F1 25, com os car
 - `className`: para encaixar o Carro no layout (ex.: `flex-1 min-w-0` ao lado do nome).
 
 ## Nos cards grandes: WithTeamCar
-`WithTeamCar` recebe `car` e, como `children`, o bloco do nome. Põe o Carro de até 320px à direita do nome, alinhado à base dele, a partir de 640px; ali o Carro nunca fica abaixo de 40% da largura (ou dos 320px), e um nome longo como "Stake F1 Team Kick Sauber" quebra linha em vez de empurrar a página para os lados. No celular, abaixo do nome, em largura total até 320px. Sem Carro, devolve só o nome. É o arranjo do card do líder e do PageTitle (prop `car`, nos perfis do piloto e da equipe); use-o em vez de repetir as classes.
+`WithTeamCar` recebe `car` e, como `children`, o bloco do nome. Põe o Carro de até 320px à direita do nome, alinhado à base dele, a partir de 640px; ali o Carro nunca fica abaixo de 40% da largura (ou dos 320px), e um nome longo como "Stake F1 Team Kick Sauber" quebra linha em vez de empurrar a página para os lados. No celular, abaixo do nome, em largura total até 320px. Sem Carro, devolve só o nome. É o arranjo do card do líder e do PageTitle (prop `car`); use-o em vez de repetir as classes.
 
 ## Faça
-- Use onde se "abre" um piloto ou uma equipe: card do líder (inclusive como Campeão), cabeçalhos dos perfis do piloto e da equipe, linhas da Chance de título (ChanceRow).
+- Use onde se "abre" um piloto ou uma equipe: card do líder (inclusive como Campeão), cabeçalhos dos perfis do piloto e da equipe, linhas da Chance de título (ChanceRow). Esta é a única lista de usos do Carro: um uso novo entra só aqui.
 - Tamanhos: até 320px nos cards grandes, pelo WithTeamCar; cerca de 100px nas linhas da Chance de título.
 - Sempre com o nome da equipe em texto por perto: o Carro é decorativo (`alt=""`).
 - Peça o endereço sempre a `teamCar`: ela sabe o Jogo de cada temporada e nunca devolve o Carro de outro ano.
