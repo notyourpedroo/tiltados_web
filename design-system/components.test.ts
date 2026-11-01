@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
-import { buildIndex } from "../scripts/design-system-index.mjs";
+import { buildIndex, readFichas } from "../scripts/design-system-index.mjs";
 
 // Componente novo ou alterado leva a ficha junto (CODING_STANDARDS.md, Design system).
 // Este teste confere a parte mecânica: cada componente exportado de src/components/ tem
@@ -42,9 +42,7 @@ function exportedComponents(): string[] {
     .filter((name) => /[a-z]/.test(name) && !NOT_VISUAL.has(name));
 }
 
-const fichas = readdirSync(join(root, "design-system/components"), { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name);
+const fichas = readFichas().map((ficha) => ficha.name);
 const previewIndex = read("design-system/index.html");
 const propTypes = read("design-system/components/index.d.ts");
 

@@ -27,7 +27,9 @@ export function readFichas() {
     .map(({ name }) => {
       const dir = join(componentsDir, name);
       const files = readdirSync(dir);
-      const meta = readFileSync(join(dir, "preview.html"), "utf8").match(/@dsCard(?: group="([^"]+)")? height=(\d+)/);
+      if (!files.includes("preview.html")) throw new Error(`${name}/ sem preview.html`);
+      const firstLine = readFileSync(join(dir, "preview.html"), "utf8").split("\n", 1)[0];
+      const meta = firstLine.match(/^<!-- @dsCard(?: group="([^"]+)")? height=(\d+) -->/);
       if (!meta) throw new Error(`${name}/preview.html sem o comentário @dsCard na primeira linha`);
       const group = meta[1] ?? "Capa";
       if (!GROUPS.includes(group)) throw new Error(`${name}: grupo desconhecido "${group}"`);
@@ -43,7 +45,9 @@ export function fichasHtml(fichas = readFichas()) {
     if (inGroup.length === 0) continue;
     lines.push(`<section><h2>${group}</h2>`);
     for (const { name, height, guide } of inGroup) {
-      const caption = guide ? `${name} <a href="components/${name}/README.md">guia</a>` : group;
+      // A capa não é componente: a legenda é o nome da seção. Ficha sem guia mostra só o nome.
+      const label = group === "Capa" ? group : name;
+      const caption = guide ? `${label} <a href="components/${name}/README.md">guia</a>` : label;
       lines.push(
         `<figure><figcaption>${caption}</figcaption><iframe title="${name}" data-src="components/${name}/preview.html" style="height:${height}px" loading="lazy"></iframe></figure>`,
       );
