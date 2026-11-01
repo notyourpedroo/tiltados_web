@@ -155,8 +155,10 @@ export function WithTeamCar({ car, children }: { car?: string; children: ReactNo
   if (!car) return <>{children}</>;
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
-      <div className="sm:shrink-0">{children}</div>
-      <TeamCar car={car} width={320} className="sm:min-w-0 sm:flex-1" />
+      <div>{children}</div>
+      {/* O piso (40%, até os 320 px) faz um nome longo quebrar linha em vez de
+          espremer o Carro até sumir e empurrar a página para os lados. */}
+      <TeamCar car={car} width={320} className="sm:min-w-[min(40%,320px)] sm:flex-1" />
     </div>
   );
 }
