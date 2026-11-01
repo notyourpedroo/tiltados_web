@@ -32,10 +32,21 @@ async function get<T>(path: string): Promise<T> {
   cacheLife("minutes");
   cacheTag("tiltados-api");
 
-  const res = await fetch(`${API_URL}${path}`, {
-    headers: { Accept: "application/json" },
-    signal: AbortSignal.timeout(15_000),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(15_000),
+    });
+  } catch (err) {
+    // Sem resposta nenhuma, o suspeito costuma ser o endereço, não a API: um
+    // .env.local antigo ainda apontando para a porta 8000, por exemplo.
+    const cause = err instanceof Error ? (err.cause ?? err) : err;
+    throw new Error(
+      `Tiltados API inacessível em ${API_URL}${path} (${cause}). Confira TILTADOS_API_URL no .env.local; o formato atual está no .env.example.`,
+      { cause: err },
+    );
+  }
   if (!res.ok) {
     let detail = "";
     try {
