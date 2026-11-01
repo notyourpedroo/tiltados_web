@@ -34,3 +34,13 @@ A skill `mattpocock-skills:code-review`, apontada para o merge-base com a `main`
 - **Branch desatualizado**: `gh pr update-branch <pr> --rebase` e espere o CI passar de novo antes do merge.
 - **Algum item falhou**: comente no PR cada achado, com arquivo e o critério afetado, e devolva o PR ao implementador para corrigir no mesmo branch. A revisão recomeça do zero depois da correção.
 - **Dúvida que só o usuário resolve** (critério ambíguo, mudança fora do escopo que parece desejada): deixe o PR aberto, explique no PR e pergunte ao usuário. Na dúvida, o PR espera.
+
+## Spec com vários tickets
+
+Uma spec cujos tickets se bloqueiam entre si (a #29 e os #30 a #34) chega à `main` num PR só, a partir de um **branch de integração** `tipo/descricao-curta` criado do `origin/main`. O PR abre como rascunho depois do primeiro ticket integrado e traz um `Closes` para a spec e um para cada ticket. As regras acima valem para esse PR, com estas diferenças:
+
+- **Base do implementador**: o worktree parte do branch de integração, não da `main`. O implementador confere com `git merge-base --is-ancestor <integração> HEAD` e, se não for, faz `git reset --hard <integração>`.
+- **Antes de devolver**: o implementador faz `git rebase <integração>`, nunca merge, e roda lint, typecheck e testes de novo. O histórico continua linear.
+- **Integrar**: a sessão principal avança o branch de integração por fast-forward (`git branch -f <integração> <branch do ticket>` e push normal). Só quando o rebase do implementador ficou para trás é que um subagente refaz o rebase e resolve os conflitos.
+- **Tickets em paralelo no mesmo arquivo**: integre o que destrava os outros antes de despachar os dependentes, para eles partirem do módulo já unido.
+- **`main` andou com conflito**: o `gh pr update-branch --rebase` falha. Refaça o rebase num branch local, confira com `git range-diff`, e publique com `git push --force-with-lease=<integração>:<ponta antiga>` só depois do OK do usuário, que é quem autoriza reescrever o branch publicado.
