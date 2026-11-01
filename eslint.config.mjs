@@ -2,6 +2,8 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
+// Mudou uma regex abaixo? Acrescente o caso que ela deve barrar e o que deve deixar
+// passar na tabela do eslint.test.ts.
 // Regras de cor do design system (design-system/README.md, seção Cor) que dá para
 // conferir no texto das classes Tailwind e dos estilos.
 const colorRule = (selectorFor, message) => [
