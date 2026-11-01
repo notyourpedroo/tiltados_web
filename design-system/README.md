@@ -84,7 +84,10 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 - `tokens.json`: todos os tokens (cores dos dois temas, tipografia, espaços, raios, sombra e medidas), cada um com nota de uso. Os valores de cor espelham `src/app/globals.css`, que é a fonte usada pelo site.
 - `tokens.css`: os mesmos tokens como variáveis CSS (`--bg`, `--space-4`…) e uma classe por estilo de texto (`.page-title`, `.eyebrow`…), editados à mão junto com o `tokens.json` e o `src/app/globals.css`. O `tokens.test.ts` (no `npm test`) confere que as cores batem nos três.
 - `components/<Nome>/README.md`: guia de cada componente (quando usar, o que fornecer, faça e evite, onde está no código).
-- `components/<Nome>/preview.html`: prévia estática do componente, com dados reais de 2026. Abra direto no navegador; `?theme=light` mostra o tema claro.
+- `components/<Nome>/preview.html`: prévia estática do componente, com dados reais de 2026. Abra direto no navegador; `?theme=light` mostra o tema claro. É HTML escrito à mão:
+  - Logos e Carros vão embutidos em base64, gerados a partir de `public/`: `node -e "console.log('data:image/webp;base64,' + require('fs').readFileSync('public/cars/2025/mercedes.webp', 'base64'))"`. Logo tem duas versões, `team-logo only-dark` (`<slug>-white.webp`) e `team-logo only-light` (`<slug>.webp`).
+  - O arquivo está em CRLF no Windows: script que troca trechos casa `\r?\n`.
+  - A altura do cartão no comentário `@dsCard height=` se repete no iframe do `index.html`; o `components.test.ts` confere as duas.
 - `components/index.d.ts`: propriedades dos componentes, copiadas de `src/components/`.
 - `components/bundle.css`: estilos compartilhados das prévias.
 - `assets/Equipes.md`, `assets/Carros.md` e `assets/Site.md`: descrição das logos (`public/teams/`), dos Carros (`public/cars/`) e dos ícones (`src/app/`).
