@@ -31,4 +31,9 @@ printf '%s\n' "$MESSAGE" | LC_ALL=C grep -q "$(printf '[^\t -~]')" &&
 printf '%s\n' "$MESSAGE" | grep -Eiq '^co-authored-by:.*(claude|anthropic)' &&
   fail "remova a linha de co-autoria do Claude"
 
+# O GitHub transforma @nome numa mensagem de commit em menção ao usuário com esse
+# login (o "@dsCard" do 27398b1 virou link para um perfil alheio). E-mail passa.
+printf '%s\n' "$MESSAGE" | grep -Eq '(^|[^A-Za-z0-9._-])@[A-Za-z0-9]' &&
+  fail "tire o @ da frente do nome: o GitHub transforma @nome em mencao a um usuario"
+
 exit 0
