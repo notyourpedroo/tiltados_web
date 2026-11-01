@@ -21,7 +21,7 @@ export interface PageTitleProps {
   title: ReactNode;
   /** Subtítulo em text-2. */
   children?: ReactNode;
-  /** Carro da equipe, de `teamCar(nome, temporada)`, no arranjo do WithTeamCar. Ex.: perfil do piloto. Sem Carro, o título fica como sempre. */
+  /** Carro da equipe, de `teamCar(nome, temporada)`, no arranjo do WithTeamCar. Ex.: perfis do piloto e da equipe. Sem Carro, o título fica como sempre. */
   car?: string;
 }
 export interface SectionTitleProps {
