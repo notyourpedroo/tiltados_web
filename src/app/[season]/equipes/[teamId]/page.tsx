@@ -87,6 +87,7 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
   if (!standing) notFound();
   const style = teamStyle(standing.team_name);
   const { stats, sessions, drivers, duels } = teamProfile(data, standing.team_id);
+  const played = sessions.length > 0;
   const driverLink = (id: number) => (
     <Link href={`/${data.season}/pilotos/${id}`} className="hover:underline">
       {driverName(data, id)}
@@ -142,27 +143,51 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
         </HideOnError>
       )}
 
-      {drivers.length > 0 && (
-        <section className="mt-10">
-          <SectionTitle>Pilotos da equipe</SectionTitle>
-          <TeamDrivers
+      {/* Sem Sessão disputada, cada seção mantém o título e mostra o aviso no
+          lugar do conteúdo. */}
+      <section className="mt-10">
+        <SectionTitle>Pilotos da equipe</SectionTitle>
+        {played ? (
+          <>
+            <TeamDrivers
+              season={data.season}
+              drivers={drivers.map((d) => ({ ...d, name: driverName(data, d.id) }))}
+            />
+            {duels.length > 0 && (
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                {duels.map(({ drivers: [a, b] }) => (
+                  <TeammateDuel
+                    key={`${a.id}-${b.id}`}
+                    label="Duelo entre companheiros de equipe"
+                    first={{ name: driverLink(a.id), ahead: a.ahead }}
+                    second={{ name: driverLink(b.id), ahead: b.ahead }}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <NoSessions />
+        )}
+      </section>
+
+      <section className="mt-10">
+        <SectionTitle>Temporada em resumo</SectionTitle>
+        {played ? (
+          <SeasonStrip
             season={data.season}
-            drivers={drivers.map((d) => ({ ...d, name: driverName(data, d.id) }))}
+            cells={sessions.map(({ session: s, drivers, points }) => ({
+              session: s,
+              value: points,
+              position: drivers[0].position,
+              points,
+              title: `${s.name} — ${plural(points, "ponto", "pontos")}`,
+            }))}
           />
-          {duels.length > 0 && (
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {duels.map(({ drivers: [a, b] }) => (
-                <TeammateDuel
-                  key={`${a.id}-${b.id}`}
-                  label="Duelo entre companheiros de equipe"
-                  first={{ name: driverLink(a.id), ahead: a.ahead }}
-                  second={{ name: driverLink(b.id), ahead: b.ahead }}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-      )}
+        ) : (
+          <NoSessions />
+        )}
+      </section>
 
       {licenses.length > 0 && (
         <section className="mt-10">
@@ -175,84 +200,67 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
         </section>
       )}
 
-      <TeamSessions data={data} sessions={sessions} />
+      <section className="mt-10">
+        <SectionTitle>Resultados</SectionTitle>
+        {played ? <TeamResults data={data} sessions={sessions} /> : <NoSessions />}
+      </section>
     </>
   );
 }
 
-/**
- * Temporada em resumo e Resultados: a equipe Sessão a Sessão, com os pilotos
- * que correram por ela em cada uma.
- */
-function TeamSessions({ data, sessions }: { data: SeasonData; sessions: TeamSession[] }) {
-  if (!sessions.length) {
-    return (
-      <section className="mt-10">
-        <Card className="p-6 text-text-2">Nenhuma Sessão disputada ainda</Card>
-      </section>
-    );
-  }
-  return (
-    <>
-      <section className="mt-10">
-        <SectionTitle>Temporada em resumo</SectionTitle>
-        <SeasonStrip
-          season={data.season}
-          cells={sessions.map(({ session: s, drivers, points }) => ({
-            session: s,
-            value: points,
-            position: drivers[0].position,
-            points,
-            title: `${s.name} — ${plural(points, "ponto", "pontos")}`,
-          }))}
-        />
-      </section>
+/** Aviso no lugar do conteúdo das seções da equipe que ainda não correu. */
+function NoSessions() {
+  return <Card className="p-6 text-text-2">Nenhuma Sessão disputada ainda</Card>;
+}
 
-      <section className="mt-10">
-        <SectionTitle>Resultados</SectionTitle>
-        <Table>
-          <thead>
-            <tr>
-              <th className={`${th} w-12`}>R</th>
-              <th className={th}>Grande Prêmio</th>
-              <th className={th}>Data</th>
-              <th className={th}>Pilotos</th>
-              <th className={`${th} text-right`}>Pts</th>
-              <th className={`${th} text-right`}>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sessions.map(({ session: s, drivers, points, total }) => (
-              <tr key={s.id} className={tr}>
-                <td className={`${td} tabular font-bold text-muted`}>{s.round}</td>
-                <td className={td}>
-                  <Link
-                    href={`/${data.season}/corridas/${s.id}`}
-                    className="flex items-center gap-2 font-bold hover:underline"
-                  >
-                    {shortGpName(s.gpName)}
-                    {s.isSprint && <SprintBadge />}
-                  </Link>
-                </td>
-                <td className={`${td} tabular whitespace-nowrap text-text-2`}>
-                  {formatDate(s.date, false)}
-                </td>
-                <td className={td}>
-                  <span className="flex flex-wrap gap-1">
-                    {drivers.map((d) => (
-                      <DriverPositionBadge key={d.driverId} name={driverName(data, d.driverId)} position={d.position} />
-                    ))}
-                  </span>
-                </td>
-                <td className={`${td} tabular text-right font-bold`}>
-                  {points || <span className="font-normal text-muted">0</span>}
-                </td>
-                <td className={`${td} tabular text-right text-text-2`}>{total}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </section>
-    </>
+/** Resultados: a equipe Sessão a Sessão, com os pilotos que correram por ela em cada uma. */
+function TeamResults({ data, sessions }: { data: SeasonData; sessions: TeamSession[] }) {
+  return (
+    <Table>
+      <thead>
+        <tr>
+          <th className={`${th} w-12`}>R</th>
+          <th className={th}>Grande Prêmio</th>
+          <th className={th}>Data</th>
+          <th className={th}>Pilotos</th>
+          <th className={`${th} text-right`}>Pts</th>
+          <th className={`${th} text-right`}>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {sessions.map(({ session: s, drivers, points, total }) => (
+          <tr key={s.id} className={tr}>
+            <td className={`${td} tabular font-bold text-muted`}>{s.round}</td>
+            <td className={td}>
+              <Link
+                href={`/${data.season}/corridas/${s.id}`}
+                className="flex items-center gap-2 font-bold hover:underline"
+              >
+                {shortGpName(s.gpName)}
+                {s.isSprint && <SprintBadge />}
+              </Link>
+            </td>
+            <td className={`${td} tabular whitespace-nowrap text-text-2`}>
+              {formatDate(s.date, false)}
+            </td>
+            <td className={td}>
+              <span className="flex flex-wrap gap-1">
+                {drivers.map((d) => (
+                  <DriverPositionBadge
+                    key={d.driverId}
+                    name={driverName(data, d.driverId)}
+                    position={d.position}
+                  />
+                ))}
+              </span>
+            </td>
+            <td className={`${td} tabular text-right font-bold`}>
+              {points || <span className="font-normal text-muted">0</span>}
+            </td>
+            <td className={`${td} tabular text-right text-text-2`}>{total}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 }
