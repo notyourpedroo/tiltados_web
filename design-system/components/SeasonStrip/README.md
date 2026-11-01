@@ -11,4 +11,4 @@ Resumo da temporada no perfil do piloto e no da equipe: uma célula por sessão 
 - `season` e uma célula por Sessão disputada, com `value` (o número da célula), `position` (a que dá a medalha), `points` (com ou sem pontos) e `title`.
 - Na equipe sem Sessão disputada, a seção mantém o título "Temporada em resumo" e mostra "Nenhuma Sessão disputada ainda" no lugar das células, como Pilotos da equipe e Resultados.
 
-Fonte: `src/components/SeasonStrip.tsx`, usado em `src/app/[season]/pilotos/[driverId]/page.tsx` e `src/app/[season]/equipes/[teamId]/page.tsx` · prévia estática com o Matheus em 2026.
+Fonte: `src/components/SeasonStrip.tsx`, usado em `src/app/[season]/pilotos/[driverId]/page.tsx` e `src/app/[season]/equipes/[teamId]/page.tsx` · prévia estática com o Matheus e a Racing Bulls em 2026, até R16.
