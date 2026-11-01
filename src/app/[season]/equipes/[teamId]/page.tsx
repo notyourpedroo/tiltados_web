@@ -93,13 +93,6 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
       {driverName(data, id)}
     </Link>
   );
-  // Superlicença de cada Piloto da equipe que aparece na rota, na ordem da lista.
-  const licenses =
-    data.season === "2026"
-      ? await getSuperLicense().then((all) =>
-          drivers.flatMap((d) => all.filter((l) => l.driver_id === d.id)),
-        )
-      : [];
 
   return (
     <>
@@ -189,15 +182,13 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
         )}
       </section>
 
-      {licenses.length > 0 && (
-        <section className="mt-10">
-          <SectionTitle>Superlicença</SectionTitle>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {licenses.map((l) => (
-              <LicenseCard key={l.driver_id} license={l} />
-            ))}
-          </div>
-        </section>
+      {/* Como a Chance de título: se a rota de Superlicença falhar, só a seção some. */}
+      {data.season === "2026" && played && (
+        <HideOnError>
+          <Suspense fallback={null}>
+            <TeamLicenses driverIds={drivers.map((d) => d.id)} />
+          </Suspense>
+        </HideOnError>
       )}
 
       <section className="mt-10">
@@ -205,6 +196,23 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
         {played ? <TeamResults data={data} sessions={sessions} /> : <NoSessions />}
       </section>
     </>
+  );
+}
+
+/** Superlicença em 2026 de cada Piloto da equipe que aparece na rota, na ordem da lista. */
+async function TeamLicenses({ driverIds }: { driverIds: number[] }) {
+  const all = await getSuperLicense();
+  const licenses = driverIds.flatMap((id) => all.filter((l) => l.driver_id === id));
+  if (!licenses.length) return null;
+  return (
+    <section className="mt-10">
+      <SectionTitle>Superlicença</SectionTitle>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {licenses.map((l) => (
+          <LicenseCard key={l.driver_id} license={l} />
+        ))}
+      </div>
+    </section>
   );
 }
 
