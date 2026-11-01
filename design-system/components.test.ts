@@ -64,4 +64,11 @@ describe("Fichas do design system", () => {
     );
     if (fichaHas(ficha, "README.md")) expect(previewIndex).toContain(`href="components/${ficha}/README.md"`);
   });
+
+  // Sem a meta, a emulação de celular desenha a prévia com 980 px e esconde estouros.
+  test.each(fichas)("%s tem a meta viewport", (ficha) => {
+    expect(read(fichaFile(ficha, "preview.html"))).toContain(
+      '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    );
+  });
 });
