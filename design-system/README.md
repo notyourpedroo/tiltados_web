@@ -17,12 +17,12 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 
 - O site nasce escuro: o tema `dark` é o primeiro e o padrão. O tema `light` vale quando o sistema pede ou quando a pessoa escolhe no botão de tema.
 - Página em `bg`; cards e tabelas em `surface` com borda de 1px em `line`; destaque de linha (hover) e chips ativos em `surface-2`.
-- Texto em `text`, apoio em `text-2`, rótulos e eixos em `muted`. Não ponha `muted` sobre `surface-2` (fica abaixo de 4,5:1).
+- Texto em `text`, apoio em `text-2`, rótulos e eixos em `muted`. Não ponha `muted` sobre `surface-2` (fica abaixo do mínimo).
 - `accent` é o vermelho F1 e aparece pouco: faixa de 4px no topo, bloco do logotipo, sublinhado da aba ativa e sobretítulos. Nunca como fundo de botão nem em texto corrido. Texto sobre ele é sempre `on-accent`.
 - Pódio: `gold`, `silver` e `bronze` coloram o número da posição (1, 2, 3) e o rótulo "Líder do campeonato". Quando a medalha vira fundo (resumo da temporada), use `gold-fill`, `silver-fill`, `bronze-fill` com `on-fill` por cima, iguais nos dois temas.
 - `gain` (▲) e `loss` (▼) só para posições ganhas e perdidas e pontos deduzidos; a seta ou o sinal sempre acompanham a cor.
 - `purple` é exclusivo da volta mais rápida.
-- Status da Superlicença usam `status-regular`, `status-atencao`, `status-alerta`, `status-suspenso`, `status-cumprida`, sempre com ícone (✓, !, ‼, ⛔, ↩) e o rótulo escrito. Um status que o site não conhece usa `muted` com "?" (com `on-fill` por cima: 5,00:1 no tema escuro e 3,11:1 no claro, então só ícone) e o texto da API como rótulo. O trilho do medidor é a própria cor a 20% (`color-mix`). Nunca reaproveite essas cores para outra coisa.
+- Status da Superlicença usam `status-regular`, `status-atencao`, `status-alerta`, `status-suspenso`, `status-cumprida`, sempre com ícone (✓, !, ‼, ⛔, ↩) e o rótulo escrito. Um status que o site não conhece usa `muted` com "?" (com `on-fill` por cima, que no claro fica abaixo do mínimo, então só ícone) e o texto da API como rótulo. O trilho do medidor é a própria cor a 20% (`color-mix`). Nunca reaproveite essas cores para outra coisa.
 - Toda cor sai de um token: no código, nenhum hex fora de `globals.css`.
 - Equipes usam `team-*`: barrinha vertical de 4px ao lado do nome, faixa de 4px no topo dos cards e a linha no gráfico. Equipe nova sem cor cadastrada cai em `team-other`.
 
@@ -66,11 +66,8 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 ## Acessibilidade
 
 - O anel de foco do gráfico é de 2px em `text-2`, com `radius-lg`.
-- Contraste mínimo nos dois temas, conferido pelo `tokens.test.ts` a partir do `tokens.json`: `text` 12:1 ou mais sobre `bg`, `surface` e `surface-2`; `text-2` 7:1 ou mais sobre os mesmos três; `muted` 4,5:1 ou mais sobre `bg` e `surface`; `accent` e `gold` como texto 4,5:1 ou mais sobre `bg` e `surface` (fora `accent` no tema escuro); cada `team-*` 3:1 ou mais sobre `surface` (linhas e marcas, não texto); `series-rest` 1,5:1 ou mais sobre `surface`, só para a linha aparecer.
-- Pares que ficam abaixo de 4,5:1 e foram mantidos como estão no código:
-  - `accent` como texto no tema escuro (3,81:1 sobre `bg` e 3,40:1 sobre `surface`): só em sobretítulos curtos.
-  - `bronze`, `gain` e `loss` sobre `bg` no claro (4,39, 4,38 e 4,31): ficam só em cards e tabelas, onde passam de 4,5:1.
-  - No hover (`surface-2`): `muted` (4,16 no escuro e 4,43 no claro) e os textos coloridos. No claro: `silver` 4,40, `purple` 4,33, `accent` 4,27, `gold` 4,25, `bronze` 4,12, `gain` 4,11 e `loss` 4,04. No escuro: `purple` 4,18 e `accent` 3,04.
+- Contraste mínimo: toda cor do `tokens.json` que vira texto, linha ou tinta declara no campo `contrast` o mínimo (`min`), os fundos em que aparece (`on`) e, por tema, os fundos em que fica abaixo de propósito (`below`). O `tokens.test.ts` confere cada par nos dois temas, reprova cor que não tem `contrast` nem é fundo de outra e reprova exceção do `below` que passou do mínimo (aí ela sai da lista). Texto colorido e tinta ficam no AA (4,5:1); as cores de equipe, que são linhas e marcas, ficam em 3:1.
+- As exceções do `below` seguem uma regra de uso: `muted` e os textos coloridos ficam fora das linhas com hover (`surface-2`); `accent` no escuro só em sobretítulos curtos; `bronze`, `gain` e `loss` só em cards e tabelas; `on-fill` sobre `status-suspenso`, `status-cumprida` e `muted` só como ícone. A documentação cita o mínimo, não a razão exata de cada par, que o teste calcula a cada mudança de paleta.
 - Cor nunca é o único sinal: posições ganhas e perdidas têm seta, status têm ícone e rótulo, o companheiro de equipe no gráfico tem tracejado.
 
 ## Componentes

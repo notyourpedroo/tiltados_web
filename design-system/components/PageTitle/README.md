@@ -16,6 +16,6 @@ Uma vez no topo de cada página, antes de qualquer conteúdo.
 - Equipe sem Carro no Jogo (`teamCar` devolve `undefined`): o título fica como sempre, sem espaço vazio.
 
 ## Evite
-- Sobretítulo longo: no tema escuro o `accent` como texto fica em 3,81:1 sobre `bg`.
+- Sobretítulo longo: no tema escuro o `accent` como texto fica abaixo do mínimo sobre `bg`.
 
 Fonte: `src/components/ui.tsx` · prévia estática.
