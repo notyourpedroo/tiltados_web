@@ -84,10 +84,10 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 - `components/<Nome>/preview.html`: prévia estática do componente, com dados reais de 2026. Abra direto no navegador; `?theme=light` mostra o tema claro. É HTML escrito à mão:
   - Logos e Carros vão embutidos em base64, gerados a partir de `public/`: `node -e "console.log('data:image/webp;base64,' + require('fs').readFileSync('public/cars/2025/mercedes.webp', 'base64'))"`. Logo tem duas versões, `team-logo only-dark` (`<slug>-white.webp`) e `team-logo only-light` (`<slug>.webp`).
   - O arquivo está em CRLF no Windows: script que troca trechos casa `\r?\n`.
-  - A altura do cartão no comentário `@dsCard height=` se repete no iframe do `index.html`; o `components.test.ts` confere as duas.
+  - A primeira linha é o comentário `<!-- @dsCard group="<seção>" height=<px> -->`. Dele sai a entrada da ficha no `index.html`: depois de criar ou mudar uma prévia, rode `npm run ds:index`.
 - `components/index.d.ts`: propriedades dos componentes, copiadas de `src/components/`.
 - `components/bundle.css`: estilos compartilhados das prévias.
 - `assets/Equipes.md`, `assets/Carros.md` e `assets/Site.md`: descrição das logos (`public/teams/`), dos Carros (`public/cars/`) e dos ícones (`src/app/`).
-- `index.html`: todas as prévias numa página só, com troca de tema.
+- `index.html`: todas as prévias numa página só, com troca de tema. As seções de fichas são geradas por `npm run ds:index` (`scripts/design-system-index.mjs`); o resto do arquivo é editado à mão.
 
 Quando uma cor, fonte ou componente mudar no código, atualize esta pasta junto para ela continuar descrevendo o site.

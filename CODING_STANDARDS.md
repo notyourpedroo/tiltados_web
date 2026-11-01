@@ -5,7 +5,7 @@ Regras de julgamento para a revisão. As regras mecânicas ficam no ESLint (`esl
 ## Design system
 
 - Toda tela e componente segue o `design-system/README.md` (voz, cor, tipografia, espaço, acessibilidade). Leia a seção Cor antes de revisar classes de cor: o lint pega `bg-accent`, hex e `muted` sobre `surface-2`, mas não pega, por exemplo, `text-accent` fora de sobretítulos, `gold` fora de pódio e "Campeão", ou um `status-*` da Superlicença usado para outra coisa.
-- Componente novo ou alterado leva a ficha junto em `design-system/components/<Nome>/` (README e prévia) e as props em `components/index.d.ts`. O `design-system/components.test.ts` confere que a ficha existe, entra no `index.html` e tem props; confira na revisão se a prévia mostra cada variante nova (uma prop como `kind`, a versão da equipe) e se as props batem com o código. Mudança de fonte atualiza `tokens.json` e `tokens.css` (as cores, o `design-system/tokens.test.ts` já confere).
+- Componente novo ou alterado leva a ficha junto em `design-system/components/<Nome>/` (README e prévia) e as props em `components/index.d.ts`. O `design-system/components.test.ts` confere que a ficha existe, tem props e que o `index.html` está igual ao gerado por `npm run ds:index`; confira na revisão se a prévia mostra cada variante nova (uma prop como `kind`, a versão da equipe) e se as props batem com o código. Mudança de fonte atualiza `tokens.json` e `tokens.css` (as cores, o `design-system/tokens.test.ts` já confere).
 - Selos e medidores reaproveitam os padrões existentes (SprintBadge, LicenseCard) antes de inventar um estilo.
 
 ## Vocabulário
