@@ -32,7 +32,12 @@ A skill `mattpocock-skills:code-review`, apontada para o merge-base com a `main`
 
 - **Tudo conferido**: se o branch do PR está em checkout num worktree, desfaça a junction do `node_modules` dele antes (`docs/agents/worktrees.md`). Depois, `gh pr merge <pr> --rebase --delete-branch`. Os commits do PR entram na `main` em linha, sem merge commit, e a issue fecha pelo `Closes`. O merge termina com cada issue citada num `Closes` fechada (`gh issue view <n> --json state`): o GitHub às vezes fecha só parte delas, e a que ficou aberta fecha com `gh issue close <n> --comment "Entregue no PR #<pr>."`. Depois, remova o worktree do implementador (`docs/agents/worktrees.md`). As capturas só servem à revisão: se o PR tem um branch `capturas/pr-<n>`, tire do corpo do PR a seção que aponta para ele (`gh pr edit <pr> --body-file`), para não ficarem imagens quebradas, e apague o branch com `git push origin --delete capturas/pr-<n>`.
 - **Branch desatualizado**: `gh pr update-branch <pr> --rebase` e espere o CI passar de novo antes do merge.
-- **Algum item falhou**: comente no PR cada achado, com arquivo e o critério afetado, e devolva o PR ao implementador para corrigir no mesmo branch. A revisão recomeça do zero depois da correção.
+- **Algum item falhou**: separe os achados em dois tipos.
+  - **Bloqueiam o merge**: critério de aceite não atendido, quebra de regra do `CODING_STANDARDS.md`, ou comportamento errado.
+  - **Não bloqueiam**: smell e julgamento de redação ou de estilo. Ficam registrados no comentário, e o implementador corrige só se a correção for barata.
+
+  Comente no PR cada achado, com arquivo, critério afetado e o tipo, e devolva o PR ao implementador para corrigir no mesmo branch os que bloqueiam. Achado que não bloqueia não devolve o PR.
+- **Revisão depois da correção**: confira o CI na ponta nova, confira se cada achado anterior foi resolvido, e revise só o diff novo (`git diff <ponta revisada>..<ponta nova>`), não o PR inteiro. O PR entra quando essa rodada não tem achado que bloqueie.
 - **Dúvida que só o usuário resolve** (critério ambíguo, mudança fora do escopo que parece desejada): deixe o PR aberto, explique no PR e pergunte ao usuário. Na dúvida, o PR espera.
 
 ## Spec com vários tickets
