@@ -12,7 +12,7 @@ Há dois papéis:
 1. **Issue**: pegue uma issue `ready-for-agent` sem bloqueador aberto (consulta de fronteira em `docs/agents/issue-tracker.md`). Um bloqueador só fecha quando o PR dele entra na `main`, então o trabalho parte do `origin/main`. Ticket de uma spec com branch de integração segue "Spec com vários tickets", no fim deste arquivo.
 2. **Branch**: um branch novo `tipo/descricao-curta` a partir do `origin/main` atualizado (ou do branch de integração, no ticket de spec), para cada issue. Num worktree, o branch do agente é renomeado (`docs/agents/worktrees.md`).
 3. **Commits**: Conventional Commits em português sem acentos; o hook `commit-msg` confere o formato. O merge é por rebase, então cada commit entra na `main` como está: correções de revisão viram commits próprios com mensagem que se explica sozinha, e nunca um merge da `main` dentro do branch.
-4. **Antes do PR**: `npm run lint`, `npm run typecheck` e `npm test` passam.
+4. **Antes do PR**: `npm run lint`, `npm run typecheck` e `npm test` passam. Mudança de tela passa também em `node scripts/rolagem.mjs` com o site de pé: sem rotas, ele percorre o site inteiro em 375, 640, 768, 1024 e 1280 px (cerca de 2 min) e falha apontando a rota, a largura e o elemento que estoura a janela.
 5. **PR**: `git push -u origin <branch>` e `gh pr create --base main`. O título segue Conventional Commits; o corpo segue a skill `pr` e traz `Closes #<issue>`, para o merge fechar a issue. Quando a issue pede capturas, rode `node scripts/capturas.mjs <pasta> --pr <n> <rota>...` com o site de pé: ele fotografa cada rota no desktop e no celular, nos temas claro e escuro, publica as PNGs no branch órfão `capturas/pr-<n>` e imprime o markdown para colar no corpo do PR (`gh pr edit <n> --body-file`). O `gh` não sobe imagens; esse branch é o caminho. As capturas trazem o selo de dev do Next no canto, que não é do site.
 
 Pronto quando o PR está aberto e o implementador devolveu a URL dele. O merge fica com a sessão principal.
@@ -24,7 +24,7 @@ Revise cada PR contra a issue que ele fecha. A revisão termina com todos os ite
 - **CI**: `gh pr checks <pr>` mostra "Verificar e empacotar" como `pass`.
 - **Spec**: cada critério de aceite da issue está atendido pelo diff, e o diff fica dentro do escopo da issue.
 - **Padrões**: o diff segue o `CODING_STANDARDS.md` e os termos do `GLOSSARY.md`.
-- **Tela**: mudança visível foi conferida no navegador a partir do checkout principal (`gh pr checkout <pr>`), com a API simulada quando o estado ainda não aconteceu. Quando a issue pede capturas, elas estão no corpo do PR (`scripts/capturas.mjs`, no passo 5 do implementador).
+- **Tela**: mudança visível foi conferida no navegador a partir do checkout principal (`gh pr checkout <pr>`), com a API simulada quando o estado ainda não aconteceu, e `node scripts/rolagem.mjs` passa. Quando a issue pede capturas, elas estão no corpo do PR (`scripts/capturas.mjs`, no passo 5 do implementador).
 
 A skill `mattpocock-skills:code-review`, apontada para o merge-base com a `main` e para a issue, cobre Spec e Padrões em paralelo.
 
