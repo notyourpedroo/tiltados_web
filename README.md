@@ -46,7 +46,9 @@ npm run typecheck  # gera os tipos de rota do Next e roda o tsc
 
 Quando a API de produção não responde da sua máquina, rode a [Tiltados API](https://github.com/notyourpedroo/tiltados_api)
 localmente (clone em `../tiltados_api`, com o `.venv` criado como no README dela) e aponte o site para ela.
-A variável de ambiente tem prioridade sobre o `.env.local`:
+A variável de ambiente tem prioridade sobre o `.env.local`. O Next aceita um só `npm run dev` por pasta:
+para trocar de API, pare o que está rodando (a mensagem "Another next dev server is already running"
+mostra o PID dele).
 
 ```powershell
 # terminal 1, na pasta da API
