@@ -76,7 +76,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 ## Componentes
 
 - As fichas mostram prévias estáticas fiéis aos componentes React do site, com as mesmas medidas, os tokens reais e dados da temporada 2026. O código de verdade está em `src/components/` e nas páginas indicadas em cada ficha; `components/index.d.ts` traz as propriedades.
-- Estrutura (SiteHeader, ThemeToggle, PageTitle, SectionTitle, MoreLink, Card, Table, Skeleton), Dados (Position, Gained, StatTile, TeamBar, TeamLogo, TeamCar, SprintBadge, FastestLapBadge, DriverPositionBadge), Classificação, Gráficos e Padrões de página (cards que vivem dentro das páginas).
+- Estrutura (SiteHeader, ThemeToggle, PageTitle, SectionTitle, MoreLink, Card, Table, Skeleton), Dados (Position, Gained, StatTile, TeamBar, TeamLogo, TeamCar, Badge, SprintBadge, FastestLapBadge, DriverPositionBadge), Classificação, Gráficos e Padrões de página (cards que vivem dentro das páginas).
 - A fonte Titillium Web vem do Google Fonts; não há arquivo de fonte neste sistema.
 
 ## Arquivos desta pasta
