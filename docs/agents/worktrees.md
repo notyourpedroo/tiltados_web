@@ -4,9 +4,9 @@ Subagentes com `isolation: worktree` trabalham em `.claude/worktrees/agent-<id>/
 
 ## Base do worktree
 
-O worktree nasce da `main` do remoto (`origin/HEAD`), não do branch em que a sessão principal está. É a base certa: o agente só pega issues sem bloqueador aberto, e tudo de que ele depende já está na `main` (`docs/agents/workflow.md`). A exceção é o ticket de uma spec com branch de integração, que parte desse branch (`docs/agents/workflow.md`, "Spec com vários tickets"): confira com `git merge-base --is-ancestor <integração> HEAD` e, se não for ancestral, faça `git reset --hard <integração>` antes do primeiro commit.
+O worktree nasce da `main` do remoto (`origin/HEAD`), não do branch em que a sessão principal está. É a base certa: o agente só pega issues sem bloqueador aberto, e tudo de que ele depende já está na `main` (`docs/agents/workflow.md`). A exceção é o ticket de uma spec com branch de integração, que parte desse branch (`docs/agents/workflow.md`, "Spec com vários tickets"): depois de `git fetch`, confira com `git merge-base --is-ancestor origin/<integração> HEAD` e, se não for ancestral, faça `git reset --hard origin/<integração>` antes do primeiro commit.
 
-Antes do primeiro commit, renomeie o branch para o nome da demanda com `git branch -m tipo/descricao-curta`; é esse branch que vai para o PR.
+Antes do primeiro commit, renomeie o branch para o nome da demanda com `git branch -m tipo/descricao-curta`; é esse branch que vai para o PR, ou para o branch de integração no ticket de spec.
 
 ## node_modules
 
