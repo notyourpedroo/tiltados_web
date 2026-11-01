@@ -63,6 +63,11 @@ export default function TeamPage({ params }: PageProps<"/[season]/equipes/[teamI
   );
 }
 
+/** Nome do piloto no cadastro, com o mesmo fallback do resto do site. */
+function driverName(data: SeasonData, id: number) {
+  return data.drivers[id]?.name ?? `#${id}`;
+}
+
 /** Chance de título de construtores da equipe em 2026, com o selo e o Motivo, para qualquer status. */
 async function TeamTitleChance({ teamId }: { teamId: number }) {
   const row = (await getTeamPrediction()).find((p) => p.team_id === teamId);
@@ -82,13 +87,9 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
   if (!standing) notFound();
   const style = teamStyle(standing.team_name);
   const { stats, sessions, drivers, duels } = teamProfile(data, standing.team_id);
-  const driverName = (id: number) =>
-    data.drivers[id]?.name ??
-    data.driverStandings.find((d) => d.driver_id === id)?.driver_name ??
-    "";
   const driverLink = (id: number) => (
     <Link href={`/${data.season}/pilotos/${id}`} className="hover:underline">
-      {driverName(id)}
+      {driverName(data, id)}
     </Link>
   );
   // Superlicença de cada Piloto da equipe que aparece na rota, na ordem da lista.
@@ -146,7 +147,7 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
           <SectionTitle>Pilotos da equipe</SectionTitle>
           <TeamDrivers
             season={data.season}
-            drivers={drivers.map((d) => ({ ...d, name: driverName(d.id) }))}
+            drivers={drivers.map((d) => ({ ...d, name: driverName(data, d.id) }))}
           />
           {duels.length > 0 && (
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -191,8 +192,6 @@ function TeamSessions({ data, sessions }: { data: SeasonData; sessions: TeamSess
       </section>
     );
   }
-  const name = (id: number) => data.drivers[id]?.name ?? `#${id}`;
-
   return (
     <>
       <section className="mt-10">
@@ -241,7 +240,7 @@ function TeamSessions({ data, sessions }: { data: SeasonData; sessions: TeamSess
                 <td className={td}>
                   <span className="flex flex-wrap gap-1">
                     {drivers.map((d) => (
-                      <DriverPositionBadge key={d.driverId} name={name(d.driverId)} position={d.position} />
+                      <DriverPositionBadge key={d.driverId} name={driverName(data, d.driverId)} position={d.position} />
                     ))}
                   </span>
                 </td>
