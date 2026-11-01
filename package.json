@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "typecheck": "next typegen && tsc --noEmit",
+    "ds:index": "node scripts/design-system-index.mjs",
     "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {

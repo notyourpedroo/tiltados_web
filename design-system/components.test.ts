@@ -1,11 +1,12 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
+import { buildIndex } from "../scripts/design-system-index.mjs";
 
 // Componente novo ou alterado leva a ficha junto (CODING_STANDARDS.md, Design system).
 // Este teste confere a parte mecânica: cada componente exportado de src/components/ tem
-// ficha (README e prévia) e props em components/index.d.ts, e cada ficha aparece no
-// index.html. Se a prévia mostra cada variante continua com a revisão.
+// ficha (README e prévia) e props em components/index.d.ts, e o index.html está igual ao
+// que o npm run ds:index gera. Se a prévia mostra cada variante continua com a revisão.
 
 const root = join(__dirname, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -56,13 +57,9 @@ describe("Fichas do design system", () => {
     expect(propTypes, `${name}Props em components/index.d.ts`).toMatch(new RegExp(`\\b${name}Props\\b`));
   });
 
-  // A altura do iframe no index.html repete a do comentário @dsCard da prévia.
-  test.each(fichas)("%s aparece no index.html", (ficha) => {
-    const height = read(fichaFile(ficha, "preview.html")).match(/@dsCard[^>]*height=(\d+)/)?.[1];
-    expect(previewIndex).toContain(
-      `title="${ficha}" data-src="components/${ficha}/preview.html" style="height:${height}px"`,
-    );
-    if (fichaHas(ficha, "README.md")) expect(previewIndex).toContain(`href="components/${ficha}/README.md"`);
+  // As seções de fichas saem dos comentários @dsCard das prévias.
+  test("index.html está igual ao gerado (npm run ds:index)", () => {
+    expect(previewIndex).toBe(buildIndex(previewIndex));
   });
 
   // Sem a meta, a emulação de celular desenha a prévia com 980 px e esconde estouros.
