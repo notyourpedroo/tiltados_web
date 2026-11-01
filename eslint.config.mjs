@@ -23,11 +23,19 @@ const ACCENT_FILL = colorRule(
 
 // Termos _Avoid_ do GLOSSARY.md que nunca têm outro sentido nos textos da tela. Os
 // ambíguos (GP, prova, licença) ficam para a revisão (CODING_STANDARDS.md, Vocabulário).
-const AVOID_TERMS = "/\\b(carteira|gancho|odds|teto|rodada|ban)\\b/i";
+const AVOID_TERMS = "/\\b(carteira|gancho|odds|teto|rodada|ban|line-?up)\\b/i";
 const AVOID_MESSAGE = "Termo marcado como _Avoid_ no GLOSSARY.md: use o termo do glossário.";
 const VOCABULARY = [
   ...colorRule(AVOID_TERMS, AVOID_MESSAGE),
   { selector: `JSXText[value=${AVOID_TERMS}]`, message: AVOID_MESSAGE },
+];
+// Os mesmos termos em nomes de variável, campo e função (inDupla, não lineup). Só os que
+// não aparecem dentro de outras palavras: "ban" está em "bandeira".
+const AVOID_IDENTIFIERS = [
+  {
+    selector: "Identifier[name=/lineup/i]",
+    message: "Identificador com termo _Avoid_ do GLOSSARY.md: use o termo do glossário (Dupla → inDupla).",
+  },
 ];
 
 const eslintConfig = defineConfig([
@@ -36,18 +44,29 @@ const eslintConfig = defineConfig([
   {
     files: ["src/**/*.{ts,tsx}"],
     rules: {
-      "no-restricted-syntax": ["error", ...HEX, ...MUTED_ON_SURFACE_2, ...ACCENT_FILL, ...VOCABULARY],
+      "no-restricted-syntax": [
+        "error",
+        ...HEX,
+        ...MUTED_ON_SURFACE_2,
+        ...ACCENT_FILL,
+        ...VOCABULARY,
+        ...AVOID_IDENTIFIERS,
+      ],
     },
   },
   {
     // A faixa do topo e o bloco do logotipo são os únicos fundos em accent.
     files: ["src/components/SiteHeader.tsx"],
-    rules: { "no-restricted-syntax": ["error", ...HEX, ...MUTED_ON_SURFACE_2, ...VOCABULARY] },
+    rules: {
+      "no-restricted-syntax": ["error", ...HEX, ...MUTED_ON_SURFACE_2, ...VOCABULARY, ...AVOID_IDENTIFIERS],
+    },
   },
   {
     // Testes citam strings da API, inclusive as que saíram de uso ("Suspenso (Ban)").
     files: ["src/**/*.test.ts"],
-    rules: { "no-restricted-syntax": ["error", ...HEX, ...MUTED_ON_SURFACE_2, ...ACCENT_FILL] },
+    rules: {
+      "no-restricted-syntax": ["error", ...HEX, ...MUTED_ON_SURFACE_2, ...ACCENT_FILL, ...AVOID_IDENTIFIERS],
+    },
   },
   // Override default ignores of eslint-config-next.
   globalIgnores([
