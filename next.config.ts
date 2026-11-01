@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
   // e o servidor (1 GB de RAM) só recebe o resultado pronto. Ver deploy/.
   output: "standalone",
   turbopack: {
+    // Num worktree de agente, o node_modules é uma junction para o do checkout
+    // principal, fora da raiz que o Turbopack deduz. TURBOPACK_ROOT aponta para
+    // uma pasta que contém os dois (docs/agents/worktrees.md). Sem ela, nada muda.
+    root: process.env.TURBOPACK_ROOT,
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],
