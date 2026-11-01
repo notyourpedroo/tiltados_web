@@ -9,7 +9,7 @@ Há dois papéis:
 
 ## Implementador
 
-1. **Issue**: pegue uma issue `ready-for-agent` sem bloqueador aberto (consulta de fronteira em `docs/agents/issue-tracker.md`). Um bloqueador só fecha quando o PR dele entra na `main`, então o trabalho sempre parte do `origin/main`.
+1. **Issue**: pegue uma issue `ready-for-agent` sem bloqueador aberto (consulta de fronteira em `docs/agents/issue-tracker.md`). Um bloqueador só fecha quando o PR dele entra na `main`, então o trabalho parte do `origin/main`. Ticket de uma spec com branch de integração segue "Spec com vários tickets", no fim deste arquivo.
 2. **Branch**: um branch novo `tipo/descricao-curta` a partir do `origin/main` atualizado, para cada issue. Num worktree, o branch do agente é renomeado (`docs/agents/worktrees.md`).
 3. **Commits**: Conventional Commits em português sem acentos; o hook `commit-msg` confere o formato. O merge é por rebase, então cada commit entra na `main` como está: correções de revisão viram commits próprios com mensagem que se explica sozinha, e nunca um merge da `main` dentro do branch.
 4. **Antes do PR**: `npm run lint`, `npm run typecheck` e `npm test` passam.
@@ -37,10 +37,11 @@ A skill `mattpocock-skills:code-review`, apontada para o merge-base com a `main`
 
 ## Spec com vários tickets
 
-Uma spec cujos tickets se bloqueiam entre si (a #29 e os #30 a #34) chega à `main` num PR só, a partir de um **branch de integração** `tipo/descricao-curta` criado do `origin/main`. O PR abre como rascunho depois do primeiro ticket integrado e traz um `Closes` para a spec e um para cada ticket. As regras acima valem para esse PR, com estas diferenças:
+Uma spec cujos tickets se bloqueiam entre si chega à `main` num PR só, a partir de um **branch de integração** `tipo/descricao-curta` criado do `origin/main`. O PR abre como rascunho depois do primeiro ticket integrado e traz um `Closes` para a spec e um para cada ticket. As regras acima valem para esse PR, com estas diferenças:
 
-- **Base do implementador**: o worktree parte do branch de integração, não da `main`. O implementador confere com `git merge-base --is-ancestor <integração> HEAD` e, se não for, faz `git reset --hard <integração>`.
-- **Antes de devolver**: o implementador faz `git rebase <integração>`, nunca merge, e roda lint, typecheck e testes de novo. O histórico continua linear.
-- **Integrar**: a sessão principal avança o branch de integração por fast-forward (`git branch -f <integração> <branch do ticket>` e push normal). Só quando o rebase do implementador ficou para trás é que um subagente refaz o rebase e resolve os conflitos.
+- **Fronteira**: os bloqueadores de um ticket só fecham no merge do PR. Ele fica pronto para pegar quando todos os bloqueadores já estão integrados no branch de integração.
+- **Base do implementador**: o worktree parte do branch de integração, não da `main` (`docs/agents/worktrees.md`).
+- **Implementador pronto**: não abre PR. Termina com o branch do ticket rebaseado sobre a ponta do branch de integração (`git rebase <integração>`, nunca merge), lint, typecheck e testes passando, e o nome do branch devolvido à sessão principal.
+- **Integrar**: a sessão principal avança o branch de integração por fast-forward (`git branch -f <integração> <branch do ticket>` e push normal). Se o rebase do implementador ficou para trás, um subagente refaz o rebase e resolve os conflitos antes.
 - **Tickets em paralelo no mesmo arquivo**: integre o que destrava os outros antes de despachar os dependentes, para eles partirem do módulo já unido.
-- **`main` andou com conflito**: o `gh pr update-branch --rebase` falha. Refaça o rebase num branch local, confira com `git range-diff`, e publique com `git push --force-with-lease=<integração>:<ponta antiga>` só depois do OK do usuário, que é quem autoriza reescrever o branch publicado.
+- **`main` andou**: o `gh pr update-branch --rebase` reescreve o branch de integração no remoto. Depois dele, alinhe o branch local com `git branch -f <integração> origin/<integração>` antes do próximo fast-forward. Se ele falhar por conflito, refaça o rebase num branch local, confira com `git range-diff`, e publique com `git push --force-with-lease=<integração>:<ponta antiga>` só depois do OK do usuário, que é quem autoriza reescrever o branch publicado.
