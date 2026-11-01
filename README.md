@@ -15,7 +15,7 @@ Feito com Next.js 16 (App Router, Cache Components), TypeScript e Tailwind CSS 4
 | `/{temporada}/pilotos` | Classificação de pilotos e gráfico de pontos acumulados |
 | `/{temporada}/pilotos/{driver_id}` | Perfil do piloto: estatísticas, resumo da temporada, duelo com companheiro e resultados |
 | `/{temporada}/equipes` | Campeonato de construtores, contribuição de cada piloto e evolução do campeonato de construtores |
-| `/{temporada}/equipes/{team_id}` | Perfil da equipe: posição no campeonato de construtores, estatísticas da temporada, em 2026 a Chance de título de construtores, Pilotos da equipe com os duelos entre eles, em 2026 a Superlicença de cada um, temporada em resumo e Resultados Sessão a Sessão |
+| `/{temporada}/equipes/{team_id}` | Perfil da equipe: posição no campeonato de construtores, estatísticas da temporada, em 2026 a Chance de título de construtores, Pilotos da equipe com os duelos entre eles, temporada em resumo, em 2026 a Superlicença de cada um e Resultados Sessão a Sessão |
 | `/2026/titulo` | Chance de título de pilotos e construtores, com o status e o Motivo de cada um |
 | `/2026/superlicenca` | Saldo da Superlicença e punições registradas |
 
