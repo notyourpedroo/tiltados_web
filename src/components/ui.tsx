@@ -13,7 +13,7 @@ export function PageTitle({
   eyebrow?: ReactNode;
   title: ReactNode;
   children?: ReactNode;
-  /** Carro da equipe, de `teamCar`, ao lado do título (ex.: perfis do piloto e da equipe). */
+  /** Carro da equipe, de `teamCar`, ao lado do título. */
   car?: string;
 }) {
   return (
