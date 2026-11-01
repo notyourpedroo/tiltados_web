@@ -16,4 +16,4 @@ Gráfico de linhas da evolução do campeonato, de pilotos ou de construtores, e
 ## Evite
 - Mais de 3 destaques ou cores fora de `team-*`.
 
-Fonte: `src/components/ProgressionChart.tsx` · prévia estática com os pilotos de 2026 (tooltip fixo numa etapa).
+Fonte: `src/components/ProgressionChart.tsx` · prévia estática com os pilotos e as equipes de 2026, até R16 (tooltip fixo numa etapa).
