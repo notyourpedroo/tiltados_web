@@ -23,7 +23,7 @@ $nm = "E:\Dev\Code\tiltados_web\.claude\worktrees\agent-<id>\node_modules"
 if ((Get-Item $nm -Force).LinkType -eq 'Junction') { [System.IO.Directory]::Delete($nm, $false) }
 ```
 
-Uma remoção recursiva com a junction no lugar apaga o `node_modules` do checkout principal.
+Uma remoção recursiva com a junction no lugar apaga o `node_modules` do checkout principal. O `gh pr merge --delete-branch` faz essa remoção sozinho quando o branch do PR está em checkout num worktree, então desfaça a junction antes do merge; se ela já foi, `npm ci` no checkout principal recria o `node_modules`.
 
 ## Verificação
 

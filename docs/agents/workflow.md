@@ -30,7 +30,7 @@ A skill `mattpocock-skills:code-review`, apontada para o merge-base com a `main`
 
 ## Sessão principal: merge
 
-- **Tudo conferido**: `gh pr merge <pr> --rebase --delete-branch`. Os commits do PR entram na `main` em linha, sem merge commit, e a issue fecha pelo `Closes`. O merge termina com cada issue citada num `Closes` fechada (`gh issue view <n> --json state`): o GitHub às vezes fecha só parte delas, e a que ficou aberta fecha com `gh issue close <n> --comment "Entregue no PR #<pr>."`. Depois, remova o worktree do implementador (`docs/agents/worktrees.md`). O branch `capturas/pr-<n>` fica: o corpo do PR aponta para ele.
+- **Tudo conferido**: se o branch do PR está em checkout num worktree, desfaça a junction do `node_modules` dele antes (`docs/agents/worktrees.md`). Depois, `gh pr merge <pr> --rebase --delete-branch`. Os commits do PR entram na `main` em linha, sem merge commit, e a issue fecha pelo `Closes`. O merge termina com cada issue citada num `Closes` fechada (`gh issue view <n> --json state`): o GitHub às vezes fecha só parte delas, e a que ficou aberta fecha com `gh issue close <n> --comment "Entregue no PR #<pr>."`. Depois, remova o worktree do implementador (`docs/agents/worktrees.md`). O branch `capturas/pr-<n>` fica: o corpo do PR aponta para ele.
 - **Branch desatualizado**: `gh pr update-branch <pr> --rebase` e espere o CI passar de novo antes do merge.
 - **Algum item falhou**: comente no PR cada achado, com arquivo e o critério afetado, e devolva o PR ao implementador para corrigir no mesmo branch. A revisão recomeça do zero depois da correção.
 - **Dúvida que só o usuário resolve** (critério ambíguo, mudança fora do escopo que parece desejada): deixe o PR aberto, explique no PR e pergunte ao usuário. Na dúvida, o PR espera.
