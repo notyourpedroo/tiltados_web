@@ -30,7 +30,7 @@ import { formatDate, ordinal, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason, type SeasonData } from "@/lib/season";
 import { teamProfile, type TeamSession } from "@/lib/team-season";
-import { teamStyle } from "@/lib/teams";
+import { teamCar, teamStyle } from "@/lib/teams";
 import { isSeason } from "@/lib/types";
 
 export async function generateStaticParams({
@@ -86,6 +86,8 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
   const standing = data.teamStandings.find((t) => String(t.team_id) === teamId);
   if (!standing) notFound();
   const style = teamStyle(standing.team_name);
+  // Carro do cadastro, o mesmo do logo e do nome no cabeçalho.
+  const car = teamCar(standing.team_name, data.season);
   const { stats, sessions, drivers, duels } = teamProfile(data, standing.team_id);
   const played = sessions.length > 0;
   const driverLink = (id: number) => (
@@ -105,6 +107,7 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
             {standing.team_name}
           </span>
         }
+        car={car}
       />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
