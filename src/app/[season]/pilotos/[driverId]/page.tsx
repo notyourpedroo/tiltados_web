@@ -128,8 +128,9 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           value={stats.best ? ordinal(stats.best.position) : "—"}
           sub={stats.best && `${stats.best.count}×`}
         />
-        <StatTile label="Poles" value={stats.poles} />
+        <StatTile label="Poles" value={stats.poles} sub={stats.poles > 0 && poleConversion(stats.poleConversion)} />
         <StatTile label="Voltas mais rápidas" value={stats.fastestLaps} />
+        <StatTile label="Hat-tricks" value={stats.hatTricks} sub="pole, vitória e volta mais rápida" />
         <StatTile
           label="Chegada média"
           value={stats.avgFinish === null ? "—" : stats.avgFinish.toFixed(1).replace(".", ",")}
@@ -302,4 +303,9 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
       </section>
     </>
   );
+}
+
+/** Conversão de pole como "X de Y", nunca em porcentagem. */
+function poleConversion({ converted, poles }: { converted: number; poles: number }): string {
+  return `${converted} de ${poles} ${converted === 1 ? "virou" : "viraram"} vitória`;
 }

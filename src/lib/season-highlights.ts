@@ -26,6 +26,8 @@ export interface SeasonHighlights {
   pace: Leaders | null;
   /** Melhor Aproveitamento, em pontos por Sessão, entre quem disputou ao menos metade das Sessões. */
   performance: Leaders;
+  /** Mais Hat-tricks; null quando ninguém fez um (o tile não aparece). */
+  hatTricks: Leaders | null;
 }
 
 /** Um piloto no mini-ranking da Forma recente. */
@@ -50,6 +52,7 @@ export function seasonHighlights(data: DriverSeasonData): SeasonHighlights {
     recentForm: recentFormTop(profiles),
     pace: bestPace(regulars),
     performance: leaders(regulars, (p) => p.performance?.pointsPerSession ?? 0),
+    hatTricks: orNull(leaders(profiles, (p) => p.stats.hatTricks)),
   };
 }
 
@@ -105,4 +108,9 @@ function bestPace(profiles: { id: number; profile: DriverProfile }[]): Leaders |
   if (!values.length) return null;
   const value = Math.min(...values.map((v) => v.value));
   return { value, driverIds: values.filter((v) => v.value === value).map((v) => v.id) };
+}
+
+/** Os líderes, ou null quando ninguém pontuou no indicador. */
+function orNull(l: Leaders): Leaders | null {
+  return l.driverIds.length ? l : null;
 }

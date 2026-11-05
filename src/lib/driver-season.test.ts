@@ -46,6 +46,49 @@ describe("Perfil do piloto", () => {
     expect(stats.fastestLaps).toBe(2);
   });
 
+  test("Hat-trick é Pole, vitória e Volta mais rápida na mesma Corrida", () => {
+    const race = session(1, 1);
+    const data = season([], [race, [result(race, 10, FERRARI, 1, { grid: 1, fastestLap: true })]]);
+
+    expect(driverProfile(data, 10).stats.hatTricks).toBe(1);
+  });
+
+  test.each([
+    ["sem Pole", { grid: 2, position: 1, fastestLap: true }],
+    ["sem vitória", { grid: 1, position: 2, fastestLap: true }],
+    ["sem Volta mais rápida", { grid: 1, position: 1, fastestLap: false }],
+  ])("Corrida %s não é Hat-trick", (_, extra) => {
+    const race = session(1, 1);
+    const data = season([], [race, [result(race, 10, FERRARI, extra.position, extra)]]);
+
+    expect(driverProfile(data, 10).stats.hatTricks).toBe(0);
+  });
+
+  test("Sprint com largada e vitória em 1º e Volta mais rápida não conta Hat-trick nem Conversão de pole", () => {
+    const sprint = session(1, 1, true);
+    const data = season([], [sprint, [result(sprint, 10, FERRARI, 1, { grid: 1, fastestLap: true })]]);
+
+    const { stats } = driverProfile(data, 10);
+
+    expect(stats.hatTricks).toBe(0);
+    expect(stats.poleConversion).toEqual({ converted: 0, poles: 0 });
+  });
+
+  test("Conversão de pole conta quantas Poles viraram vitória na mesma Corrida", () => {
+    const race = session(1, 1);
+    const race2 = session(2, 2);
+    const race3 = session(3, 3);
+    const data = season(
+      [],
+      [race, [result(race, 10, FERRARI, 1, { grid: 1 })]],
+      [race2, [result(race2, 20, MCLAREN, 1, { grid: 2 }), result(race2, 10, FERRARI, 2, { grid: 1 })]],
+      // Vitória largando de 3º não conta.
+      [race3, [result(race3, 10, FERRARI, 1, { grid: 3 })]],
+    );
+
+    expect(driverProfile(data, 10).stats.poleConversion).toEqual({ converted: 1, poles: 2 });
+  });
+
   test("chegada média conta só Corridas; posições ganhas somam o saldo de Corrida e Sprint", () => {
     const sprint = session(1, 1, true);
     const race = session(2, 1);
@@ -206,7 +249,17 @@ describe("Perfil do piloto", () => {
     const race = session(1, 1);
     const withSessions = season([], [race, [result(race, 20, MCLAREN, 1)]]);
     const empty = {
-      stats: { poles: 0, fastestLaps: 0, avgFinish: null, gained: 0, best: null, recentForm: 0, pace: null },
+      stats: {
+        poles: 0,
+        fastestLaps: 0,
+        avgFinish: null,
+        gained: 0,
+        best: null,
+        recentForm: 0,
+        pace: null,
+        hatTricks: 0,
+        poleConversion: { converted: 0, poles: 0 },
+      },
       streaks: {
         scoring: { best: 0, current: 0 },
         podium: { best: 0, current: 0 },
