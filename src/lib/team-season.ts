@@ -4,6 +4,7 @@
 // seu período.
 import type { ChartSeries, ChartSession } from "@/components/ProgressionChart";
 import { chartSessions } from "./chart";
+import { isPole } from "./driver-season";
 import type { SeasonData, Session, SessionResult } from "./season";
 import { recentFormSessions } from "./weekend";
 
@@ -103,7 +104,7 @@ export function teamProfile(data: TeamSeasonData, teamId: number): TeamProfile {
       stats.points += r.points;
       if (recent.has(s.id)) stats.recentForm += r.points;
       if (r.position <= 3) stats.podiums++;
-      if (r.grid === 1 && !s.isSprint) stats.poles++;
+      if (isPole(s, r)) stats.poles++;
       if (r.fastestLap) stats.fastestLaps++;
       if (!stats.best || r.position < stats.best.position) {
         stats.best = { position: r.position, count: 1 };
