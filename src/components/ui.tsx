@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ordinal } from "@/lib/format";
 import type { TeamLogo as TeamLogoSrc } from "@/lib/teams";
+import { InfoIcon, Tooltip } from "./Tooltip";
 import type { ReactNode } from "react";
 
 export function PageTitle({
@@ -68,12 +69,11 @@ export function Card({
   children: ReactNode;
   className?: string;
 }) {
-  return (
-    <div className={`rounded-xl border border-line bg-surface ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`${CARD} ${className}`}>{children}</div>;
 }
+
+/** Classes do Card, para quem desenha um card sem passar pelo componente (o Tooltip). */
+const CARD = "rounded-xl border border-line bg-surface";
 
 export function TeamBar({ color, className = "h-5" }: { color: string; className?: string }) {
   return (
@@ -205,17 +205,29 @@ export function StatTile({
   label,
   value,
   sub,
+  description,
 }: {
   label: ReactNode;
   value: ReactNode;
   sub?: ReactNode;
+  /** O que o indicador mede (de `src/lib/indicators.ts`): vira o tooltip do card, com o ícone ⓘ. */
+  description?: string;
 }) {
-  return (
-    <Card className="p-4">
-      <p className="text-xs font-bold uppercase tracking-wider text-muted">{label}</p>
+  const content = (
+    <>
+      <p className="text-xs font-bold uppercase tracking-wider text-muted">
+        {label}
+        {description && <InfoIcon />}
+      </p>
       <p className="mt-1 text-3xl font-black leading-tight">{value}</p>
       {sub && <p className="mt-0.5 truncate text-sm text-text-2">{sub}</p>}
-    </Card>
+    </>
+  );
+  if (!description) return <Card className="p-4">{content}</Card>;
+  return (
+    <Tooltip description={description} className={`${CARD} p-4`}>
+      {content}
+    </Tooltip>
   );
 }
 

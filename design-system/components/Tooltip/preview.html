@@ -1,0 +1,34 @@
+<!-- @dsCard group="Dados" height=260 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../bundle.css">
+<script>document.documentElement.dataset.theme = new URLSearchParams(location.search).get("theme") || "dark";</script>
+<title>Tooltip</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap">
+<style>
+.two { grid-template-columns: repeat(2, minmax(0, 200px)); align-items: start; }
+.ell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.i { margin-left: 4px; font-size: 14px; font-weight: 400; }
+.bubble { position: absolute; top: 100%; left: 0; z-index: 1; width: min(288px, calc(100vw - 32px)); margin-top: 8px; padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--bg) 95%, transparent); box-shadow: var(--shadow-tooltip); font-size: 14px; line-height: 20px; color: var(--text); }
+</style>
+</head>
+<body>
+<div class="demo two">
+  <div class="card" style="padding:var(--space-4);overflow:visible">
+    <p class="lbl" style="margin:0">Poles<span class="i" aria-hidden="true">ⓘ</span></p>
+    <p class="big" style="margin:4px 0 0">5</p>
+    <p class="c-text-2 ell" style="margin:2px 0 0;font-size:14px;line-height:20px">3 de 5 viraram vitória</p>
+    <div class="bubble" role="tooltip">As Corridas em que o piloto largou em 1º; largar em 1º numa Sprint não conta. A Conversão de pole diz quantas dessas Poles viraram vitória, como X de Y.</div>
+  </div>
+  <div class="card" style="padding:var(--space-4);overflow:visible">
+    <p class="lbl" style="margin:0">Chegada média<span class="i" aria-hidden="true">ⓘ</span></p>
+    <p class="big" style="margin:4px 0 0">4,2</p>
+    <p class="c-text-2 ell" style="margin:2px 0 0;font-size:14px;line-height:20px">em corridas</p>
+  </div>
+</div>
+</body>
+</html>
