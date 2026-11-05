@@ -1,5 +1,6 @@
 // Rolagem horizontal: abre cada rota em várias larguras no Chrome headless e falha
-// quando a página fica mais larga que a janela, apontando o elemento que estoura.
+// quando a página fica mais larga que a janela, apontando o elemento que estoura, ou
+// quando um texto de uma linha (.truncate) sai cortado a 1280 px.
 // Sem rotas, percorre o site inteiro a partir de /2025 e /2026 (perfis, Etapas...).
 //
 //   node scripts/rolagem.mjs [rota]...
@@ -17,6 +18,7 @@ const base = (process.env.CAPTURAS_BASE ?? "http://localhost:3000").replace(/\/+
 const chrome = process.env.CHROME ?? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 // O celular, a borda do breakpoint sm (640 px) e as larguras em que o desktop aperta.
 const WIDTHS = [375, 640, 768, 1024, 1280];
+const DESKTOP = 1024;
 const PARALLEL = 4;
 
 const given = process.argv.slice(2).map((route) => route.replace(/^\/+|\/+$/g, ""));
@@ -82,7 +84,11 @@ const MEASURE = `(async () => {
     if (el) culprit = (el.tagName.toLowerCase() + " " + (el.getAttribute("class") ?? "")).trim().slice(0, 100);
   }
   const links = [...document.querySelectorAll("a[href^='/']")].map((a) => a.getAttribute("href"));
-  return { overflow, culprit, links };
+  // Texto de uma linha (.truncate) cortado com reticências.
+  const cut = [...document.querySelectorAll(".truncate")]
+    .filter((el) => el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 1)
+    .map((el) => el.textContent.trim().slice(0, 60));
+  return { overflow, culprit, links, cut };
 })()`;
 
 async function check(route) {
@@ -114,8 +120,11 @@ async function check(route) {
       { expression: MEASURE, awaitPromise: true, returnByValue: true },
       sessionId,
     );
-    const { overflow, culprit, links } = result.value;
+    const { overflow, culprit, links, cut } = result.value;
     if (overflow > 0) failures.push(`/${route} em ${width}px: +${overflow}px (${culprit || "?"})`);
+    // No celular o corte é previsto (design-system/components/StatTile); no desktop
+    // largo, é texto longo demais para o espaço.
+    if (width >= DESKTOP) for (const text of cut) failures.push(`/${route} em ${width}px: texto cortado "${text}"`);
     if (crawl && width === WIDTHS[0]) {
       for (const href of links) {
         const next = href.split(/[?#]/)[0].replace(/^\/+|\/+$/g, "");
@@ -159,8 +168,10 @@ try {
 } catch {}
 
 if (failures.length) {
-  console.error(`Rolagem horizontal em ${failures.length} caso(s), de ${checked} rota(s) × ${WIDTHS.length} larguras:\n`);
+  console.error(`Rolagem horizontal ou texto cortado em ${failures.length} caso(s), de ${checked} rota(s) × ${WIDTHS.length} larguras:\n`);
   for (const failure of failures.sort()) console.error(`  ${failure}`);
   process.exit(1);
 }
-console.log(`Sem rolagem horizontal: ${checked} rota(s) × ${WIDTHS.length} larguras (${WIDTHS.join(", ")} px).`);
+console.log(
+  `Sem rolagem horizontal: ${checked} rota(s) × ${WIDTHS.length} larguras (${WIDTHS.join(", ")} px); sem texto cortado a partir de ${DESKTOP} px.`,
+);
