@@ -128,7 +128,8 @@ describe("Sequências do piloto", () => {
       [],
       ...positions.map((position, i) => {
         const race = session(i + 1, i + 1);
-        return [race, [result(race, 10, FERRARI, position)]] as const;
+        const entry: Parameters<typeof season>[1] = [race, [result(race, 10, FERRARI, position)]];
+        return entry;
       }),
     );
   }
