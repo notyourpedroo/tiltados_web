@@ -172,7 +172,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
         <StatTile
           label="Aproveitamento"
           value={performance ? decimal(performance.pointsPerSession) : "—"}
-          sub={performance && `pts por sessão · pontuou em ${percent(performance.scoringRate, 0)}`}
+          sub={performance && `por sessão · pontuou em ${percent(performance.scoringRate, 0)}`}
         />
       </div>
 

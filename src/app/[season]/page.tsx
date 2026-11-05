@@ -257,7 +257,7 @@ async function Overview({ season }: { season: string }) {
           )}
         </Card>
         <StatTile
-          label="Melhor Ritmo"
+          label="Melhor ritmo"
           value={ritmo ? percent(ritmo.value) : "—"}
           sub={ritmo && names(ritmo.driverIds)}
         />
