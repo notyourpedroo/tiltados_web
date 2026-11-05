@@ -1,5 +1,6 @@
 // Contas de um piloto numa temporada, a partir dos dados já carregados (não busca
 // nada na API). Espelho do perfil da equipe (team-season.ts).
+import { lapToMs } from "./lap";
 import type { SeasonData, Session, SessionResult } from "./season";
 import { recentFormSessions } from "./weekend";
 
@@ -27,6 +28,12 @@ export interface DriverStats {
   best: { position: number; count: number } | null;
   /** Forma recente: pontos nas últimas 3 Etapas disputadas da temporada, Corrida e Sprint somadas. */
   recentForm: number;
+  /**
+   * Ritmo: média, entre as Sessões em que o piloto marcou tempo, de quanto a melhor
+   * volta dele fica atrás da Volta mais rápida da Sessão, em fração (0,012 = 1,2%);
+   * null sem tempo válido.
+   */
+  pace: number | null;
 }
 
 /** Quem chegou na frente nas Sessões em que o piloto e um companheiro correram pela mesma equipe. */
@@ -85,6 +92,7 @@ export function driverProfile(data: DriverSeasonData, driverId: number): DriverP
     gained: results.reduce((sum, r) => sum + r.gained, 0),
     best: bestResult(results),
     recentForm: recentForm(data, sessions),
+    pace: pace(data, sessions),
   };
   return {
     stats,
@@ -144,4 +152,17 @@ function bestResult(results: SessionResult[]): DriverStats["best"] {
   if (!results.length) return null;
   const position = Math.min(...results.map((r) => r.position));
   return { position, count: results.filter((r) => r.position === position).length };
+}
+
+function pace(data: DriverSeasonData, sessions: DriverSession[]): number | null {
+  const gaps: number[] = [];
+  for (const { session, result } of sessions) {
+    const lap = lapToMs(result.bestLap);
+    if (lap === null) continue;
+    const laps = (data.results[session.id] ?? []).map((r) => lapToMs(r.bestLap) ?? Infinity);
+    const fastest = Math.min(...laps);
+    if (fastest <= 0) continue;
+    gaps.push((lap - fastest) / fastest);
+  }
+  return gaps.length ? gaps.reduce((sum, g) => sum + g, 0) / gaps.length : null;
 }

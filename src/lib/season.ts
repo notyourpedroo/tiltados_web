@@ -9,6 +9,7 @@ import {
   getTeamStandings,
   getTeams,
 } from "./api";
+import { lapToMs } from "./lap";
 import { teamStyle, type TeamLogo } from "./teams";
 import { mainSession, weekends } from "./weekend";
 import type {
@@ -81,12 +82,6 @@ export interface SeasonData {
    */
   progression: { driverId: number; cumulative: number[]; positions: number[] }[];
   punishments: ApiPunishment[];
-}
-
-function lapToMs(lap: string): number | null {
-  const m = /^(?:(\d+):)?(\d+(?:\.\d+)?)$/.exec(lap.trim());
-  if (!m) return null;
-  return (Number(m[1] ?? 0) * 60 + Number(m[2])) * 1000;
 }
 
 export async function getSeason(season: Season): Promise<SeasonData> {

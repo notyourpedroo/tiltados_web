@@ -135,11 +135,59 @@ describe("Perfil do piloto", () => {
     expect(driverProfile(data, 10).stats.recentForm).toBe(7 + 25);
   });
 
+  test("Ritmo é a média da distância, em fração, entre a melhor volta do piloto e a Volta mais rápida de cada Sessão", () => {
+    const sprint = session(1, 1, true);
+    const race = session(2, 1);
+    const data = season(
+      [],
+      // 1:31.000 contra 1:30.000 → 1/90 atrás; 1:42.000 contra 1:40.000 → 2/100 atrás.
+      [sprint, [result(sprint, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(sprint, 10, FERRARI, 2, { bestLap: "1:31.000" })]],
+      [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:40.000" }), result(race, 10, FERRARI, 2, { bestLap: "1:42.000" })]],
+    );
+
+    expect(driverProfile(data, 10).stats.pace).toBeCloseTo((1 / 90 + 0.02) / 2, 10);
+  });
+
+  test("piloto que fez a Volta mais rápida em todas as Sessões tem Ritmo zero", () => {
+    const race = session(1, 1);
+    const race2 = session(2, 2);
+    const data = season(
+      [],
+      [race, [result(race, 10, FERRARI, 1, { bestLap: "1:29.500" }), result(race, 20, MCLAREN, 2, { bestLap: "1:30.000" })]],
+      [race2, [result(race2, 20, MCLAREN, 1, { bestLap: "1:31.000" }), result(race2, 10, FERRARI, 2, { bestLap: "1:30.250" })]],
+    );
+
+    expect(driverProfile(data, 10).stats.pace).toBe(0);
+  });
+
+  test("Sessão sem tempo válido do piloto fica fora do Ritmo", () => {
+    const race = session(1, 1);
+    const race2 = session(2, 2);
+    const data = season(
+      [],
+      [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 10, FERRARI, 2, { bestLap: "1:33.000" })]],
+      // Sem volta: se entrasse, puxaria a média para baixo (ou quebraria a conta).
+      [race2, [result(race2, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race2, 10, FERRARI, 2, { bestLap: "" })]],
+    );
+
+    expect(driverProfile(data, 10).stats.pace).toBeCloseTo(3 / 90, 10);
+  });
+
+  test("piloto sem nenhum tempo válido fica sem Ritmo", () => {
+    const race = session(1, 1);
+    const data = season(
+      [],
+      [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 10, FERRARI, 2, { bestLap: "-" })]],
+    );
+
+    expect(driverProfile(data, 10).stats.pace).toBeNull();
+  });
+
   test("piloto sem Sessão disputada tem as estatísticas zeradas, sem chegada média nem melhor resultado", () => {
     const race = session(1, 1);
     const withSessions = season([], [race, [result(race, 20, MCLAREN, 1)]]);
     const empty = {
-      stats: { poles: 0, fastestLaps: 0, avgFinish: null, gained: 0, best: null, recentForm: 0 },
+      stats: { poles: 0, fastestLaps: 0, avgFinish: null, gained: 0, best: null, recentForm: 0, pace: null },
       streaks: {
         scoring: { best: 0, current: 0 },
         podium: { best: 0, current: 0 },

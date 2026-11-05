@@ -22,3 +22,14 @@ export function lastWeekends(n: number): string {
 export function plural(n: number, one: string, many: string): string {
   return `${n} ${n === 1 ? one : many}`;
 }
+
+const PERCENT = new Intl.NumberFormat("pt-BR", {
+  style: "percent",
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
+
+/** 0.012 → "1,2%" (padrão brasileiro, uma casa decimal). */
+export function percent(fraction: number): string {
+  return PERCENT.format(fraction).replace(/\s/g, "");
+}
