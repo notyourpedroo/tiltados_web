@@ -77,10 +77,25 @@ function recentFormTop(profiles: DriverEntry[]): RecentFormEntry[] {
     .slice(0, RECENT_FORM_TOP);
 }
 
-/** Pilotos que disputaram ao menos metade das Sessões disputadas da temporada. */
+/**
+ * Parte mínima das Sessões disputadas da temporada que um piloto precisa ter disputado
+ * para entrar em Melhor Ritmo e Melhor Aproveitamento. O texto dos tooltips desses
+ * cards (indicators.ts) sai daqui.
+ */
+export const MINIMUM_SESSIONS_SHARE = 1 / 2;
+
+/**
+ * Se um piloto que disputou `disputed` Sessões entra em Melhor Ritmo e Melhor
+ * Aproveitamento, numa temporada com `played` Sessões disputadas.
+ */
+export function hasMinimumSessions(disputed: number, played: number): boolean {
+  return disputed >= played * MINIMUM_SESSIONS_SHARE;
+}
+
+/** Pilotos que disputaram ao menos a parte mínima das Sessões disputadas da temporada. */
 function withMinimumSessions(data: DriverSeasonData, profiles: DriverEntry[]): DriverEntry[] {
   const played = playedSessions(data);
-  return profiles.filter(({ profile }) => profile.sessions.length * 2 >= played);
+  return profiles.filter(({ profile }) => hasMinimumSessions(profile.sessions.length, played));
 }
 
 /** Pilotos com resultado na temporada, na ordem em que aparecem nas Sessões. */

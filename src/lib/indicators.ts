@@ -5,6 +5,8 @@
  * GLOSSARY.md.
  */
 
+import { MINIMUM_SESSIONS_SHARE } from "./season-highlights";
+
 const SEQUENCIA_RULE =
   "Só Corridas contam, e uma Corrida que ele não disputou quebra a Sequência. O atual é a Sequência que chega à última Corrida da temporada.";
 
@@ -33,4 +35,29 @@ export const DRIVER_INDICATORS = {
   sequenciaScoring: `A maior Sequência de Corridas seguidas em que o piloto pontuou. ${SEQUENCIA_RULE}`,
   sequenciaPodium: `A maior Sequência de Corridas seguidas em que o piloto subiu ao pódio. ${SEQUENCIA_RULE}`,
   sequenciaWin: `A maior Sequência de Corridas seguidas em que o piloto venceu. ${SEQUENCIA_RULE}`,
+} as const satisfies Record<string, string>;
+
+const TIES = "Pilotos empatados aparecem juntos.";
+
+/** A parte mínima das Sessões de Melhor ritmo e Melhor aproveitamento, por extenso. */
+function sessionShare(share: number): string {
+  return share === 1 / 2 ? "metade" : `${Math.round(share * 100)}%`;
+}
+
+const REGULARS = `Só entra quem disputou ao menos ${sessionShare(MINIMUM_SESSIONS_SHARE)} das Sessões da temporada.`;
+
+/**
+ * Destaques da visão geral da temporada. Os "Mais/Melhor X" reaproveitam o texto do
+ * piloto e dizem quem entra na disputa e que empatados aparecem juntos.
+ */
+export const SEASON_HIGHLIGHT_INDICATORS = {
+  rounds:
+    "As Etapas disputadas na temporada: cada fim de semana de GP, com uma Corrida e, em alguns, uma Sprint. O subtítulo conta as Sprints.",
+  poles: `O piloto com mais Poles: Corridas em que largou em 1º; largar em 1º numa Sprint não conta. ${TIES}`,
+  fastestLaps: `O piloto com mais Voltas mais rápidas. ${DRIVER_INDICATORS.fastestLaps} ${TIES}`,
+  winSequencia: `A maior Sequência de Corridas seguidas com vitória da temporada. Só Corridas contam, e uma Corrida que o piloto não disputou quebra a Sequência. ${TIES}`,
+  recentForm: `Os 3 pilotos com mais pontos na Forma recente. ${DRIVER_INDICATORS.recentForm} Quem não pontuou na janela fica de fora.`,
+  ritmo: `O piloto com o melhor Ritmo. ${DRIVER_INDICATORS.ritmo} ${REGULARS} ${TIES}`,
+  performance: `O piloto com mais pontos por Sessão disputada no Aproveitamento. ${REGULARS} ${TIES}`,
+  hatTricks: `O piloto com mais Hat-tricks. ${DRIVER_INDICATORS.hatTricks} ${TIES}`,
 } as const satisfies Record<string, string>;
