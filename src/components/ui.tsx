@@ -73,7 +73,7 @@ export function Card({
 }
 
 /** Classes do Card, para quem desenha um card sem passar pelo componente (o Tooltip). */
-const CARD = "rounded-xl border border-line bg-surface";
+export const CARD = "rounded-xl border border-line bg-surface";
 
 export function TeamBar({ color, className = "h-5" }: { color: string; className?: string }) {
   return (

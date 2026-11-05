@@ -3,7 +3,9 @@ import { Suspense, type ReactNode } from "react";
 import { ChampionshipCharts } from "@/components/ChampionshipCharts";
 import { HideOnError } from "@/components/HideOnError";
 import { DriverStandingsTable, TeamStandingsTable } from "@/components/standings";
+import { InfoIcon, Tooltip } from "@/components/Tooltip";
 import {
+  CARD,
   Card,
   MoreLink,
   PageTitle,
@@ -20,6 +22,7 @@ import { describeChance } from "@/lib/chance";
 import { chartData } from "@/lib/chart";
 import { driverName } from "@/lib/drivers";
 import { decimal, formatDate, lastWeekends, percent, plural } from "@/lib/format";
+import { SEASON_HIGHLIGHT_INDICATORS } from "@/lib/indicators";
 import { loadSeason } from "@/lib/load";
 import { mainSessions } from "@/lib/season";
 import { seasonHighlights } from "@/lib/season-highlights";
@@ -221,16 +224,35 @@ async function Overview({ season }: { season: string }) {
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatTile label="Etapas" value={rounds} sub={plural(data.sessions.filter((s) => s.isSprint).length, "sprint", "sprints")} />
-        <StatTile label="Mais poles" value={poles.value} sub={names(poles.driverIds)} />
-        <StatTile label="Mais voltas rápidas" value={fastestLaps.value} sub={names(fastestLaps.driverIds)} />
+        <StatTile
+          label="Etapas"
+          value={rounds}
+          sub={plural(data.sessions.filter((s) => s.isSprint).length, "sprint", "sprints")}
+          description={SEASON_HIGHLIGHT_INDICATORS.rounds}
+        />
+        <StatTile
+          label="Mais poles"
+          value={poles.value}
+          sub={names(poles.driverIds)}
+          description={SEASON_HIGHLIGHT_INDICATORS.poles}
+        />
+        <StatTile
+          label="Mais voltas rápidas"
+          value={fastestLaps.value}
+          sub={names(fastestLaps.driverIds)}
+          description={SEASON_HIGHLIGHT_INDICATORS.fastestLaps}
+        />
         <StatTile
           label="Maior sequência de vitórias"
           value={winSequencia.value}
           sub={names(winSequencia.driverIds)}
+          description={SEASON_HIGHLIGHT_INDICATORS.winSequencia}
         />
-        <Card className="p-4">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted">Melhor forma recente</p>
+        <Tooltip description={SEASON_HIGHLIGHT_INDICATORS.recentForm} className={`${CARD} p-4`}>
+          <p className="text-xs font-bold uppercase tracking-wider text-muted">
+            Melhor forma recente
+            <InfoIcon />
+          </p>
           {recentForm.length ? (
             <>
               <ol className="mt-1.5 space-y-1">
@@ -255,18 +277,27 @@ async function Overview({ season }: { season: string }) {
               <p className="mt-0.5 text-sm text-text-2">sem pontos na janela</p>
             </>
           )}
-        </Card>
+        </Tooltip>
         <StatTile
           label="Melhor ritmo"
           value={ritmo ? percent(ritmo.value) : "—"}
           sub={ritmo && names(ritmo.driverIds)}
+          description={SEASON_HIGHLIGHT_INDICATORS.ritmo}
         />
         <StatTile
           label="Melhor aproveitamento"
           value={performance.driverIds.length ? decimal(performance.value) : "—"}
           sub={performance.driverIds.length > 0 && `pts por sessão · ${names(performance.driverIds)}`}
+          description={SEASON_HIGHLIGHT_INDICATORS.performance}
         />
-        {hatTricks && <StatTile label="Hat-tricks" value={hatTricks.value} sub={names(hatTricks.driverIds)} />}
+        {hatTricks && (
+          <StatTile
+            label="Hat-tricks"
+            value={hatTricks.value}
+            sub={names(hatTricks.driverIds)}
+            description={SEASON_HIGHLIGHT_INDICATORS.hatTricks}
+          />
+        )}
       </div>
 
       <ChampionshipCharts kind="driver" sessions={chart.sessions} series={chart.series} />
