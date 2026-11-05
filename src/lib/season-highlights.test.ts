@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { result, season, session } from "./season-fixtures";
-import { seasonHighlights } from "./season-highlights";
+import { MINIMUM_SESSIONS_SHARE, seasonHighlights } from "./season-highlights";
 
 const FERRARI = 1;
 const MCLAREN = 2;
@@ -147,6 +147,31 @@ describe("Destaques da temporada", () => {
     );
 
     expect(seasonHighlights(data).performance).toEqual({ value: 21.5, driverIds: [20, 10] });
+  });
+
+  // O corte sai da mesma constante que o texto do tooltip (indicators.test.ts confere o texto):
+  // se o cálculo deixar de usá-la, mudar o corte quebra este teste.
+  test("Melhor Ritmo e Melhor Aproveitamento cortam em MINIMUM_SESSIONS_SHARE das Sessões", () => {
+    const played = 10;
+    const needed = Math.ceil(played * MINIMUM_SESSIONS_SHARE);
+    const races = Array.from({ length: played }, (_, i) => session(i + 1, i + 1));
+    const data = season(
+      [],
+      ...races.map((r): [typeof r, ReturnType<typeof result>[]] => [
+        r,
+        [
+          // O 30 é o melhor em tudo, mas disputa uma Sessão a menos que o corte.
+          ...(r.id < needed ? [result(r, 30, MCLAREN, 1, { bestLap: "1:30.000" })] : []),
+          // O 20 disputa exatamente o corte.
+          ...(r.id <= needed ? [result(r, 20, MCLAREN, 2, { bestLap: "1:30.500" })] : []),
+          result(r, 10, FERRARI, 3, { bestLap: "1:31.000" }),
+        ],
+      ]),
+    );
+
+    const { ritmo, performance } = seasonHighlights(data);
+    expect(ritmo?.driverIds).toEqual([20]);
+    expect(performance.driverIds).toEqual([20]);
   });
 
   test("Hat-tricks lista os líderes empatados; a Sprint perfeita não conta", () => {

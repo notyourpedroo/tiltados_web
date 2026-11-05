@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { DRIVER_INDICATORS, SEASON_HIGHLIGHT_INDICATORS, TEAM_INDICATORS } from "./indicators";
-import { hasMinimumSessions } from "./season-highlights";
+import { MINIMUM_SESSIONS_SHARE } from "./season-highlights";
 
 // Os indicadores que cada página mostra, um por StatTile (e o card próprio "Melhor forma
 // recente" da visão geral). Um card novo entra aqui e no registro do sujeito.
@@ -127,15 +127,11 @@ describe("Descrições dos destaques da visão geral", () => {
     },
   );
 
-  // A regra dos destaques e o texto andam juntos: mudar o corte quebra um dos dois lados.
-  test("O corte de Melhor ritmo e Melhor aproveitamento é metade das Sessões", () => {
-    expect(hasMinimumSessions(5, 10)).toBe(true);
-    expect(hasMinimumSessions(4, 10)).toBe(false);
-    expect(hasMinimumSessions(2, 3)).toBe(true);
-    expect(hasMinimumSessions(1, 3)).toBe(false);
-  });
-
+  // A regra dos destaques e o texto andam juntos: o cálculo corta em MINIMUM_SESSIONS_SHARE
+  // (season-highlights.test.ts confere nos limites), e mudar o corte quebra este teste até
+  // o texto acompanhar.
   test.each(["ritmo", "performance"] as const)("%s cita o corte de metade das Sessões", (key) => {
+    expect(MINIMUM_SESSIONS_SHARE).toBe(1 / 2);
     expect(SEASON_HIGHLIGHT_INDICATORS[key]).toContain("ao menos metade das Sessões");
   });
 });

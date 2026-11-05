@@ -80,7 +80,7 @@ function recentFormTop(profiles: DriverEntry[]): RecentFormEntry[] {
 /**
  * Parte mínima das Sessões disputadas da temporada que um piloto precisa ter disputado
  * para entrar em Melhor Ritmo e Melhor Aproveitamento. O texto dos tooltips desses
- * cards (indicators.ts) sai daqui.
+ * cards (indicators.ts) diz o mesmo corte, e o indicators.test.ts confere os dois.
  */
 export const MINIMUM_SESSIONS_SHARE = 1 / 2;
 
@@ -88,7 +88,7 @@ export const MINIMUM_SESSIONS_SHARE = 1 / 2;
  * Se um piloto que disputou `disputed` Sessões entra em Melhor Ritmo e Melhor
  * Aproveitamento, numa temporada com `played` Sessões disputadas.
  */
-export function hasMinimumSessions(disputed: number, played: number): boolean {
+function hasMinimumSessions(disputed: number, played: number): boolean {
   return disputed >= played * MINIMUM_SESSIONS_SHARE;
 }
 
