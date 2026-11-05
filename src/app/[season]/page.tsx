@@ -226,27 +226,27 @@ async function Overview({ season }: { season: string }) {
       <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatTile
           label="Etapas"
+          description={SEASON_HIGHLIGHT_INDICATORS.rounds}
           value={rounds}
           sub={plural(data.sessions.filter((s) => s.isSprint).length, "sprint", "sprints")}
-          description={SEASON_HIGHLIGHT_INDICATORS.rounds}
         />
         <StatTile
           label="Mais poles"
+          description={SEASON_HIGHLIGHT_INDICATORS.poles}
           value={poles.value}
           sub={names(poles.driverIds)}
-          description={SEASON_HIGHLIGHT_INDICATORS.poles}
         />
         <StatTile
           label="Mais voltas rápidas"
+          description={SEASON_HIGHLIGHT_INDICATORS.fastestLaps}
           value={fastestLaps.value}
           sub={names(fastestLaps.driverIds)}
-          description={SEASON_HIGHLIGHT_INDICATORS.fastestLaps}
         />
         <StatTile
           label="Maior sequência de vitórias"
+          description={SEASON_HIGHLIGHT_INDICATORS.winSequencia}
           value={winSequencia.value}
           sub={names(winSequencia.driverIds)}
-          description={SEASON_HIGHLIGHT_INDICATORS.winSequencia}
         />
         <Tooltip description={SEASON_HIGHLIGHT_INDICATORS.recentForm} className={`${CARD} p-4`}>
           <p className="text-xs font-bold uppercase tracking-wider text-muted">
@@ -280,22 +280,22 @@ async function Overview({ season }: { season: string }) {
         </Tooltip>
         <StatTile
           label="Melhor ritmo"
+          description={SEASON_HIGHLIGHT_INDICATORS.ritmo}
           value={ritmo ? percent(ritmo.value) : "—"}
           sub={ritmo && names(ritmo.driverIds)}
-          description={SEASON_HIGHLIGHT_INDICATORS.ritmo}
         />
         <StatTile
           label="Melhor aproveitamento"
+          description={SEASON_HIGHLIGHT_INDICATORS.aproveitamento}
           value={performance.driverIds.length ? decimal(performance.value) : "—"}
           sub={performance.driverIds.length > 0 && `pts por sessão · ${names(performance.driverIds)}`}
-          description={SEASON_HIGHLIGHT_INDICATORS.aproveitamento}
         />
         {hatTricks && (
           <StatTile
             label="Hat-tricks"
+            description={SEASON_HIGHLIGHT_INDICATORS.hatTricks}
             value={hatTricks.value}
             sub={names(hatTricks.driverIds)}
-            description={SEASON_HIGHLIGHT_INDICATORS.hatTricks}
           />
         )}
       </div>
