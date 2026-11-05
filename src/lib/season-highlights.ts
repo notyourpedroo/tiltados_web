@@ -24,6 +24,8 @@ export interface SeasonHighlights {
    * metade das Sessões disputadas da temporada; null quando ninguém se qualifica.
    */
   pace: Leaders | null;
+  /** Melhor Aproveitamento, em pontos por Sessão, entre quem disputou ao menos metade das Sessões. */
+  performance: Leaders;
 }
 
 /** Um piloto no mini-ranking da Forma recente. */
@@ -39,12 +41,15 @@ const RECENT_FORM_TOP = 3;
 /** Líderes de cada tile de destaque da temporada. */
 export function seasonHighlights(data: DriverSeasonData): SeasonHighlights {
   const profiles = driverIds(data).map((id) => ({ id, profile: driverProfile(data, id) }));
+  // Melhor Ritmo e Melhor Aproveitamento exigem ao menos metade das Sessões.
+  const regulars = withMinimumSessions(data, profiles);
   return {
     poles: leaders(profiles, (p) => p.stats.poles),
     fastestLaps: leaders(profiles, (p) => p.stats.fastestLaps),
     winStreak: leaders(profiles, (p) => p.streaks.win.best),
     recentForm: recentFormTop(profiles),
-    pace: bestPace(profiles.filter(({ profile }) => profile.sessions.length >= playedSessions(data) / 2)),
+    pace: bestPace(regulars),
+    performance: leaders(regulars, (p) => p.performance?.pointsPerSession ?? 0),
   };
 }
 
@@ -58,6 +63,15 @@ function recentFormTop(profiles: { id: number; profile: DriverProfile }[]): Rece
     .filter((e) => e.points > 0)
     .sort((a, b) => b.points - a.points)
     .slice(0, RECENT_FORM_TOP);
+}
+
+/** Pilotos que disputaram ao menos metade das Sessões disputadas da temporada. */
+function withMinimumSessions(
+  data: DriverSeasonData,
+  profiles: { id: number; profile: DriverProfile }[],
+): { id: number; profile: DriverProfile }[] {
+  const played = playedSessions(data);
+  return profiles.filter(({ profile }) => profile.sessions.length * 2 >= played);
 }
 
 /** Pilotos com resultado na temporada, na ordem em que aparecem nas Sessões. */
