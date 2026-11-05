@@ -20,10 +20,13 @@ New-Item -ItemType Junction -Path node_modules -Target E:\Dev\Code\tiltados_web\
 
 Para apagar worktrees, use `node scripts/remover-worktree.mjs <caminho>... [--force]`: ele desfaz a junction e só então roda `git worktree remove`. Uma remoção recursiva com a junction no lugar apaga o `node_modules` do checkout principal. O `gh pr merge --delete-branch` faz essa remoção sozinho quando o branch do PR está em checkout num worktree, então rode o script nesse worktree antes do merge. Se o `node_modules` do checkout principal já foi apagado, `npm ci` no checkout principal o recria.
 
+Ticket que muda o `package.json` roda `npm ci` (ou o `npm install` da mudança) no próprio worktree, sem a junction: pela junction, o `npm install` reescreve o `node_modules` do checkout principal.
+
 ## Verificação
 
 - `npm run typecheck` gera os tipos de rota do Next (`next typegen`) antes do `tsc`; num worktree novo, o `tsc --noEmit` sozinho reclama de `PageProps`.
 - `npm test` e `npm run lint` rodam como no checkout principal.
+- `npm run build` pré-renderiza todas as rotas contra o `TILTADOS_API_URL`. Com a API de produção do `.env.local`, ele pode falhar com `respondeu 429`: suba a API local (`tiltados-api-local` no `.claude/launch.json`) e rode `$env:TILTADOS_API_URL = "http://127.0.0.1:8000"; npm run build`.
 - A conferência no navegador fica com a revisão do PR, no checkout principal (`gh pr checkout <pr>`). Quando ele está ocupado por outra sessão, rode o site no worktree:
   - O Turbopack recusa a junction de `node_modules`, que aponta para fora da raiz que ele deduz ("Symlink node_modules could not be resolved"). Aponte `TURBOPACK_ROOT` para o checkout principal, que contém o worktree e o `node_modules`: `$env:TURBOPACK_ROOT = "E:\Dev\Code\tiltados_web"`. Só para o `npm run dev`: no `npm run build` a variável também muda a raiz do pacote `standalone`.
   - Use o Turbopack: com `--webpack` a página sobe sem estilo, porque o Tailwind entra pelo loader `@tailwindcss/turbopack` do `next.config.ts`.
