@@ -29,7 +29,7 @@ describe("Perfil do piloto", () => {
     ]);
   });
 
-  test("poles e voltas mais rápidas contam Corrida e Sprint", () => {
+  test("pole conta só largada em 1º numa Corrida; voltas mais rápidas contam Corrida e Sprint", () => {
     const sprint = session(1, 1, true);
     const race = session(2, 1);
     const race2 = session(3, 2);
@@ -42,7 +42,7 @@ describe("Perfil do piloto", () => {
 
     const { stats } = driverProfile(data, 10);
 
-    expect(stats.poles).toBe(2);
+    expect(stats.poles).toBe(1);
     expect(stats.fastestLaps).toBe(2);
   });
 

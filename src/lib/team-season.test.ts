@@ -37,7 +37,7 @@ describe("Perfil da equipe", () => {
     expect(stats.oneTwos).toBe(1);
   });
 
-  test("pódios, poles e voltas mais rápidas contam Corrida e Sprint, de cada piloto da equipe", () => {
+  test("pódios e voltas mais rápidas contam Corrida e Sprint, poles só Corrida, de cada piloto da equipe", () => {
     const sprint = session(1, 1, true);
     const race = session(2, 1);
     const data = season(
@@ -62,7 +62,7 @@ describe("Perfil da equipe", () => {
 
     const { stats } = teamProfile(data, FERRARI);
     expect(stats.podiums).toBe(3);
-    expect(stats.poles).toBe(2);
+    expect(stats.poles).toBe(1);
     expect(stats.fastestLaps).toBe(2);
   });
 

@@ -14,7 +14,7 @@ export interface DriverSession {
 }
 
 export interface DriverStats {
-  /** Largadas em 1º, em Corridas e Sprints. */
+  /** Poles: largadas em 1º em Corridas (a Sprint não conta). */
   poles: number;
   /** Voltas mais rápidas, em Corridas e Sprints. */
   fastestLaps: number;
@@ -57,7 +57,7 @@ export function driverProfile(data: DriverSeasonData, driverId: number): DriverP
   const results = sessions.map((s) => s.result);
   const races = sessions.filter((s) => !s.session.isSprint).map((s) => s.result);
   const stats: DriverStats = {
-    poles: results.filter((r) => r.grid === 1).length,
+    poles: races.filter((r) => r.grid === 1).length,
     fastestLaps: results.filter((r) => r.fastestLap).length,
     avgFinish: races.length ? races.reduce((sum, r) => sum + r.position, 0) / races.length : null,
     gained: results.reduce((sum, r) => sum + r.gained, 0),
