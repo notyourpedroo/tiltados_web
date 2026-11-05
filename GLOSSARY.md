@@ -60,6 +60,42 @@ _Avoid_: previsão, odds, probabilidade de campeão
 A frase que explica por que um piloto ou equipe tem a sua Chance de título. No dia a dia, só "Motivo".
 _Avoid_: justificativa, explicação
 
+## Desempenho
+
+**Pole**:
+Largar em 1º numa Corrida. Largar em 1º numa Sprint não conta.
+_Avoid_: pole da Sprint
+
+**Volta mais rápida**:
+A melhor volta de uma Sessão, Corrida ou Sprint, entre todos os pilotos.
+_Avoid_: VMR, fastest lap
+
+**Hat-trick**:
+Pole, vitória e Volta mais rápida do mesmo piloto na mesma Corrida.
+_Avoid_: Grand Chelem
+
+**Conversão de pole**:
+Quantas das Poles de um piloto viraram vitória na mesma Corrida, contada como "X de Y".
+
+**Forma recente**:
+Os pontos de um piloto nas últimas 3 Etapas disputadas da temporada, Corrida e Sprint somadas; uma Etapa em que ele não correu conta zero.
+_Avoid_: momento, fase
+
+**Sequência**:
+Corridas seguidas em que um piloto pontuou, subiu ao pódio ou venceu. Só Corridas contam, e uma Corrida que ele não disputou quebra a Sequência.
+_Avoid_: streak
+
+**Aproveitamento**:
+Os pontos por Sessão disputada de um piloto e a parte das suas Sessões em que pontuou.
+_Avoid_: média de pontos, eficiência
+
+**Ritmo**:
+Quanto, em média e em porcentagem, a melhor volta de um piloto fica atrás da Volta mais rápida de cada Sessão em que ele marcou tempo.
+_Avoid_: pace, velocidade
+
+**Temporada passada**:
+A temporada imediatamente anterior, usada para comparar o mesmo piloto pelas médias por Sessão, nunca pelos totais.
+
 ## Equipes
 
 **Piloto da equipe**:
