@@ -28,6 +28,7 @@ import { getDriverPrediction, getSuperLicense } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { driverProfile, seasonComparison } from "@/lib/driver-season";
 import { shortGpName } from "@/lib/chart";
+import { DRIVER_INDICATORS } from "@/lib/indicators";
 import { decimal, formatDate, lastWeekends, ordinal, percent, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason } from "@/lib/season";
@@ -134,43 +135,50 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
       </PageTitle>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatTile label="Pontos" value={standing.points} sub={`${ordinal(standing.position)} lugar`} />
+        <StatTile label="Pontos" description={DRIVER_INDICATORS.points} value={standing.points} sub={`${ordinal(standing.position)} lugar`} />
         <StatTile
           label="Vitórias"
+          description={DRIVER_INDICATORS.wins}
           value={standing.wins}
           sub={plural(standing.sprint_wins, "vitória em sprint", "vitórias em sprint")}
         />
-        <StatTile label="Pódios" value={standing.podiums} sub={plural(standing.races, "sessão disputada", "sessões disputadas")} />
+        <StatTile label="Pódios" description={DRIVER_INDICATORS.podiums} value={standing.podiums} sub={plural(standing.races, "sessão disputada", "sessões disputadas")} />
         <StatTile
           label="Melhor resultado"
+          description={DRIVER_INDICATORS.best}
           value={stats.best ? ordinal(stats.best.position) : "—"}
           sub={stats.best && `${stats.best.count}×`}
         />
-        <StatTile label="Poles" value={stats.poles} sub={stats.poles > 0 && poleConversion(stats.poleConversion)} />
-        <StatTile label="Voltas mais rápidas" value={stats.fastestLaps} />
-        <StatTile label="Hat-tricks" value={stats.hatTricks} sub="pole, vitória e volta mais rápida" />
+        <StatTile label="Poles" description={DRIVER_INDICATORS.poles} value={stats.poles} sub={stats.poles > 0 && poleConversion(stats.poleConversion)} />
+        <StatTile label="Voltas mais rápidas" description={DRIVER_INDICATORS.fastestLaps} value={stats.fastestLaps} />
+        <StatTile label="Hat-tricks" description={DRIVER_INDICATORS.hatTricks} value={stats.hatTricks} sub="pole, vitória e volta mais rápida" />
         <StatTile
           label="Chegada média"
+          description={DRIVER_INDICATORS.avgFinish}
           value={stats.avgFinish === null ? "—" : decimal(stats.avgFinish)}
           sub="em corridas"
         />
         <StatTile
           label="Posições ganhas"
+          description={DRIVER_INDICATORS.gained}
           value={stats.gained > 0 ? `+${stats.gained}` : stats.gained}
           sub="saldo grid → chegada"
         />
         <StatTile
           label="Forma recente"
+          description={DRIVER_INDICATORS.recentForm}
           value={formWeekends ? stats.recentForm : "—"}
           sub={formWeekends ? `pts ${lastWeekends(formWeekends)}` : "sem etapa disputada"}
         />
         <StatTile
           label="Ritmo"
+          description={DRIVER_INDICATORS.ritmo}
           value={stats.ritmo === null ? "—" : percent(stats.ritmo)}
           sub={stats.ritmo !== null && "da melhor volta, em média"}
         />
         <StatTile
           label="Aproveitamento"
+          description={DRIVER_INDICATORS.aproveitamento}
           value={performance ? decimal(performance.pointsPerSession) : "—"}
           sub={performance && `por sessão · pontuou em ${percent(performance.scoringRate, 0)}`}
         />
@@ -179,14 +187,15 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
       <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
         {(
           [
-            ["Maior sequência pontuando", sequencias.scoring],
-            ["Maior sequência no pódio", sequencias.podium],
-            ["Maior sequência vencendo", sequencias.win],
+            ["Maior sequência pontuando", sequencias.scoring, DRIVER_INDICATORS.sequenciaScoring],
+            ["Maior sequência no pódio", sequencias.podium, DRIVER_INDICATORS.sequenciaPodium],
+            ["Maior sequência vencendo", sequencias.win, DRIVER_INDICATORS.sequenciaWin],
           ] as const
-        ).map(([label, sequencia]) => (
+        ).map(([label, sequencia, description]) => (
           <StatTile
             key={label}
             label={label}
+            description={description}
             value={sequencia.best}
             sub={`atual: ${plural(sequencia.current, "corrida", "corridas")}`}
           />
