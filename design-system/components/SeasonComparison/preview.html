@@ -1,0 +1,39 @@
+<!-- @dsCard group="Padrões de página" height=300 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../bundle.css">
+<script>document.documentElement.dataset.theme = new URLSearchParams(location.search).get("theme") || "dark";</script>
+<title>SeasonComparison</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap">
+<style>
+  .cmp { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; line-height: 20px; }
+  .cmp th { padding: 4px 0; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); text-align: right; }
+  .cmp th:first-child { text-align: left; }
+  .cmp td { padding: 8px 0; border-top: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; }
+  .cmp td:first-child { text-align: left; font-weight: 700; }
+  .cmp .before { color: var(--text-2); }
+  .cmp .now { font-weight: 900; }
+  .cmp .trend { padding-left: 12px; font-size: 12px; color: var(--text-2); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="demo"><div class="card" style="padding:var(--space-5);max-width:440px">
+  <p class="lbl" style="margin:0">Comparativo com 2025</p>
+  <table class="cmp">
+    <thead><tr><th>Média</th><th>2025</th><th>2026</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>Pontos por sessão</td><td class="before">8,2</td><td class="now">7,9</td><td class="trend">▼ pior</td></tr>
+      <tr><td>Vitórias em corridas</td><td class="before">0%</td><td class="now">0%</td><td class="trend">= igual</td></tr>
+      <tr><td>Pódios</td><td class="before">23%</td><td class="now">25%</td><td class="trend">▲ melhor</td></tr>
+      <tr><td>Chegada média</td><td class="before">5,3</td><td class="now">4,9</td><td class="trend">▲ melhor</td></tr>
+      <tr><td>Ritmo</td><td class="before">1,9%</td><td class="now">1,9%</td><td class="trend">= igual</td></tr>
+    </tbody>
+  </table>
+  <p class="c-muted" style="margin:8px 0 0;font-size:12px;line-height:16px">2026 até agora contra 2025 inteira, sempre por sessão disputada</p>
+</div></div>
+</body>
+</html>

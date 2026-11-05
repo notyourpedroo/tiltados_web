@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { TitleChanceCard } from "@/components/chance";
 import { HideOnError } from "@/components/HideOnError";
+import { SeasonComparison } from "@/components/SeasonComparison";
 import { SeasonStrip } from "@/components/SeasonStrip";
 import { TeammateDuel } from "@/components/TeammateDuel";
 import {
@@ -25,13 +26,13 @@ import {
 } from "@/components/ui";
 import { getDriverPrediction, getSuperLicense } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
-import { driverProfile } from "@/lib/driver-season";
+import { driverProfile, seasonComparison } from "@/lib/driver-season";
 import { shortGpName } from "@/lib/chart";
 import { decimal, formatDate, lastWeekends, ordinal, percent, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason } from "@/lib/season";
 import { teamCar, teamStyle } from "@/lib/teams";
-import { isSeason } from "@/lib/types";
+import { isSeason, SEASONS, type Season } from "@/lib/types";
 import { recentFormWeekends } from "@/lib/weekend";
 
 export async function generateStaticParams({
@@ -74,6 +75,23 @@ async function DriverTitleChance({ driverId }: { driverId: number }) {
       view={describeChance(row, "driver")}
       reason={row.probability_reason}
     />
+  );
+}
+
+/**
+ * Card comparativo com a Temporada passada (a anterior na lista de temporadas), pelo
+ * mesmo ID. Some na primeira temporada e para quem não tem Sessão disputada nas duas.
+ */
+async function DriverSeasonComparison({ season, driverId }: { season: Season; driverId: number }) {
+  const previousSeason = SEASONS[SEASONS.indexOf(season) - 1];
+  if (!previousSeason) return null;
+  const [current, previous] = await Promise.all([getSeason(season), getSeason(previousSeason)]);
+  const comparison = seasonComparison(driverProfile(current, driverId), driverProfile(previous, driverId));
+  if (!comparison) return null;
+  return (
+    <div className="mt-10 grid gap-4 sm:grid-cols-2">
+      <SeasonComparison season={season} previousSeason={previousSeason} {...comparison} />
+    </div>
   );
 }
 
@@ -174,6 +192,13 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           />
         ))}
       </div>
+
+      {/* Comparativo com a Temporada passada: carrega à parte e, se falhar, some. */}
+      <HideOnError>
+        <Suspense fallback={null}>
+          <DriverSeasonComparison season={data.season} driverId={id} />
+        </Suspense>
+      </HideOnError>
 
       {/* Carrega à parte: se a rota demorar, o resto da página não espera; se
           falhar, o bloco some sem derrubar a página. */}
