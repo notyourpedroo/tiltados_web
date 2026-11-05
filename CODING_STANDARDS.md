@@ -14,4 +14,4 @@ Regras de julgamento para a revisão. As regras mecânicas ficam no ESLint (`esl
 
 ## Documentação
 
-- Página nova entra na tabela "Páginas" do `README.md`; arquivo novo em `src/lib/` entra na árvore "Estrutura".
+- Página nova entra na tabela "Páginas" do `README.md`; arquivo novo em `src/lib/` entra na árvore "Estrutura" (o `readme.test.ts` confere).
