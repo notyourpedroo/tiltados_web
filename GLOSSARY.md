@@ -67,8 +67,8 @@ Largar em 1º numa Corrida. Largar em 1º numa Sprint não conta.
 _Avoid_: pole da Sprint
 
 **Volta mais rápida**:
-A melhor volta de uma Sessão, Corrida ou Sprint, entre todos os pilotos.
-_Avoid_: VMR, fastest lap
+A melhor volta de uma Sessão, Corrida ou Sprint, entre todos os pilotos. Abreviada VMR só no selo, onde não cabe o nome inteiro; no texto corrido, o nome por extenso.
+_Avoid_: fastest lap
 
 **Hat-trick**:
 Pole, vitória e Volta mais rápida do mesmo piloto na mesma Corrida.
