@@ -36,8 +36,27 @@ export interface DriverDuel {
   behind: number;
 }
 
+/** Uma Sequência: Corridas seguidas em que o piloto cumpriu o critério. */
+export interface Streak {
+  /** A maior da temporada. */
+  best: number;
+  /** A que chega à última Corrida disputada da temporada; 0 se ela quebrou ali. */
+  current: number;
+}
+
+export interface DriverStreaks {
+  /** Corridas seguidas pontuando. */
+  scoring: Streak;
+  /** Corridas seguidas no pódio. */
+  podium: Streak;
+  /** Corridas seguidas vencendo. */
+  win: Streak;
+}
+
 export interface DriverProfile {
   stats: DriverStats;
+  /** Sequências de pontos, pódios e vitórias, só em Corridas. */
+  streaks: DriverStreaks;
   /** Sessões disputadas pelo piloto, em ordem. */
   sessions: DriverSession[];
   /** Um duelo por companheiro, na ordem em que correram juntos pela primeira vez. */
@@ -63,7 +82,38 @@ export function driverProfile(data: DriverSeasonData, driverId: number): DriverP
     gained: results.reduce((sum, r) => sum + r.gained, 0),
     best: bestResult(results),
   };
-  return { stats, sessions, duels: driverDuels(data, driverId, sessions) };
+  return {
+    stats,
+    streaks: driverStreaks(data, driverId),
+    sessions,
+    duels: driverDuels(data, driverId, sessions),
+  };
+}
+
+/**
+ * Sequências sobre as Corridas disputadas da temporada, em ordem: Sprints não
+ * contam, e uma Corrida sem o piloto quebra a corrente.
+ */
+function driverStreaks(data: DriverSeasonData, driverId: number): DriverStreaks {
+  const races = data.sessions
+    .filter((s) => !s.isSprint)
+    .map((s) => data.results[s.id] ?? [])
+    .filter((list) => list.length > 0)
+    .map((list) => list.find((r) => r.driverId === driverId));
+  const streak = (hit: (r: SessionResult) => boolean): Streak => {
+    let best = 0;
+    let current = 0;
+    for (const r of races) {
+      current = r && hit(r) ? current + 1 : 0;
+      best = Math.max(best, current);
+    }
+    return { best, current };
+  };
+  return {
+    scoring: streak((r) => r.points > 0),
+    podium: streak((r) => r.position <= 3),
+    win: streak((r) => r.position === 1),
+  };
 }
 
 function driverDuels(data: DriverSeasonData, driverId: number, sessions: DriverSession[]): DriverDuel[] {
