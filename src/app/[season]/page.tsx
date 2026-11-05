@@ -120,9 +120,6 @@ async function Overview({ season }: { season: string }) {
   const lastPodium = last ? data.results[last.id].slice(0, 3) : [];
   const rounds = mains.length;
 
-  const winners = new Set(
-    data.sessions.filter((s) => !s.isSprint).map((s) => data.results[s.id][0]?.driverId),
-  );
   const { poles, fastestLaps, winSequencia, recentForm, ritmo, performance, hatTricks } = seasonHighlights(data);
   const formWeekends = recentFormWeekends(data.sessions);
   const names = (ids: number[]) => ids.map((id) => driverName(data, id)).join(", ");
@@ -225,7 +222,6 @@ async function Overview({ season }: { season: string }) {
 
       <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatTile label="Etapas" value={rounds} sub={plural(data.sessions.filter((s) => s.isSprint).length, "sprint", "sprints")} />
-        <StatTile label="Vencedores diferentes" value={winners.size} sub="em corridas" />
         <StatTile label="Mais poles" value={poles.value} sub={names(poles.driverIds)} />
         <StatTile label="Mais voltas rápidas" value={fastestLaps.value} sub={names(fastestLaps.driverIds)} />
         <StatTile
