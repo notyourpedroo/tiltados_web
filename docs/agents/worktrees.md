@@ -18,7 +18,7 @@ O worktree vem sem `node_modules`. Em vez de `npm install`, crie uma junction pa
 New-Item -ItemType Junction -Path node_modules -Target E:\Dev\Code\tiltados_web\node_modules
 ```
 
-Para apagar worktrees, use `node scripts/remover-worktree.mjs <caminho>... [--force]`: ele desfaz a junction e só então roda `git worktree remove`. Uma remoção recursiva com a junction no lugar apaga o `node_modules` do checkout principal. O `gh pr merge --delete-branch` faz essa remoção sozinho quando o branch do PR está em checkout num worktree, então desfaça a junction antes do merge; se ela já foi, `npm ci` no checkout principal recria o `node_modules`.
+Para apagar worktrees, use `node scripts/remover-worktree.mjs <caminho>... [--force]`: ele desfaz a junction e só então roda `git worktree remove`. Uma remoção recursiva com a junction no lugar apaga o `node_modules` do checkout principal. O `gh pr merge --delete-branch` faz essa remoção sozinho quando o branch do PR está em checkout num worktree, então rode o script nesse worktree antes do merge. Se o `node_modules` do checkout principal já foi apagado, `npm ci` no checkout principal o recria.
 
 ## Verificação
 
