@@ -116,6 +116,7 @@ src/
     ├── license.ts         # como o status da Superlicença aparece no card (testado com o Vitest)
     ├── season.ts          # modelo derivado da temporada
     ├── season-fixtures.ts # temporadas montadas à mão para os testes
+    ├── season-highlights.ts # líderes dos tiles de destaque da home (testado com o Vitest)
     ├── team-season.ts     # perfil da equipe e evolução do campeonato de construtores (testado com o Vitest)
     ├── teams.ts           # cores, logos e Carros das equipes, e o Jogo de cada temporada (testado com o Vitest)
     ├── types.ts           # tipos das respostas da API

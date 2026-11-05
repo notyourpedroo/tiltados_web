@@ -20,7 +20,8 @@ import { describeChance } from "@/lib/chance";
 import { chartData } from "@/lib/chart";
 import { formatDate, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
-import { mainSessions, type SeasonData, type SessionResult } from "@/lib/season";
+import { mainSessions } from "@/lib/season";
+import { seasonHighlights } from "@/lib/season-highlights";
 import { teamCar, teamStyle } from "@/lib/teams";
 
 export default function SeasonPage({ params }: PageProps<"/[season]">) {
@@ -31,21 +32,6 @@ export default function SeasonPage({ params }: PageProps<"/[season]">) {
       ))}
     </Suspense>
   );
-}
-
-/** Piloto(s) com mais resultados que satisfazem `pick` (empates listados juntos). */
-function topBy(data: SeasonData, pick: (r: SessionResult) => boolean) {
-  const count = new Map<number, number>();
-  for (const list of Object.values(data.results)) {
-    for (const r of list) {
-      if (pick(r)) count.set(r.driverId, (count.get(r.driverId) ?? 0) + 1);
-    }
-  }
-  const best = Math.max(0, ...count.values());
-  const names = [...count]
-    .filter(([, c]) => c === best)
-    .map(([id]) => data.drivers[id]?.name ?? `#${id}`);
-  return { best, names };
 }
 
 function LeaderLabel({ children }: { children: ReactNode }) {
@@ -135,8 +121,8 @@ async function Overview({ season }: { season: string }) {
   const winners = new Set(
     data.sessions.filter((s) => !s.isSprint).map((s) => data.results[s.id][0]?.driverId),
   );
-  const poles = topBy(data, (r) => r.grid === 1);
-  const fastest = topBy(data, (r) => r.fastestLap);
+  const { poles, fastestLaps } = seasonHighlights(data);
+  const names = (ids: number[]) => ids.map((id) => data.drivers[id]?.name ?? `#${id}`).join(", ");
 
   const chart = chartData(data);
 
@@ -237,8 +223,8 @@ async function Overview({ season }: { season: string }) {
       <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatTile label="Etapas" value={rounds} sub={plural(data.sessions.filter((s) => s.isSprint).length, "sprint", "sprints")} />
         <StatTile label="Vencedores diferentes" value={winners.size} sub="em corridas" />
-        <StatTile label="Mais poles" value={poles.best} sub={poles.names.join(", ")} />
-        <StatTile label="Mais voltas rápidas" value={fastest.best} sub={fastest.names.join(", ")} />
+        <StatTile label="Mais poles" value={poles.value} sub={names(poles.driverIds)} />
+        <StatTile label="Mais voltas rápidas" value={fastestLaps.value} sub={names(fastestLaps.driverIds)} />
       </div>
 
       <ChampionshipCharts kind="driver" sessions={chart.sessions} series={chart.series} />
