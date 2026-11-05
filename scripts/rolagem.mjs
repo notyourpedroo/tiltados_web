@@ -1,7 +1,8 @@
 // Rolagem horizontal: abre cada rota em várias larguras no Chrome headless e falha
 // quando a página fica mais larga que a janela, apontando o elemento que estoura, ou
 // quando um texto de uma linha (.truncate) sai cortado a 1280 px. Uma rota que não
-// responde 2xx falha pelo status, sem medir a página de erro.
+// responde 2xx falha pelo status, sem medir a página de erro. Cada tooltip de card é
+// aberto e falha quando o balão sai da janela.
 // Sem rotas, percorre o site inteiro a partir de /2025 e /2026 (perfis, Etapas...).
 //
 //   node scripts/rolagem.mjs [rota]...
@@ -92,7 +93,36 @@ const MEASURE = `(async () => {
   const cut = [...document.querySelectorAll(".truncate")]
     .filter((el) => el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 1)
     .map((el) => el.textContent.trim().slice(0, 60));
-  return { overflow, culprit, links, cut };
+  // Tooltip aberto (components/Tooltip.tsx): abre cada um como o usuário abriria, com o
+  // card na borda de baixo da janela, onde o balão precisa virar para cima.
+  const frame = () => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
+  const hover = matchMedia("(hover: hover)").matches;
+  const tooltips = [];
+  for (const card of document.querySelectorAll("[aria-describedby]")) {
+    const bubble = document.getElementById(card.getAttribute("aria-describedby"));
+    if (bubble?.getAttribute("role") !== "tooltip" || card.offsetParent === null) continue;
+    const label = (card.querySelector("p")?.textContent ?? "").replace("ⓘ", "").trim();
+    card.scrollIntoView({ block: "end" });
+    // O load chega antes da hidratação: tenta abrir até o React ligar os eventos.
+    for (let tries = 0; bubble.hidden && tries < 30; tries++) {
+      if (hover) {
+        card.blur();
+        card.focus();
+      } else card.click();
+      await frame();
+    }
+    if (bubble.hidden) tooltips.push('tooltip "' + label + '" não abriu');
+    else {
+      const r = bubble.getBoundingClientRect();
+      if (r.left < 0 || r.right > limit || r.top < 0 || r.bottom > root.clientHeight || root.scrollWidth > limit) {
+        tooltips.push('tooltip "' + label + '" sai da janela (' + [r.left, r.right, r.top, r.bottom].map(Math.round).join(", ") + ")");
+      }
+    }
+    if (hover) card.blur();
+    else card.click();
+    await frame();
+  }
+  return { overflow, culprit, links, cut, tooltips };
 })()`;
 
 async function check(route) {
@@ -124,12 +154,13 @@ async function check(route) {
       { expression: MEASURE, awaitPromise: true, returnByValue: true },
       sessionId,
     );
-    const { status, overflow, culprit, links, cut } = result.value;
+    const { status, overflow, culprit, links, cut, tooltips } = result.value;
     if (status) {
       failures.push(`/${route}: HTTP ${status}`);
       break;
     }
     if (overflow > 0) failures.push(`/${route} em ${width}px: +${overflow}px (${culprit || "?"})`);
+    for (const tooltip of tooltips) failures.push(`/${route} em ${width}px: ${tooltip}`);
     // No celular o corte é previsto (design-system/components/StatTile); no desktop
     // largo, é texto longo demais para o espaço.
     if (width >= DESKTOP) for (const text of cut) failures.push(`/${route} em ${width}px: texto cortado "${text}"`);
