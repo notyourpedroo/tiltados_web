@@ -18,14 +18,7 @@ O worktree vem sem `node_modules`. Em vez de `npm install`, crie uma junction pa
 New-Item -ItemType Junction -Path node_modules -Target E:\Dev\Code\tiltados_web\node_modules
 ```
 
-Para apagar um worktree, desfaça a junction primeiro e depois rode `git worktree remove`. A junction sai com o comando abaixo, que remove só o link (o `cmd /c rmdir` é bloqueado pela ferramenta PowerShell); troque o caminho pelo do worktree:
-
-```powershell
-$nm = "E:\Dev\Code\tiltados_web\.claude\worktrees\agent-<id>\node_modules"
-if ((Get-Item $nm -Force).LinkType -eq 'Junction') { [System.IO.Directory]::Delete($nm, $false) }
-```
-
-Uma remoção recursiva com a junction no lugar apaga o `node_modules` do checkout principal. O `gh pr merge --delete-branch` faz essa remoção sozinho quando o branch do PR está em checkout num worktree, então desfaça a junction antes do merge; se ela já foi, `npm ci` no checkout principal recria o `node_modules`.
+Para apagar worktrees, use `node scripts/remover-worktree.mjs <caminho>... [--force]`: ele desfaz a junction e só então roda `git worktree remove`. Uma remoção recursiva com a junction no lugar apaga o `node_modules` do checkout principal. O `gh pr merge --delete-branch` faz essa remoção sozinho quando o branch do PR está em checkout num worktree, então desfaça a junction antes do merge; se ela já foi, `npm ci` no checkout principal recria o `node_modules`.
 
 ## Verificação
 
@@ -36,3 +29,7 @@ Uma remoção recursiva com a junction no lugar apaga o `node_modules` do checko
   - Use o Turbopack: com `--webpack` a página sobe sem estilo, porque o Tailwind entra pelo loader `@tailwindcss/turbopack` do `next.config.ts`.
   - O `.env.local` não vem no worktree: copie o do checkout principal.
   - Use uma porta própria (`npm run dev -- --port 3005`), porque vários servidores de dev disputam a 3000.
+- Armadilhas do `next dev`, no worktree ou no checkout principal:
+  - Na primeira subida ele pode parar num aviso de vulnerabilidade que sugere `next upgrade`. Suba de novo com o mesmo comando; o upgrade é decisão do usuário.
+  - Trocar de branch com o servidor de pé corrompe o cache: as rotas dão 500 com `SyntaxError` em `JSON.parse`. Pare o servidor, apague o `.next` e suba de novo. O `rolagem.mjs` acusa isso como `HTTP 500`.
+  - Depois de navegar no cliente, o DOM da rota anterior fica na página, escondido. Para contar elementos de uma página, carregue-a direto (recarregue).
