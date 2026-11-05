@@ -37,12 +37,23 @@ const VOCABULARY = [
 const LINEUP_WORD =
   "/(^|_)([Ll]ine_?[Uu]p|LINE_?UP)s?($|[A-Z_])|[a-z0-9]Line_?[Uu]ps?($|[A-Z_])/";
 const LINEUP_MESSAGE = "line-up é _Avoid_ no GLOSSARY.md: use o termo Dupla (inDupla).";
-const LINEUP_IDENTIFIER = [
-  { selector: `Identifier[name=${LINEUP_WORD}]`, message: LINEUP_MESSAGE },
-  { selector: `JSXIdentifier[name=${LINEUP_WORD}]`, message: LINEUP_MESSAGE },
+const identifierRule = (word, message) => [
+  { selector: `Identifier[name=${word}]`, message },
+  { selector: `JSXIdentifier[name=${word}]`, message },
+];
+// Uma palavra inglesa como parte de um identificador (pace, bestPace, PACE, pace_ms),
+// e não dentro de outra (space, replace).
+const englishWord = (word) => {
+  const cap = word[0].toUpperCase() + word.slice(1);
+  return `/(^|_)(${word}|${cap}|${word.toUpperCase()})s?($|[A-Z_])|[a-z0-9]${cap}s?($|[A-Z_])/`;
+};
+const IDENTIFIERS = [
+  ...identifierRule(LINEUP_WORD, LINEUP_MESSAGE),
+  ...identifierRule(englishWord("pace"), "pace é _Avoid_ no GLOSSARY.md: use o termo Ritmo (ritmo)."),
+  ...identifierRule(englishWord("streak"), "streak é _Avoid_ no GLOSSARY.md: use o termo Sequência (sequencia)."),
 ];
 // O que vale em todo arquivo de src/; cada bloco abaixo só acrescenta o que é dele.
-const EVERYWHERE = [...HEX, ...MUTED_ON_SURFACE_2, ...LINEUP_IDENTIFIER];
+const EVERYWHERE = [...HEX, ...MUTED_ON_SURFACE_2, ...IDENTIFIERS];
 
 const eslintConfig = defineConfig([
   ...nextVitals,
