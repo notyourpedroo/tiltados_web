@@ -16,14 +16,14 @@ export interface SeasonHighlights {
   /** Mais voltas rápidas. */
   fastestLaps: Leaders;
   /** Maior Sequência de vitórias da temporada. */
-  winStreak: Leaders;
+  winSequencia: Leaders;
   /** Melhor Forma recente: mini-ranking dos 3 primeiros. */
   recentForm: RecentFormEntry[];
   /**
    * Melhor Ritmo: o menor Ritmo (driver-season.ts) entre quem disputou ao menos
    * metade das Sessões disputadas da temporada; null quando ninguém se qualifica.
    */
-  pace: Leaders | null;
+  ritmo: Leaders | null;
   /** Melhor Aproveitamento, em pontos por Sessão, entre quem disputou ao menos metade das Sessões. */
   performance: Leaders;
   /** Mais Hat-tricks; null quando ninguém fez um (o tile não aparece). */
@@ -48,9 +48,9 @@ export function seasonHighlights(data: DriverSeasonData): SeasonHighlights {
   return {
     poles: leaders(profiles, (p) => p.stats.poles),
     fastestLaps: leaders(profiles, (p) => p.stats.fastestLaps),
-    winStreak: leaders(profiles, (p) => p.streaks.win.best),
+    winSequencia: leaders(profiles, (p) => p.sequencias.win.best),
     recentForm: recentFormTop(profiles),
-    pace: bestPace(regulars),
+    ritmo: bestRitmo(regulars),
     performance: leaders(regulars, (p) => p.performance?.pointsPerSession ?? 0),
     hatTricks: orNull(leaders(profiles, (p) => p.stats.hatTricks)),
   };
@@ -101,9 +101,9 @@ function playedSessions(data: DriverSeasonData): number {
 }
 
 /** Pilotos com o menor Ritmo, empatados juntos; null quando ninguém tem Ritmo. */
-function bestPace(profiles: { id: number; profile: DriverProfile }[]): Leaders | null {
+function bestRitmo(profiles: { id: number; profile: DriverProfile }[]): Leaders | null {
   const values = profiles.flatMap(({ id, profile }) =>
-    profile.stats.pace === null ? [] : [{ id, value: profile.stats.pace }],
+    profile.stats.ritmo === null ? [] : [{ id, value: profile.stats.ritmo }],
   );
   if (!values.length) return null;
   const value = Math.min(...values.map((v) => v.value));

@@ -188,7 +188,7 @@ describe("Perfil do piloto", () => {
       [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:40.000" }), result(race, 10, FERRARI, 2, { bestLap: "1:42.000" })]],
     );
 
-    expect(driverProfile(data, 10).stats.pace).toBeCloseTo((1 / 90 + 0.02) / 2, 10);
+    expect(driverProfile(data, 10).stats.ritmo).toBeCloseTo((1 / 90 + 0.02) / 2, 10);
   });
 
   test("piloto que fez a Volta mais rápida em todas as Sessões tem Ritmo zero", () => {
@@ -200,7 +200,7 @@ describe("Perfil do piloto", () => {
       [race2, [result(race2, 20, MCLAREN, 1, { bestLap: "1:31.000" }), result(race2, 10, FERRARI, 2, { bestLap: "1:30.250" })]],
     );
 
-    expect(driverProfile(data, 10).stats.pace).toBe(0);
+    expect(driverProfile(data, 10).stats.ritmo).toBe(0);
   });
 
   test("Sessão sem tempo válido do piloto fica fora do Ritmo", () => {
@@ -213,7 +213,7 @@ describe("Perfil do piloto", () => {
       [race2, [result(race2, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race2, 10, FERRARI, 2, { bestLap: "" })]],
     );
 
-    expect(driverProfile(data, 10).stats.pace).toBeCloseTo(3 / 90, 10);
+    expect(driverProfile(data, 10).stats.ritmo).toBeCloseTo(3 / 90, 10);
   });
 
   test("Sessão com o tempo de quem não marcou volta (\"9:99.999\", da API de 2025) fica fora do Ritmo", () => {
@@ -225,7 +225,7 @@ describe("Perfil do piloto", () => {
       [race2, [result(race2, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race2, 10, FERRARI, 2, { bestLap: "9:99.999" })]],
     );
 
-    expect(driverProfile(data, 10).stats.pace).toBeCloseTo(3 / 90, 10);
+    expect(driverProfile(data, 10).stats.ritmo).toBeCloseTo(3 / 90, 10);
   });
 
   test("piloto sem nenhum tempo válido fica sem Ritmo", () => {
@@ -235,7 +235,7 @@ describe("Perfil do piloto", () => {
       [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 10, FERRARI, 2, { bestLap: "-" })]],
     );
 
-    expect(driverProfile(data, 10).stats.pace).toBeNull();
+    expect(driverProfile(data, 10).stats.ritmo).toBeNull();
   });
 
   test("Aproveitamento: pontos por Sessão disputada e a parte das Sessões em que pontuou, sem contar as Sessões em que faltou", () => {
@@ -268,11 +268,11 @@ describe("Perfil do piloto", () => {
         gained: 0,
         best: null,
         recentForm: 0,
-        pace: null,
+        ritmo: null,
         hatTricks: 0,
         poleConversion: { converted: 0, poles: 0 },
       },
-      streaks: {
+      sequencias: {
         scoring: { best: 0, current: 0 },
         podium: { best: 0, current: 0 },
         win: { best: 0, current: 0 },
@@ -304,16 +304,16 @@ describe("Sequências do piloto", () => {
     // Pontua nas 3 primeiras, fica fora dos pontos na 4ª e volta a pontuar na 5ª.
     const data = races(1, 2, 3, 9, 4);
 
-    expect(driverProfile(data, 10).streaks.scoring).toEqual({ best: 3, current: 1 });
+    expect(driverProfile(data, 10).sequencias.scoring).toEqual({ best: 3, current: 1 });
   });
 
   test("pódio e vitória contam cada um o seu critério", () => {
     const data = races(1, 1, 2, 3, 1, 5);
 
-    const { streaks } = driverProfile(data, 10);
+    const { sequencias } = driverProfile(data, 10);
 
-    expect(streaks.podium).toEqual({ best: 5, current: 0 });
-    expect(streaks.win).toEqual({ best: 2, current: 0 });
+    expect(sequencias.podium).toEqual({ best: 5, current: 0 });
+    expect(sequencias.win).toEqual({ best: 2, current: 0 });
   });
 
   test("a Sprint no meio da corrente é ignorada, sem somar nem quebrar", () => {
@@ -328,10 +328,10 @@ describe("Sequências do piloto", () => {
       [race2, [result(race2, 10, FERRARI, 1)]],
     );
 
-    const { streaks } = driverProfile(data, 10);
+    const { sequencias } = driverProfile(data, 10);
 
-    expect(streaks.scoring).toEqual({ best: 2, current: 2 });
-    expect(streaks.win).toEqual({ best: 2, current: 2 });
+    expect(sequencias.scoring).toEqual({ best: 2, current: 2 });
+    expect(sequencias.win).toEqual({ best: 2, current: 2 });
   });
 
   test("uma Corrida sem o piloto zera a corrente", () => {
@@ -345,7 +345,7 @@ describe("Sequências do piloto", () => {
       [race3, [result(race3, 10, FERRARI, 1)]],
     );
 
-    expect(driverProfile(data, 10).streaks.win).toEqual({ best: 1, current: 1 });
+    expect(driverProfile(data, 10).sequencias.win).toEqual({ best: 1, current: 1 });
   });
 
   test("sem ter disputado a última Corrida da temporada, a atual é zero", () => {
@@ -357,14 +357,14 @@ describe("Sequências do piloto", () => {
       [race2, [result(race2, 20, MCLAREN, 1)]],
     );
 
-    expect(driverProfile(data, 10).streaks.win).toEqual({ best: 1, current: 0 });
+    expect(driverProfile(data, 10).sequencias.win).toEqual({ best: 1, current: 0 });
   });
 
   test("temporada só com Sprint não tem Sequência", () => {
     const sprint = session(1, 1, true);
     const data = season([], [sprint, [result(sprint, 10, FERRARI, 1)]]);
 
-    expect(driverProfile(data, 10).streaks.win).toEqual({ best: 0, current: 0 });
+    expect(driverProfile(data, 10).sequencias.win).toEqual({ best: 0, current: 0 });
   });
 });
 
@@ -389,14 +389,14 @@ describe("Comparativo com a Temporada passada", () => {
     const comparison = seasonComparison(driverProfile(current, 10), driverProfile(previous, 10));
 
     expect(comparison).toEqual({
-      current: { pointsPerSession: 15, raceWinRate: 0, podiumRate: 1, avgFinish: 3, pace: 0.01 },
+      current: { pointsPerSession: 15, raceWinRate: 0, podiumRate: 1, avgFinish: 3, ritmo: 0.01 },
       // 7 + 25 + 12 pontos em 3 Sessões; Ritmo: 1%, 0% e 2%.
       previous: {
         pointsPerSession: expect.closeTo(44 / 3),
         raceWinRate: 0.5,
         podiumRate: expect.closeTo(2 / 3),
         avgFinish: 2.5,
-        pace: expect.closeTo(0.01),
+        ritmo: expect.closeTo(0.01),
       },
     });
   });

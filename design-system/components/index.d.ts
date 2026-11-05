@@ -256,7 +256,7 @@ export interface SeasonAverages {
   /** Chegada média em Corridas; null sem Corrida. */
   avgFinish: number | null;
   /** Ritmo, em fração (0,012 = 1,2%); null sem tempo válido. */
-  pace: number | null;
+  ritmo: number | null;
 }
 export interface SeasonComparisonProps {
   /** Temporada atual, ex.: "2026". */

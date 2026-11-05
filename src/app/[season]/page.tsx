@@ -122,7 +122,7 @@ async function Overview({ season }: { season: string }) {
   const winners = new Set(
     data.sessions.filter((s) => !s.isSprint).map((s) => data.results[s.id][0]?.driverId),
   );
-  const { poles, fastestLaps, winStreak, recentForm, pace, performance, hatTricks } = seasonHighlights(data);
+  const { poles, fastestLaps, winSequencia, recentForm, ritmo, performance, hatTricks } = seasonHighlights(data);
   const formWeekends = recentFormWeekends(data.sessions);
   const names = (ids: number[]) => ids.map((id) => data.drivers[id]?.name ?? `#${id}`).join(", ");
 
@@ -229,8 +229,8 @@ async function Overview({ season }: { season: string }) {
         <StatTile label="Mais voltas rápidas" value={fastestLaps.value} sub={names(fastestLaps.driverIds)} />
         <StatTile
           label="Maior sequência de vitórias"
-          value={winStreak.value}
-          sub={names(winStreak.driverIds)}
+          value={winSequencia.value}
+          sub={names(winSequencia.driverIds)}
         />
         <Card className="p-4">
           <p className="text-xs font-bold uppercase tracking-wider text-muted">Melhor forma recente</p>
@@ -261,8 +261,8 @@ async function Overview({ season }: { season: string }) {
         </Card>
         <StatTile
           label="Melhor Ritmo"
-          value={pace ? percent(pace.value) : "—"}
-          sub={pace && names(pace.driverIds)}
+          value={ritmo ? percent(ritmo.value) : "—"}
+          sub={ritmo && names(ritmo.driverIds)}
         />
         <StatTile
           label="Melhor aproveitamento"
