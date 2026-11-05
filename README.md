@@ -132,6 +132,7 @@ src/
     ├── team-season.ts     # perfil da equipe e evolução do campeonato de construtores (testado com o Vitest)
     ├── teams.ts           # cores, logos e Carros das equipes, e o Jogo de cada temporada (testado com o Vitest)
     ├── theme.ts           # tema claro/escuro salvo no navegador
+    ├── tooltip.ts         # onde o balão do tooltip abre, dentro da janela (testado com o Vitest)
     ├── types.ts           # tipos das respostas da API
     └── weekend.ts         # Sessões agrupadas por Etapa (testado com o Vitest)
 ```
