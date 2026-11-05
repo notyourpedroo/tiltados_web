@@ -245,6 +245,27 @@ export interface TeammateDuelProps {
   first: DuelSide;
   second: DuelSide;
 }
+/** Médias por Sessão de um piloto numa temporada (SeasonAverages em src/lib/driver-season.ts). */
+export interface SeasonAverages {
+  /** Pontos por Sessão disputada. */
+  pointsPerSession: number;
+  /** Parte das Corridas disputadas que venceu, de 0 a 1; null sem Corrida. */
+  raceWinRate: number | null;
+  /** Parte das Sessões disputadas em que chegou no pódio, de 0 a 1. */
+  podiumRate: number;
+  /** Chegada média em Corridas; null sem Corrida. */
+  avgFinish: number | null;
+  /** Ritmo, em fração (0,012 = 1,2%); null sem tempo válido. */
+  pace: number | null;
+}
+export interface SeasonComparisonProps {
+  /** Temporada atual, ex.: "2026". */
+  season: string;
+  /** Temporada passada, ex.: "2025". */
+  previousSeason: string;
+  current: SeasonAverages;
+  previous: SeasonAverages;
+}
 /** Status da Superlicença como a API escreve (LicenseStatus em src/lib/types.ts). */
 export type LicenseStatus =
   | "Regular"
