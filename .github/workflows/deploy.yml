@@ -23,6 +23,24 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Histórico inteiro, para o passo seguinte ler os commits do PR.
+          fetch-depth: 0
+
+      # O Contributors do GitHub conta o autor de cada commit da main. Commit de
+      # bot (Dependabot) é reescrito antes do merge: docs/agents/workflow.md.
+      - name: Autor dos commits
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          bots="$(git log --format='%h %an <%ae>' "$BASE..$HEAD" | grep -F '[bot]' || true)"
+          if [ -n "$bots" ]; then
+            echo "::error::Commit com autor bot; reescreva o autor antes do merge (docs/agents/workflow.md):"
+            echo "$bots"
+            exit 1
+          fi
 
       - uses: actions/setup-node@v7
         with:
