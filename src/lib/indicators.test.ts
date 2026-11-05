@@ -2,31 +2,65 @@ import { describe, expect, test } from "vitest";
 import { DRIVER_INDICATORS, SEASON_HIGHLIGHT_INDICATORS, TEAM_INDICATORS } from "./indicators";
 import { hasMinimumSessions } from "./season-highlights";
 
+// Os indicadores que cada página mostra, um por StatTile (e o card próprio "Melhor forma
+// recente" da visão geral). Um card novo entra aqui e no registro do sujeito.
+const DRIVER_PROFILE_CARDS = [
+  "points",
+  "wins",
+  "podiums",
+  "best",
+  "poles",
+  "fastestLaps",
+  "hatTricks",
+  "avgFinish",
+  "gained",
+  "recentForm",
+  "ritmo",
+  "aproveitamento",
+  "sequenciaScoring",
+  "sequenciaPodium",
+  "sequenciaWin",
+];
+const SEASON_OVERVIEW_CARDS = [
+  "rounds",
+  "poles",
+  "fastestLaps",
+  "winSequencia",
+  "recentForm",
+  "ritmo",
+  "performance",
+  "hatTricks",
+];
+const TEAM_PROFILE_CARDS = [
+  "points",
+  "wins",
+  "podiums",
+  "oneTwos",
+  "poles",
+  "fastestLaps",
+  "best",
+  "bothScored",
+  "recentForm",
+  "aproveitamento",
+];
+
+describe("Cada card das três páginas tem descrição, para piloto e equipe", () => {
+  test.each([
+    ["perfil do piloto", DRIVER_INDICATORS, DRIVER_PROFILE_CARDS],
+    ["visão geral", SEASON_HIGHLIGHT_INDICATORS, SEASON_OVERVIEW_CARDS],
+    ["perfil da equipe", TEAM_INDICATORS, TEAM_PROFILE_CARDS],
+  ] as const)("%s: um texto por card, nenhum vazio e nenhum sobrando", (_, indicators, cards) => {
+    expect(Object.keys(indicators).sort()).toEqual([...cards].sort());
+    for (const description of Object.values(indicators)) {
+      expect(description.trim().length).toBeGreaterThan(0);
+    }
+  });
+});
+
 // Uma asserção por indicador: os tickets da equipe e da visão geral só acrescentam
 // entradas e casos, sem reescrever os de outro sujeito.
 
 describe("Descrições dos indicadores do piloto", () => {
-  test.each([
-    "points",
-    "wins",
-    "podiums",
-    "best",
-    "poles",
-    "fastestLaps",
-    "hatTricks",
-    "avgFinish",
-    "gained",
-    "recentForm",
-    "ritmo",
-    "aproveitamento",
-    "sequenciaScoring",
-    "sequenciaPodium",
-    "sequenciaWin",
-  ])("%s tem descrição", (key) => {
-    const description = (DRIVER_INDICATORS as Record<string, string>)[key];
-    expect(description?.trim().length).toBeGreaterThan(0);
-  });
-
   test("Pole só conta em Corrida", () => {
     expect(DRIVER_INDICATORS.poles).toContain("Corrida");
     expect(DRIVER_INDICATORS.poles).toMatch(/Sprint não conta/);
@@ -59,20 +93,6 @@ describe("Descrições dos indicadores do piloto", () => {
 });
 
 describe("Descrições dos destaques da visão geral", () => {
-  test.each([
-    "rounds",
-    "poles",
-    "fastestLaps",
-    "winSequencia",
-    "recentForm",
-    "ritmo",
-    "performance",
-    "hatTricks",
-  ])("%s tem descrição", (key) => {
-    const description = (SEASON_HIGHLIGHT_INDICATORS as Record<string, string>)[key];
-    expect(description?.trim().length).toBeGreaterThan(0);
-  });
-
   test("Etapas explica a Etapa e a contagem de Sprints", () => {
     expect(SEASON_HIGHLIGHT_INDICATORS.rounds).toContain("fim de semana de GP");
     expect(SEASON_HIGHLIGHT_INDICATORS.rounds).toContain("Sprints");
@@ -117,22 +137,6 @@ describe("Descrições dos destaques da visão geral", () => {
 });
 
 describe("Descrições dos indicadores da equipe", () => {
-  test.each([
-    "points",
-    "wins",
-    "podiums",
-    "oneTwos",
-    "poles",
-    "fastestLaps",
-    "best",
-    "bothScored",
-    "recentForm",
-    "aproveitamento",
-  ])("%s tem descrição", (key) => {
-    const description = (TEAM_INDICATORS as Record<string, string>)[key];
-    expect(description?.trim().length).toBeGreaterThan(0);
-  });
-
   test("Pontos somam os de todos os Pilotos da equipe por ela", () => {
     expect(TEAM_INDICATORS.points).toMatch(/todos os Pilotos da equipe/);
   });
