@@ -25,10 +25,11 @@ import {
 } from "@/components/ui";
 import { getDriverPrediction, getSuperLicense } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
+import { driverProfile } from "@/lib/driver-season";
 import { shortGpName } from "@/lib/chart";
 import { formatDate, ordinal, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
-import { getSeason, type Session, type SessionResult } from "@/lib/season";
+import { getSeason } from "@/lib/season";
 import { teamCar, teamStyle } from "@/lib/teams";
 import { isSeason } from "@/lib/types";
 
@@ -89,36 +90,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
       : undefined;
   const penalties = data.punishments.filter((p) => p.driver_id === id);
 
-  const races: { s: Session; r: SessionResult; total: number }[] = [];
-  let running = 0;
-  for (const s of data.sessions) {
-    const r = data.results[s.id].find((res) => res.driverId === id);
-    if (!r) continue;
-    running += r.points;
-    races.push({ s, r, total: running });
-  }
-
-  const poles = races.filter(({ r }) => r.grid === 1).length;
-  const fastestLaps = races.filter(({ r }) => r.fastestLap).length;
-  const mainRaces = races.filter(({ s }) => !s.isSprint);
-  const avgFinish = mainRaces.length
-    ? mainRaces.reduce((sum, { r }) => sum + r.position, 0) / mainRaces.length
-    : 0;
-  const best = Math.min(...races.map(({ r }) => r.position));
-  const bestCount = races.filter(({ r }) => r.position === best).length;
-  const gainedTotal = races.reduce((sum, { r }) => sum + r.gained, 0);
-
-  // Duelo com companheiros: sessões em que ambos correram pela mesma equipe.
-  const duels = new Map<number, { ahead: number; behind: number }>();
-  for (const { s, r } of races) {
-    for (const other of data.results[s.id]) {
-      if (other.driverId === id || other.teamId !== r.teamId) continue;
-      const d = duels.get(other.driverId) ?? { ahead: 0, behind: 0 };
-      if (r.position < other.position) d.ahead++;
-      else d.behind++;
-      duels.set(other.driverId, d);
-    }
-  }
+  const { stats, sessions, duels } = driverProfile(data, id);
 
   return (
     <>
@@ -151,19 +123,19 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
         <StatTile label="Pódios" value={standing.podiums} sub={plural(standing.races, "sessão disputada", "sessões disputadas")} />
         <StatTile
           label="Melhor resultado"
-          value={ordinal(best)}
-          sub={`${bestCount}×`}
+          value={stats.best ? ordinal(stats.best.position) : "—"}
+          sub={stats.best && `${stats.best.count}×`}
         />
-        <StatTile label="Poles" value={poles} />
-        <StatTile label="Voltas mais rápidas" value={fastestLaps} />
+        <StatTile label="Poles" value={stats.poles} />
+        <StatTile label="Voltas mais rápidas" value={stats.fastestLaps} />
         <StatTile
           label="Chegada média"
-          value={avgFinish ? avgFinish.toFixed(1).replace(".", ",") : "—"}
+          value={stats.avgFinish === null ? "—" : stats.avgFinish.toFixed(1).replace(".", ",")}
           sub="em corridas"
         />
         <StatTile
           label="Posições ganhas"
-          value={gainedTotal > 0 ? `+${gainedTotal}` : gainedTotal}
+          value={stats.gained > 0 ? `+${stats.gained}` : stats.gained}
           sub="saldo grid → chegada"
         />
       </div>
@@ -182,7 +154,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
         <SectionTitle>Temporada em resumo</SectionTitle>
         <SeasonStrip
           season={data.season}
-          cells={races.map(({ s, r }) => ({
+          cells={sessions.map(({ session: s, result: r }) => ({
             session: s,
             value: r.position,
             position: r.position,
@@ -192,17 +164,17 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
         />
       </section>
 
-      {(duels.size > 0 || license) && (
+      {(duels.length > 0 || license) && (
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          {[...duels].map(([otherId, d]) => (
+          {duels.map((d) => (
             <TeammateDuel
-              key={otherId}
+              key={d.id}
               label="Duelo com companheiro de equipe"
               first={{ name: standing.driver_name, ahead: d.ahead }}
               second={{
                 name: (
-                  <Link href={`/${data.season}/pilotos/${otherId}`} className="hover:underline">
-                    {data.drivers[otherId]?.name}
+                  <Link href={`/${data.season}/pilotos/${d.id}`} className="hover:underline">
+                    {data.drivers[d.id]?.name}
                   </Link>
                 ),
                 ahead: d.behind,
@@ -250,7 +222,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
             </tr>
           </thead>
           <tbody>
-            {races.map(({ s, r, total }) => {
+            {sessions.map(({ session: s, result: r, total }) => {
               const raceTeam = data.teams[r.teamId];
               const changedTeam = raceTeam && raceTeam.name !== standing.team_name;
               return (
