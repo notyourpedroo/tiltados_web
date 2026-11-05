@@ -17,6 +17,11 @@ updates:
         patterns:
           - next
           - eslint-config-next
+      # O react-dom exige a mesma versão do react: um sem o outro não instala.
+      react:
+        patterns:
+          - react
+          - react-dom
 
   - package-ecosystem: github-actions
     directory: /
