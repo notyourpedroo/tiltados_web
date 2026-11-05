@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { DRIVER_INDICATORS } from "./indicators";
+import { DRIVER_INDICATORS, SEASON_HIGHLIGHT_INDICATORS } from "./indicators";
+import { hasMinimumSessions } from "./season-highlights";
 
 // Uma asserção por indicador: os tickets da equipe e da visão geral só acrescentam
 // entradas e casos, sem reescrever os de outro sujeito.
@@ -55,4 +56,62 @@ describe("Descrições dos indicadores do piloto", () => {
       expect(DRIVER_INDICATORS[key]).toContain("atual");
     },
   );
+});
+
+describe("Descrições dos destaques da visão geral", () => {
+  test.each([
+    "rounds",
+    "poles",
+    "fastestLaps",
+    "winSequencia",
+    "recentForm",
+    "ritmo",
+    "performance",
+    "hatTricks",
+  ])("%s tem descrição", (key) => {
+    const description = (SEASON_HIGHLIGHT_INDICATORS as Record<string, string>)[key];
+    expect(description?.trim().length).toBeGreaterThan(0);
+  });
+
+  test("Etapas explica a Etapa e a contagem de Sprints", () => {
+    expect(SEASON_HIGHLIGHT_INDICATORS.rounds).toContain("fim de semana de GP");
+    expect(SEASON_HIGHLIGHT_INDICATORS.rounds).toContain("Sprints");
+  });
+
+  test("Mais poles conta só Poles de Corrida", () => {
+    expect(SEASON_HIGHLIGHT_INDICATORS.poles).toMatch(/Sprint não conta/);
+  });
+
+  test("Maior sequência de vitórias só conta Corridas seguidas", () => {
+    expect(SEASON_HIGHLIGHT_INDICATORS.winSequencia).toMatch(/Só Corridas contam/);
+    expect(SEASON_HIGHLIGHT_INDICATORS.winSequencia).toMatch(/quebra a Sequência/);
+  });
+
+  test("Melhor forma recente soma as últimas 3 Etapas e conta zero na Etapa sem o piloto", () => {
+    expect(SEASON_HIGHLIGHT_INDICATORS.recentForm).toContain("últimas 3 Etapas");
+    expect(SEASON_HIGHLIGHT_INDICATORS.recentForm).toContain("conta zero");
+  });
+
+  test("Hat-tricks explica Pole, vitória e Volta mais rápida na mesma Corrida", () => {
+    expect(SEASON_HIGHLIGHT_INDICATORS.hatTricks).toMatch(/Pole, vitória e Volta mais rápida/);
+  });
+
+  test.each(["poles", "fastestLaps", "winSequencia", "ritmo", "performance", "hatTricks"] as const)(
+    "%s avisa que empatados aparecem juntos",
+    (key) => {
+      expect(SEASON_HIGHLIGHT_INDICATORS[key]).toMatch(/empatados aparecem juntos/);
+    },
+  );
+
+  // A regra dos destaques e o texto andam juntos: mudar o corte quebra um dos dois lados.
+  test("O corte de Melhor ritmo e Melhor aproveitamento é metade das Sessões", () => {
+    expect(hasMinimumSessions(5, 10)).toBe(true);
+    expect(hasMinimumSessions(4, 10)).toBe(false);
+    expect(hasMinimumSessions(2, 3)).toBe(true);
+    expect(hasMinimumSessions(1, 3)).toBe(false);
+  });
+
+  test.each(["ritmo", "performance"] as const)("%s cita o corte de metade das Sessões", (key) => {
+    expect(SEASON_HIGHLIGHT_INDICATORS[key]).toContain("ao menos metade das Sessões");
+  });
 });
