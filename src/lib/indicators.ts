@@ -29,7 +29,7 @@ export const DRIVER_INDICATORS = {
   recentForm:
     "Os pontos do piloto nas últimas 3 Etapas disputadas da temporada, Corrida e Sprint somadas; uma Etapa em que ele não correu conta zero.",
   ritmo:
-    "Quanto, em média, a melhor volta do piloto fica atrás da Volta mais rápida de cada Sessão em que ele marcou tempo. Quanto mais perto de 0%, mais rápido.",
+    "Quanto, em média e em porcentagem, a melhor volta do piloto fica atrás da Volta mais rápida de cada Sessão em que ele marcou tempo. Quanto mais perto de 0%, mais rápido.",
   aproveitamento:
     "Os pontos por Sessão disputada do piloto e a parte das suas Sessões em que ele pontuou.",
   sequenciaScoring: `A maior Sequência de Corridas seguidas em que o piloto pontuou. ${SEQUENCIA_RULE}`,
