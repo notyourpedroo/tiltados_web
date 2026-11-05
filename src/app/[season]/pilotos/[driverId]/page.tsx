@@ -27,7 +27,7 @@ import { getDriverPrediction, getSuperLicense } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { driverProfile } from "@/lib/driver-season";
 import { shortGpName } from "@/lib/chart";
-import { formatDate, lastWeekends, ordinal, plural } from "@/lib/format";
+import { formatDate, lastWeekends, ordinal, percent, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason } from "@/lib/season";
 import { teamCar, teamStyle } from "@/lib/teams";
@@ -144,6 +144,11 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           label="Forma recente"
           value={formWeekends ? stats.recentForm : "—"}
           sub={formWeekends ? `pts ${lastWeekends(formWeekends)}` : "sem etapa disputada"}
+        />
+        <StatTile
+          label="Ritmo"
+          value={stats.pace === null ? "—" : percent(stats.pace)}
+          sub={stats.pace !== null && "da melhor volta, em média"}
         />
       </div>
 
