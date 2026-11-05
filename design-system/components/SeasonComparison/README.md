@@ -12,4 +12,4 @@ Card que compara as médias por Sessão do piloto na temporada atual até agora 
 ## Onde aparece
 - Perfil do piloto, depois das Sequências, em meia largura. Só para quem tem Sessão disputada nas duas temporadas, pelo mesmo ID; some para o estreante, para quem ainda não correu a temporada atual e em 2025, que não tem temporada anterior no site.
 
-Fonte: `src/components/SeasonComparison.tsx` e `seasonComparison` em `src/lib/driver-season.ts`, usado em `src/app/[season]/pilotos/[driverId]/page.tsx` · prévia estática com o Paulo em 2026 (até R18) contra 2025, que mostra as três evoluções.
+Fonte: `src/components/SeasonComparison.tsx` e `seasonComparison` em `src/lib/driver-season.ts`, usado em `src/app/[season]/pilotos/[driverId]/page.tsx` · prévia estática com o Paulo em 2026 (até R18) contra 2025, que mostra as três evoluções, e um piloto que em 2026 só correu Sprints e em 2025 não marcou tempo, com "—" sem evolução.
