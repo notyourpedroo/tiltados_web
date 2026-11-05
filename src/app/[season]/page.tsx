@@ -18,11 +18,12 @@ import {
 import { getDriverPrediction } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { chartData } from "@/lib/chart";
-import { formatDate, plural } from "@/lib/format";
+import { formatDate, lastWeekends, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { mainSessions } from "@/lib/season";
 import { seasonHighlights } from "@/lib/season-highlights";
 import { teamCar, teamStyle } from "@/lib/teams";
+import { recentFormWeekends } from "@/lib/weekend";
 
 export default function SeasonPage({ params }: PageProps<"/[season]">) {
   return (
@@ -121,7 +122,8 @@ async function Overview({ season }: { season: string }) {
   const winners = new Set(
     data.sessions.filter((s) => !s.isSprint).map((s) => data.results[s.id][0]?.driverId),
   );
-  const { poles, fastestLaps, winStreak } = seasonHighlights(data);
+  const { poles, fastestLaps, winStreak, recentForm } = seasonHighlights(data);
+  const formWeekends = recentFormWeekends(data.sessions);
   const names = (ids: number[]) => ids.map((id) => data.drivers[id]?.name ?? `#${id}`).join(", ");
 
   const chart = chartData(data);
@@ -230,6 +232,33 @@ async function Overview({ season }: { season: string }) {
           value={winStreak.value}
           sub={names(winStreak.driverIds)}
         />
+        <Card className="p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted">Melhor forma recente</p>
+          {recentForm.length ? (
+            <>
+              <ol className="mt-1.5 space-y-1">
+                {recentForm.map((e, i) => (
+                  <li key={e.driverId} className="flex items-baseline gap-2">
+                    <span className="w-3 text-sm font-black text-muted">{i + 1}</span>
+                    <Link
+                      href={`/${data.season}/pilotos/${e.driverId}`}
+                      className="truncate font-bold hover:underline"
+                    >
+                      {names([e.driverId])}
+                    </Link>
+                    <span className="tabular ml-auto text-sm text-text-2">{e.points} pts</span>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-1 text-sm text-text-2">{lastWeekends(formWeekends)}</p>
+            </>
+          ) : (
+            <>
+              <p className="mt-1 text-3xl font-black leading-tight">—</p>
+              <p className="mt-0.5 text-sm text-text-2">sem pontos na janela</p>
+            </>
+          )}
+        </Card>
       </div>
 
       <ChampionshipCharts kind="driver" sessions={chart.sessions} series={chart.series} />

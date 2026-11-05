@@ -14,6 +14,11 @@ export function ordinal(position: number): string {
   return `${position}º`;
 }
 
+/** A janela da Forma recente em texto: "nas últimas 3 etapas", "na última etapa". */
+export function lastWeekends(n: number): string {
+  return n === 1 ? "na última etapa" : `nas últimas ${n} etapas`;
+}
+
 export function plural(n: number, one: string, many: string): string {
   return `${n} ${n === 1 ? one : many}`;
 }
