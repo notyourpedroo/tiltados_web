@@ -18,7 +18,7 @@ import {
 import { getDriverPrediction } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { chartData } from "@/lib/chart";
-import { formatDate, lastWeekends, percent, plural } from "@/lib/format";
+import { decimal, formatDate, lastWeekends, percent, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { mainSessions } from "@/lib/season";
 import { seasonHighlights } from "@/lib/season-highlights";
@@ -122,7 +122,7 @@ async function Overview({ season }: { season: string }) {
   const winners = new Set(
     data.sessions.filter((s) => !s.isSprint).map((s) => data.results[s.id][0]?.driverId),
   );
-  const { poles, fastestLaps, winStreak, recentForm, pace } = seasonHighlights(data);
+  const { poles, fastestLaps, winStreak, recentForm, pace, performance } = seasonHighlights(data);
   const formWeekends = recentFormWeekends(data.sessions);
   const names = (ids: number[]) => ids.map((id) => data.drivers[id]?.name ?? `#${id}`).join(", ");
 
@@ -263,6 +263,11 @@ async function Overview({ season }: { season: string }) {
           label="Melhor Ritmo"
           value={pace ? percent(pace.value) : "—"}
           sub={pace && names(pace.driverIds)}
+        />
+        <StatTile
+          label="Melhor aproveitamento"
+          value={performance.driverIds.length ? decimal(performance.value) : "—"}
+          sub={performance.driverIds.length > 0 && `pts por sessão · ${names(performance.driverIds)}`}
         />
       </div>
 

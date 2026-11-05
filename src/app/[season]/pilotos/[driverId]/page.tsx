@@ -27,7 +27,7 @@ import { getDriverPrediction, getSuperLicense } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { driverProfile } from "@/lib/driver-season";
 import { shortGpName } from "@/lib/chart";
-import { formatDate, lastWeekends, ordinal, percent, plural } from "@/lib/format";
+import { decimal, formatDate, lastWeekends, ordinal, percent, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason } from "@/lib/season";
 import { teamCar, teamStyle } from "@/lib/teams";
@@ -91,7 +91,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
       : undefined;
   const penalties = data.punishments.filter((p) => p.driver_id === id);
 
-  const { stats, streaks, sessions, duels } = driverProfile(data, id);
+  const { stats, streaks, performance, sessions, duels } = driverProfile(data, id);
   const formWeekends = recentFormWeekends(data.sessions);
 
   return (
@@ -149,6 +149,11 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           label="Ritmo"
           value={stats.pace === null ? "—" : percent(stats.pace)}
           sub={stats.pace !== null && "da melhor volta, em média"}
+        />
+        <StatTile
+          label="Aproveitamento"
+          value={performance ? decimal(performance.pointsPerSession) : "—"}
+          sub={performance && `pts por sessão · pontuou em ${percent(performance.scoringRate, 0)}`}
         />
       </div>
 

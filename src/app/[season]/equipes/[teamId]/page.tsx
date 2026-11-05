@@ -26,7 +26,7 @@ import {
 import { getSuperLicense, getTeamPrediction } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { shortGpName } from "@/lib/chart";
-import { formatDate, lastWeekends, ordinal, plural } from "@/lib/format";
+import { decimal, formatDate, lastWeekends, ordinal, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason, type SeasonData } from "@/lib/season";
 import { teamProfile, type TeamSession } from "@/lib/team-season";
@@ -89,7 +89,7 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
   const style = teamStyle(standing.team_name);
   // Carro do cadastro, o mesmo do logo e do nome no cabeçalho.
   const car = teamCar(standing.team_name, data.season);
-  const { stats, sessions, drivers, duels } = teamProfile(data, standing.team_id);
+  const { stats, pointsPerSession, sessions, drivers, duels } = teamProfile(data, standing.team_id);
   const played = sessions.length > 0;
   const formWeekends = recentFormWeekends(data.sessions);
   const driverLink = (id: number) => (
@@ -133,6 +133,11 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
           label="Forma recente"
           value={formWeekends ? stats.recentForm : "—"}
           sub={formWeekends ? `pts ${lastWeekends(formWeekends)}` : "sem etapa disputada"}
+        />
+        <StatTile
+          label="Aproveitamento"
+          value={pointsPerSession === null ? "—" : decimal(pointsPerSession)}
+          sub={pointsPerSession !== null && "pts por sessão de cada piloto"}
         />
       </div>
 
