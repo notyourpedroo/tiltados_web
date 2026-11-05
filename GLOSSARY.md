@@ -78,7 +78,7 @@ _Avoid_: Grand Chelem
 Quantas das Poles de um piloto viraram vitória na mesma Corrida, contada como "X de Y".
 
 **Forma recente**:
-Os pontos de um piloto nas últimas 3 Etapas disputadas da temporada, Corrida e Sprint somadas; uma Etapa em que ele não correu conta zero.
+Os pontos de um piloto ou equipe nas últimas 3 Etapas disputadas da temporada, Corrida e Sprint somadas; uma Etapa em que ele não correu conta zero. A da equipe soma os pontos de todos os Pilotos da equipe na janela.
 _Avoid_: momento, fase
 
 **Sequência**:
@@ -86,7 +86,7 @@ Corridas seguidas em que um piloto pontuou, subiu ao pódio ou venceu. Só Corri
 _Avoid_: streak
 
 **Aproveitamento**:
-Os pontos por Sessão disputada de um piloto e a parte das suas Sessões em que pontuou.
+Os pontos por Sessão disputada de um piloto e a parte das suas Sessões em que pontuou. O da equipe é a média por participação de piloto: uma Sessão em que dois Pilotos da equipe correram conta duas vezes.
 _Avoid_: média de pontos, eficiência
 
 **Ritmo**:
@@ -116,6 +116,9 @@ _Avoid_: pilotos atuais, line-up
 **Dobradinha**:
 O 1º e o 2º lugar de uma Corrida feitos por pilotos da mesma equipe. Uma Sprint não conta.
 _Avoid_: 1-2, dobrada
+
+**Dois nos pontos**:
+Uma Sessão, Corrida ou Sprint, em que ao menos dois Pilotos da equipe pontuaram.
 
 ## Superlicença
 
