@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { ChampionshipCharts } from "@/components/ChampionshipCharts";
 import { TeamStandingsTable } from "@/components/standings";
 import { Card, PageTitle, SectionTitle, Skeleton, TeamLogo } from "@/components/ui";
+import { driverName } from "@/lib/drivers";
 import { ordinal } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { constructorsProgression } from "@/lib/team-season";
@@ -101,7 +102,7 @@ async function Teams({ season }: { season: string }) {
                         href={`/${data.season}/pilotos/${id}`}
                         className="font-bold hover:underline"
                       >
-                        {data.drivers[id]?.name ?? `#${id}`}
+                        {driverName(data, id)}
                       </Link>
                       <span className="tabular ml-auto text-text-2">{pts} pts</span>
                     </li>

@@ -113,6 +113,7 @@ src/
     ├── api.ts             # chamadas à Tiltados API (com cache)
     ├── chance.ts          # como a Chance de título aparece na tela (testado com o Vitest)
     ├── driver-season.ts   # perfil do piloto na temporada (testado com o Vitest)
+    ├── drivers.ts         # nome do piloto para a tela
     ├── lap.ts             # tempo de volta da API em milissegundos (testado com o Vitest)
     ├── license.ts         # como o status da Superlicença aparece no card (testado com o Vitest)
     ├── season.ts          # modelo derivado da temporada

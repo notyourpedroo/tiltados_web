@@ -1,4 +1,5 @@
 import type { ChartSeries, ChartSession } from "@/components/ProgressionChart";
+import { driverName } from "./drivers";
 import type { SeasonData, Session } from "./season";
 
 /** "GP da China" → "China". */
@@ -30,7 +31,7 @@ export function chartData(data: SeasonData): {
         .some((q) => data.drivers[q.driverId]?.teamId === teamId);
       return {
         id: p.driverId,
-        name: data.drivers[p.driverId]?.name ?? `#${p.driverId}`,
+        name: driverName(data, p.driverId),
         color: data.teams[teamId]?.color ?? "var(--team-other)",
         dashed,
         cumulative: p.cumulative,

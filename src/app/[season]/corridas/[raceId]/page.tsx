@@ -19,6 +19,7 @@ import {
   tr,
 } from "@/components/ui";
 import { shortGpName } from "@/lib/chart";
+import { driverName } from "@/lib/drivers";
 import { formatDate } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason, weekendOf } from "@/lib/season";
@@ -71,7 +72,7 @@ async function Race({ season, raceId }: { season: string; raceId: string }) {
   const next = data.sessions[index + 1];
   const penalties = data.punishments.filter((p) => p.race_id === session.id);
   const climber = [...results].sort((a, b) => b.gained - a.gained)[0];
-  const name = (id: number) => data.drivers[id]?.name ?? `#${id}`;
+  const name = (id: number) => driverName(data, id);
 
   return (
     <>
