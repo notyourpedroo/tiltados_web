@@ -15,6 +15,8 @@ export interface SeasonHighlights {
   poles: Leaders;
   /** Mais voltas rápidas. */
   fastestLaps: Leaders;
+  /** Maior Sequência de vitórias da temporada. */
+  winStreak: Leaders;
 }
 
 /** Líderes de cada tile de destaque da temporada. */
@@ -23,6 +25,7 @@ export function seasonHighlights(data: DriverSeasonData): SeasonHighlights {
   return {
     poles: leaders(profiles, (p) => p.stats.poles),
     fastestLaps: leaders(profiles, (p) => p.stats.fastestLaps),
+    winStreak: leaders(profiles, (p) => p.streaks.win.best),
   };
 }
 

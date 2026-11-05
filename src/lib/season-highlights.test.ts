@@ -39,9 +39,25 @@ describe("Destaques da temporada", () => {
     expect(seasonHighlights(data).fastestLaps).toEqual({ value: 2, driverIds: [20, 10] });
   });
 
+  test("Maior Sequência de vitórias lista todos os empatados na maior da temporada", () => {
+    const race = session(1, 1);
+    const race2 = session(2, 2);
+    const race3 = session(3, 3);
+    const race4 = session(4, 4);
+    const data = season(
+      [],
+      [race, [result(race, 10, FERRARI, 1), result(race, 20, MCLAREN, 2)]],
+      [race2, [result(race2, 10, FERRARI, 1), result(race2, 20, MCLAREN, 2)]],
+      [race3, [result(race3, 20, MCLAREN, 1), result(race3, 10, FERRARI, 2)]],
+      [race4, [result(race4, 20, MCLAREN, 1), result(race4, 10, FERRARI, 2)]],
+    );
+
+    expect(seasonHighlights(data).winStreak).toEqual({ value: 2, driverIds: [10, 20] });
+  });
+
   test("temporada sem Sessão disputada fica sem líderes, com valor zero", () => {
     const none = { value: 0, driverIds: [] };
 
-    expect(seasonHighlights(season([]))).toEqual({ poles: none, fastestLaps: none });
+    expect(seasonHighlights(season([]))).toEqual({ poles: none, fastestLaps: none, winStreak: none });
   });
 });
