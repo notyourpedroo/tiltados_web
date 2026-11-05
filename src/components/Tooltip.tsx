@@ -11,11 +11,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react";
-
-/** Folga mínima entre o tooltip e a borda da janela, em px. */
-const EDGE = 16;
-/** Largura máxima do tooltip, em px; encolhe até caber na janela. */
-const MAX_WIDTH = 288;
+import { tooltipPlacement, type TooltipPlacement } from "@/lib/tooltip";
 
 // O critério é o dispositivo ter hover (mouse), não a largura da janela.
 const HOVER_QUERY = "(hover: hover)";
@@ -34,8 +30,9 @@ let closeOpen: (() => void) | null = null;
 /**
  * Card com um tooltip de descrição. Com hover, abre ao passar o mouse ou focar pelo
  * teclado e fecha ao sair; sem hover, abre e fecha com toque, fecha com toque fora e
- * só um fica aberto por vez. Tocar num link dentro do card navega sem abrir o
- * tooltip. Esc fecha. A descrição liga ao card por `aria-describedby`.
+ * só um fica aberto por vez. Tocar num link dentro do card navega e fecha o tooltip.
+ * Abre abaixo do card, ou acima quando abaixo não cabe, e se reposiciona ao rolar ou
+ * redimensionar a janela. Esc fecha. A descrição liga ao card por `aria-describedby`.
  */
 export function Tooltip({
   description,
@@ -50,9 +47,9 @@ export function Tooltip({
   const id = useId();
   const hover = useSyncExternalStore(subscribeHover, hasHover, hasHoverOnServer);
   const [open, setOpen] = useState(false);
-  const [left, setLeft] = useState(0);
-  const [width, setWidth] = useState(MAX_WIDTH);
+  const [placement, setPlacement] = useState<TooltipPlacement>({ left: 0, width: 0, above: false });
   const card = useRef<HTMLDivElement>(null);
+  const bubble = useRef<HTMLDivElement>(null);
 
   const close = useCallback(() => setOpen(false), []);
   const show = useCallback(() => {
@@ -61,15 +58,29 @@ export function Tooltip({
     setOpen(true);
   }, [close]);
 
-  // Encaixa o tooltip na janela: alinhado ao card e empurrado para dentro na borda.
+  // Encaixa o balão na janela ao abrir e a cada rolagem ou redimensionamento.
   useLayoutEffect(() => {
-    if (!open || !card.current) return;
-    const rect = card.current.getBoundingClientRect();
-    const viewport = document.documentElement.clientWidth;
-    const w = Math.min(MAX_WIDTH, viewport - 2 * EDGE);
-    const x = Math.min(Math.max(rect.left, EDGE), viewport - EDGE - w);
-    setWidth(w);
-    setLeft(x - rect.left);
+    if (!open) return;
+    const place = () => {
+      if (!card.current || !bubble.current) return;
+      const viewport = {
+        width: document.documentElement.clientWidth,
+        height: document.documentElement.clientHeight,
+      };
+      const rect = card.current.getBoundingClientRect();
+      // A altura depende da largura: mede o balão já na largura em que vai abrir.
+      const { width } = tooltipPlacement(rect, 0, viewport);
+      bubble.current.style.width = `${width}px`;
+      setPlacement(tooltipPlacement(rect, bubble.current.offsetHeight, viewport));
+    };
+    place();
+    window.addEventListener("resize", place);
+    // Captura: a rolagem de um contêiner também move o card.
+    window.addEventListener("scroll", place, { capture: true, passive: true });
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, { capture: true });
+    };
   }, [open]);
 
   // Sem hover, um toque fora do card fecha.
@@ -91,8 +102,7 @@ export function Tooltip({
 
   const onClick = (event: MouseEvent) => {
     if (hover) return;
-    if ((event.target as Element).closest("a")) return;
-    if (open) close();
+    if (open || (event.target as Element).closest("a")) close();
     else show();
   };
 
@@ -114,8 +124,8 @@ export function Tooltip({
         id={id}
         role="tooltip"
         hidden={!open}
-        className="absolute top-full z-20 mt-2 rounded-lg border border-line bg-bg/95 p-3 text-sm font-normal normal-case tracking-normal text-text shadow-xl"
-        style={{ left, width }}
+        className={`absolute z-20 ${placement.above ? "bottom-full mb-2" : "top-full mt-2"} rounded-lg border border-line bg-bg/95 p-3 text-sm font-normal normal-case tracking-normal text-text shadow-xl`}
+        style={{ left: placement.left, width: placement.width }}
       >
         {description}
       </div>
