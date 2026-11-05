@@ -79,9 +79,49 @@ describe("Destaques da temporada", () => {
     ]);
   });
 
-  test("temporada sem Sessão disputada fica sem líderes, com valor zero", () => {
+  test("Melhor Ritmo só considera quem disputou ao menos metade das Sessões da temporada", () => {
+    const races = [1, 2, 3, 4].map((id) => session(id, id));
+    const data = season(
+      [],
+      ...races.map((r): [typeof r, ReturnType<typeof result>[]] => [
+        r,
+        [
+          result(r, 10, FERRARI, 1, { bestLap: "1:30.000" }),
+          result(r, 20, MCLAREN, 2, { bestLap: "1:30.900" }),
+          // O 30 só corre a 1ª Sessão (menos da metade), e nela a volta mais rápida é dele.
+          ...(r.id === 1 ? [result(r, 30, MCLAREN, 3, { bestLap: "1:29.000" })] : []),
+          // O 40 corre exatamente metade das Sessões, meio segundo atrás do 10.
+          ...(r.id <= 2 ? [result(r, 40, FERRARI, 4, { bestLap: "1:30.500" })] : []),
+        ],
+      ]),
+    );
+
+    // Na 1ª Sessão a referência é o 1:29.000 do 30; nas outras, o 1:30.000 do 10.
+    const ten = (1 / 89 + 0 + 0 + 0) / 4;
+    const forty = (1.5 / 89 + 0.5 / 90) / 2;
+    expect(ten).toBeLessThan(forty);
+    const { pace } = seasonHighlights(data);
+    expect(pace?.driverIds).toEqual([10]);
+    expect(pace?.value).toBeCloseTo(ten, 10);
+  });
+
+  test("Melhor Ritmo lista todos os empatados", () => {
+    const race = session(1, 1);
+    const race2 = session(2, 2);
+    const data = season(
+      [],
+      [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 10, FERRARI, 2, { bestLap: "1:31.000" })]],
+      [race2, [result(race2, 10, FERRARI, 1, { bestLap: "1:30.000" }), result(race2, 20, MCLAREN, 2, { bestLap: "1:31.000" })]],
+    );
+
+    const { pace } = seasonHighlights(data);
+    expect(pace?.driverIds).toEqual([20, 10]);
+    expect(pace?.value).toBeCloseTo(1 / 180, 10);
+  });
+
+  test("temporada sem Sessão disputada fica sem líderes, com valor zero, e sem Melhor Ritmo", () => {
     const none = { value: 0, driverIds: [] };
 
-    expect(seasonHighlights(season([]))).toEqual({ poles: none, fastestLaps: none, winStreak: none, recentForm: [] });
+    expect(seasonHighlights(season([]))).toEqual({ poles: none, fastestLaps: none, winStreak: none, recentForm: [], pace: null });
   });
 });
