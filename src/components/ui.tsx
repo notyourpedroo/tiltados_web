@@ -210,23 +210,20 @@ export function StatTile({
   label: ReactNode;
   value: ReactNode;
   sub?: ReactNode;
-  /** O que o indicador mede (de `src/lib/indicators.ts`): vira o tooltip do card, com o ícone ⓘ. */
-  description?: string;
+  /**
+   * O que o indicador mede (de `src/lib/indicators.ts`): vira o tooltip do card, com o ícone ⓘ.
+   * Obrigatória, para nenhum card sair sem explicação.
+   */
+  description: string;
 }) {
-  const content = (
-    <>
+  return (
+    <Tooltip description={description} className={`${CARD} p-4`}>
       <p className="text-xs font-bold uppercase tracking-wider text-muted">
         {label}
-        {description && <InfoIcon />}
+        <InfoIcon />
       </p>
       <p className="mt-1 text-3xl font-black leading-tight">{value}</p>
       {sub && <p className="mt-0.5 truncate text-sm text-text-2">{sub}</p>}
-    </>
-  );
-  if (!description) return <Card className="p-4">{content}</Card>;
-  return (
-    <Tooltip description={description} className={`${CARD} p-4`}>
-      {content}
     </Tooltip>
   );
 }
