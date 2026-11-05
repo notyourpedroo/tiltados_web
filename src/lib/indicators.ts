@@ -61,3 +61,24 @@ export const SEASON_HIGHLIGHT_INDICATORS = {
   performance: `O piloto com mais pontos por Sessão disputada no Aproveitamento. ${REGULARS} ${TIES}`,
   hatTricks: `O piloto com mais Hat-tricks. ${DRIVER_INDICATORS.hatTricks} ${TIES}`,
 } as const satisfies Record<string, string>;
+
+/** Indicadores do perfil da equipe: contam o que os Pilotos da equipe fizeram correndo por ela. */
+export const TEAM_INDICATORS = {
+  points:
+    "Os pontos que todos os Pilotos da equipe fizeram por ela na temporada, Corridas e Sprints somadas. O subtítulo mostra a posição dela na classificação de equipes.",
+  wins: "As Corridas que um piloto da equipe venceu; conta só Corridas, as vitórias em Sprint ficam de fora.",
+  podiums:
+    "Os pódios dos Pilotos da equipe em Corridas e Sprints, um por piloto no pódio: dois pilotos no pódio da mesma Sessão contam dois.",
+  oneTwos: "As Corridas em que os Pilotos da equipe chegaram em 1º e 2º. A Sprint não conta.",
+  poles:
+    "As Corridas em que um piloto da equipe largou em 1º; largar em 1º numa Sprint não conta.",
+  fastestLaps:
+    "As Sessões, Corrida ou Sprint, em que um piloto da equipe fez a Volta mais rápida: a melhor volta da Sessão entre todos os pilotos.",
+  best: "A melhor posição de chegada de um piloto da equipe numa Sessão, Corrida ou Sprint. O N× diz quantas vezes um piloto dela chegou nessa posição.",
+  bothScored:
+    "As Sessões, Corrida ou Sprint, em que ao menos dois Pilotos da equipe pontuaram por ela.",
+  recentForm:
+    "Os pontos de todos os Pilotos da equipe nas últimas 3 Etapas disputadas da temporada, Corrida e Sprint somadas.",
+  aproveitamento:
+    "Os pontos da equipe por Sessão, na média por participação de piloto: uma Sessão em que dois Pilotos da equipe correram conta duas vezes.",
+} as const satisfies Record<string, string>;
