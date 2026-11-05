@@ -1,6 +1,7 @@
 // Rolagem horizontal: abre cada rota em várias larguras no Chrome headless e falha
 // quando a página fica mais larga que a janela, apontando o elemento que estoura, ou
-// quando um texto de uma linha (.truncate) sai cortado a 1280 px.
+// quando um texto de uma linha (.truncate) sai cortado a 1280 px. Uma rota que não
+// responde 2xx falha pelo status, sem medir a página de erro.
 // Sem rotas, percorre o site inteiro a partir de /2025 e /2026 (perfis, Etapas...).
 //
 //   node scripts/rolagem.mjs [rota]...
@@ -70,6 +71,9 @@ const send = (method, params = {}, sessionId) =>
 
 // Mede depois das fontes: a Titillium muda a largura dos títulos.
 const MEASURE = `(async () => {
+  // Uma página de erro não é a rota: sem 2xx, não mede.
+  const status = performance.getEntriesByType("navigation")[0]?.responseStatus ?? 0;
+  if (status < 200 || status >= 300) return { status };
   await document.fonts.ready;
   const root = document.documentElement;
   const limit = root.clientWidth;
@@ -120,7 +124,11 @@ async function check(route) {
       { expression: MEASURE, awaitPromise: true, returnByValue: true },
       sessionId,
     );
-    const { overflow, culprit, links, cut } = result.value;
+    const { status, overflow, culprit, links, cut } = result.value;
+    if (status) {
+      failures.push(`/${route}: HTTP ${status}`);
+      break;
+    }
     if (overflow > 0) failures.push(`/${route} em ${width}px: +${overflow}px (${culprit || "?"})`);
     // No celular o corte é previsto (design-system/components/StatTile); no desktop
     // largo, é texto longo demais para o espaço.
@@ -168,8 +176,13 @@ try {
 } catch {}
 
 if (failures.length) {
-  console.error(`Rolagem horizontal ou texto cortado em ${failures.length} caso(s), de ${checked} rota(s) × ${WIDTHS.length} larguras:\n`);
+  console.error(`Rolagem horizontal, texto cortado ou erro HTTP em ${failures.length} caso(s), de ${checked} rota(s) × ${WIDTHS.length} larguras:\n`);
   for (const failure of failures.sort()) console.error(`  ${failure}`);
+  if (failures.some((failure) => failure.includes(": HTTP 5"))) {
+    console.error(
+      "\nRota com erro 5xx: se o servidor de dev mostra SyntaxError em JSON.parse, o cache está corrompido; pare o next dev, apague o .next e suba de novo.",
+    );
+  }
   process.exit(1);
 }
 console.log(
