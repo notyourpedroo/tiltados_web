@@ -6,7 +6,7 @@ const FERRARI = 1;
 const MCLAREN = 2;
 
 describe("Destaques da temporada", () => {
-  test("Mais poles traz o piloto com mais largadas em 1º, em Corrida ou Sprint", () => {
+  test("Mais poles conta só largadas em 1º em Corridas: a pole da Sprint não desempata", () => {
     const sprint = session(1, 1, true);
     const race = session(2, 1);
     const race2 = session(3, 2);
@@ -17,7 +17,7 @@ describe("Destaques da temporada", () => {
       [race2, [result(race2, 20, MCLAREN, 1, { grid: 1 }), result(race2, 10, FERRARI, 2, { grid: 2 })]],
     );
 
-    expect(seasonHighlights(data).poles).toEqual({ value: 2, driverIds: [10] });
+    expect(seasonHighlights(data).poles).toEqual({ value: 1, driverIds: [10, 20] });
   });
 
   test("Mais voltas rápidas lista todos os empatados, na ordem em que aparecem na temporada", () => {

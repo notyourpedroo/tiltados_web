@@ -17,7 +17,7 @@ export interface TeamStats {
   oneTwos: number;
   /** Pódios dos pilotos da equipe, em Corridas e Sprints. */
   podiums: number;
-  /** Largadas em 1º, em Corridas e Sprints. */
+  /** Poles: largadas em 1º em Corridas (a Sprint não conta). */
   poles: number;
   /** Voltas mais rápidas, em Corridas e Sprints. */
   fastestLaps: number;
@@ -92,7 +92,7 @@ export function teamProfile(data: TeamSeasonData, teamId: number): TeamProfile {
     for (const r of own) {
       stats.points += r.points;
       if (r.position <= 3) stats.podiums++;
-      if (r.grid === 1) stats.poles++;
+      if (r.grid === 1 && !s.isSprint) stats.poles++;
       if (r.fastestLap) stats.fastestLaps++;
       if (!stats.best || r.position < stats.best.position) {
         stats.best = { position: r.position, count: 1 };
