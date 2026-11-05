@@ -19,6 +19,18 @@ export function weekends(sessions: Session[]): Weekend[] {
   return [...byRound.values()];
 }
 
+/** Etapas da janela da Forma recente. */
+export const RECENT_FORM_WEEKENDS = 3;
+
+/**
+ * As Sessões das últimas 3 Etapas disputadas da temporada (Corrida e Sprint), a
+ * janela da Forma recente. Com menos de 3 Etapas, todas entram.
+ */
+export function recentFormSessions(sessions: Session[]): Session[] {
+  const rounds = new Set(weekends(sessions).slice(-RECENT_FORM_WEEKENDS).map((w) => w.round));
+  return sessions.filter((s) => rounds.has(s.round));
+}
+
 /** A Sessão que representa a Etapa: a Corrida, ou a Sprint enquanto a Corrida está pendente. */
 export function mainSession(weekend: Weekend): Session {
   return (weekend.race ?? weekend.sprint)!;

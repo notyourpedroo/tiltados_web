@@ -5,6 +5,7 @@
 import type { ChartSeries, ChartSession } from "@/components/ProgressionChart";
 import { chartSessions } from "./chart";
 import type { SeasonData, Session, SessionResult } from "./season";
+import { recentFormSessions } from "./weekend";
 
 /** Dados da temporada de que o perfil da equipe precisa. */
 export type TeamSeasonData = Pick<SeasonData, "sessions" | "results" | "drivers">;
@@ -25,6 +26,8 @@ export interface TeamStats {
   best: { position: number; count: number } | null;
   /** Sessões em que dois pilotos da equipe pontuaram. */
   bothScored: number;
+  /** Forma recente: pontos feitos pela equipe nas últimas 3 Etapas disputadas da temporada. */
+  recentForm: number;
 }
 
 /** Uma Sessão disputada pela equipe. */
@@ -86,11 +89,14 @@ export function teamProfile(data: TeamSeasonData, teamId: number): TeamProfile {
     fastestLaps: 0,
     best: null,
     bothScored: 0,
+    recentForm: 0,
   };
+  const recent = new Set(recentFormSessions(data.sessions).map((s) => s.id));
   for (const s of data.sessions) {
     const own = teamResults(data, s, teamId);
     for (const r of own) {
       stats.points += r.points;
+      if (recent.has(s.id)) stats.recentForm += r.points;
       if (r.position <= 3) stats.podiums++;
       if (r.grid === 1 && !s.isSprint) stats.poles++;
       if (r.fastestLap) stats.fastestLaps++;

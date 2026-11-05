@@ -17,7 +17,19 @@ export interface SeasonHighlights {
   fastestLaps: Leaders;
   /** Maior Sequência de vitórias da temporada. */
   winStreak: Leaders;
+  /** Melhor Forma recente: mini-ranking dos 3 primeiros. */
+  recentForm: RecentFormEntry[];
 }
+
+/** Um piloto no mini-ranking da Forma recente. */
+export interface RecentFormEntry {
+  driverId: number;
+  /** Pontos nas últimas 3 Etapas disputadas da temporada. */
+  points: number;
+}
+
+/** Pilotos no mini-ranking da Forma recente. */
+const RECENT_FORM_TOP = 3;
 
 /** Líderes de cada tile de destaque da temporada. */
 export function seasonHighlights(data: DriverSeasonData): SeasonHighlights {
@@ -26,7 +38,20 @@ export function seasonHighlights(data: DriverSeasonData): SeasonHighlights {
     poles: leaders(profiles, (p) => p.stats.poles),
     fastestLaps: leaders(profiles, (p) => p.stats.fastestLaps),
     winStreak: leaders(profiles, (p) => p.streaks.win.best),
+    recentForm: recentFormTop(profiles),
   };
+}
+
+/**
+ * Os 3 pilotos com mais pontos na Forma recente, do maior para o menor; empatados
+ * na ordem em que aparecem na temporada. Quem não pontuou na janela fica de fora.
+ */
+function recentFormTop(profiles: { id: number; profile: DriverProfile }[]): RecentFormEntry[] {
+  return profiles
+    .map(({ id, profile }) => ({ driverId: id, points: profile.stats.recentForm }))
+    .filter((e) => e.points > 0)
+    .sort((a, b) => b.points - a.points)
+    .slice(0, RECENT_FORM_TOP);
 }
 
 /** Pilotos com resultado na temporada, na ordem em que aparecem nas Sessões. */

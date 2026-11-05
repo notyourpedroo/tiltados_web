@@ -55,9 +55,33 @@ describe("Destaques da temporada", () => {
     expect(seasonHighlights(data).winStreak).toEqual({ value: 2, driverIds: [10, 20] });
   });
 
+  test("Forma recente traz os 3 pilotos com mais pontos nas últimas 3 Etapas, empatados na ordem em que aparecem", () => {
+    const r1 = session(1, 1);
+    const sprint2 = session(2, 2, true);
+    const r2 = session(3, 2);
+    const r3 = session(4, 3);
+    const r4 = session(5, 4);
+    const data = season(
+      [],
+      // Etapa 1 fica fora da janela: o 40 venceu, mas não pontua mais.
+      [r1, [result(r1, 40, MCLAREN, 1), result(r1, 30, MCLAREN, 2)]],
+      [sprint2, [result(sprint2, 10, FERRARI, 1), result(sprint2, 20, MCLAREN, 2)]],
+      [r2, [result(r2, 20, MCLAREN, 1), result(r2, 10, FERRARI, 2)]],
+      // O 30 empata com o 50 e aparece antes dele; o 50 fica fora do top 3.
+      [r3, [result(r3, 30, MCLAREN, 2), result(r3, 50, FERRARI, 2)]],
+      [r4, [result(r4, 40, MCLAREN, 7)]],
+    );
+
+    expect(seasonHighlights(data).recentForm).toEqual([
+      { driverId: 20, points: 7 + 25 },
+      { driverId: 10, points: 8 + 18 },
+      { driverId: 30, points: 18 },
+    ]);
+  });
+
   test("temporada sem Sessão disputada fica sem líderes, com valor zero", () => {
     const none = { value: 0, driverIds: [] };
 
-    expect(seasonHighlights(season([]))).toEqual({ poles: none, fastestLaps: none, winStreak: none });
+    expect(seasonHighlights(season([]))).toEqual({ poles: none, fastestLaps: none, winStreak: none, recentForm: [] });
   });
 });

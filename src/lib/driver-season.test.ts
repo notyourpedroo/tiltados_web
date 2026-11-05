@@ -102,11 +102,44 @@ describe("Perfil do piloto", () => {
     ]);
   });
 
+  test("Forma recente soma Corrida e Sprint das últimas 3 Etapas da temporada, contando zero na Etapa sem o piloto", () => {
+    const r1 = session(1, 1);
+    const sprint2 = session(2, 2, true);
+    const r2 = session(3, 2);
+    const r3 = session(4, 3);
+    const r4 = session(5, 4);
+    const data = season(
+      [],
+      // Etapa 1 fica fora da janela.
+      [r1, [result(r1, 10, FERRARI, 1)]],
+      // A Etapa 2 tem Sprint e Corrida, mas ocupa uma vaga só.
+      [sprint2, [result(sprint2, 10, FERRARI, 1)]],
+      [r2, [result(r2, 10, FERRARI, 2)]],
+      // Etapa 3 sem o piloto 10: conta zero e não puxa a Etapa 1 para a janela.
+      [r3, [result(r3, 20, MCLAREN, 1)]],
+      [r4, [result(r4, 10, FERRARI, 3)]],
+    );
+
+    expect(driverProfile(data, 10).stats.recentForm).toBe(8 + 18 + 15);
+  });
+
+  test("Forma recente usa as Etapas que houver quando a temporada tem menos de 3", () => {
+    const sprint = session(1, 1, true);
+    const race = session(2, 1);
+    const data = season(
+      [],
+      [sprint, [result(sprint, 10, FERRARI, 2)]],
+      [race, [result(race, 10, FERRARI, 1)]],
+    );
+
+    expect(driverProfile(data, 10).stats.recentForm).toBe(7 + 25);
+  });
+
   test("piloto sem Sessão disputada tem as estatísticas zeradas, sem chegada média nem melhor resultado", () => {
     const race = session(1, 1);
     const withSessions = season([], [race, [result(race, 20, MCLAREN, 1)]]);
     const empty = {
-      stats: { poles: 0, fastestLaps: 0, avgFinish: null, gained: 0, best: null },
+      stats: { poles: 0, fastestLaps: 0, avgFinish: null, gained: 0, best: null, recentForm: 0 },
       streaks: {
         scoring: { best: 0, current: 0 },
         podium: { best: 0, current: 0 },

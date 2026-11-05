@@ -171,6 +171,29 @@ describe("Perfil da equipe", () => {
     expect(stats.points).toBe(13 + 33);
   });
 
+  test("Forma recente soma os pontos feitos pela equipe nas últimas 3 Etapas, contando só o período de quem trocou de equipe", () => {
+    const r1 = session(1, 1);
+    const sprint2 = session(2, 2, true);
+    const r2 = session(3, 2);
+    const r3 = session(4, 3);
+    const r4 = session(5, 4);
+    const data = season(
+      [],
+      // Etapa 1 fica fora da janela.
+      [r1, [result(r1, 10, FERRARI, 1)]],
+      // A Etapa 2 tem Sprint e Corrida, mas ocupa uma vaga só.
+      [sprint2, [result(sprint2, 10, FERRARI, 1), result(sprint2, 11, FERRARI, 2)]],
+      [r2, [result(r2, 11, FERRARI, 1), result(r2, 10, FERRARI, 2)]],
+      // Etapa 3 sem a Ferrari: conta zero.
+      [r3, [result(r3, 20, MCLAREN, 1)]],
+      // O piloto 10 passa para a McLaren: os pontos dele aqui não são da Ferrari.
+      [r4, [result(r4, 10, MCLAREN, 1), result(r4, 11, FERRARI, 2)]],
+    );
+
+    expect(teamProfile(data, FERRARI).stats.recentForm).toBe(8 + 7 + 25 + 18 + 18);
+    expect(teamProfile(data, MCLAREN).stats.recentForm).toBe(25 + 25);
+  });
+
   test("equipe sem Sessão disputada fica sem Sessões", () => {
     const race = session(1, 1);
     const data = season([], [race, [result(race, 10, FERRARI, 1)]]);
