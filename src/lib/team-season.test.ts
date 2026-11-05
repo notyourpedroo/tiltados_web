@@ -97,6 +97,31 @@ describe("Perfil da equipe", () => {
     expect(teamProfile(data, FERRARI).stats.bothScored).toBe(2);
   });
 
+  test("pontos por Sessão da equipe dividem os pontos pelas Sessões de cada piloto por ela; quem trocou de equipe só conta o que fez por ela", () => {
+    const r1 = session(1, 1);
+    const r2 = session(2, 2);
+    const r3 = session(3, 3);
+    const data = season(
+      [],
+      [r1, [result(r1, 10, FERRARI, 1), result(r1, 11, FERRARI, 2), result(r1, 12, MCLAREN, 3)]],
+      // O 11 passa para a McLaren; a Ferrari corre com um piloto só.
+      [r2, [result(r2, 11, MCLAREN, 1), result(r2, 10, FERRARI, 2), result(r2, 12, MCLAREN, 3)]],
+      [r3, [result(r3, 12, MCLAREN, 1), result(r3, 11, MCLAREN, 4), result(r3, 10, FERRARI, 7)]],
+    );
+
+    // Ferrari: 25 + 18 (r1) + 18 (r2) + 0 (r3) = 61 pts em 4 Sessões de piloto.
+    expect(teamProfile(data, FERRARI).pointsPerSession).toBe(61 / 4);
+    // McLaren: 15 (r1) + 25 + 15 (r2) + 25 + 12 (r3) = 92 pts em 5 Sessões de piloto.
+    expect(teamProfile(data, MCLAREN).pointsPerSession).toBe(92 / 5);
+  });
+
+  test("equipe sem Sessão disputada fica sem pontos por Sessão", () => {
+    const race = session(1, 1);
+
+    expect(teamProfile(season([], [race, [result(race, 10, FERRARI, 1)]]), WILLIAMS).pointsPerSession).toBeNull();
+    expect(teamProfile(season([]), WILLIAMS).pointsPerSession).toBeNull();
+  });
+
   test("equipe sem Sessão disputada tem as estatísticas zeradas e fica sem melhor resultado", () => {
     const race = session(1, 1);
     const withSessions = season([], [race, [result(race, 10, FERRARI, 1), result(race, 20, MCLAREN, 2)]]);

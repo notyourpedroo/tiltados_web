@@ -119,9 +119,46 @@ describe("Destaques da temporada", () => {
     expect(pace?.value).toBeCloseTo(1 / 180, 10);
   });
 
+  test("Melhor Aproveitamento só considera quem disputou ao menos metade das Sessões da temporada", () => {
+    const sprint = session(1, 1, true);
+    const race = session(2, 1);
+    const race2 = session(3, 2);
+    const race3 = session(4, 3);
+    const data = season(
+      [],
+      // O 40 vence a única Sessão que disputa (25 pts por Sessão), mas fica abaixo do mínimo de 2.
+      [sprint, [result(sprint, 10, FERRARI, 2), result(sprint, 20, MCLAREN, 3)]],
+      [race, [result(race, 30, FERRARI, 1), result(race, 10, FERRARI, 2), result(race, 20, MCLAREN, 3)]],
+      [race2, [result(race2, 30, FERRARI, 2), result(race2, 10, FERRARI, 3), result(race2, 20, MCLAREN, 4)]],
+      [race3, [result(race3, 40, MCLAREN, 1), result(race3, 10, FERRARI, 2), result(race3, 20, MCLAREN, 3)]],
+    );
+
+    // O 30 disputa exatamente metade: (25 + 18) / 2 = 21,5 pts por Sessão.
+    expect(seasonHighlights(data).performance).toEqual({ value: 21.5, driverIds: [30] });
+  });
+
+  test("Melhor Aproveitamento lista todos os empatados, na ordem em que aparecem na temporada", () => {
+    const race = session(1, 1);
+    const race2 = session(2, 2);
+    const data = season(
+      [],
+      [race, [result(race, 20, MCLAREN, 1), result(race, 10, FERRARI, 2), result(race, 30, FERRARI, 3)]],
+      [race2, [result(race2, 10, FERRARI, 1), result(race2, 20, MCLAREN, 2), result(race2, 30, FERRARI, 3)]],
+    );
+
+    expect(seasonHighlights(data).performance).toEqual({ value: 21.5, driverIds: [20, 10] });
+  });
+
   test("temporada sem Sessão disputada fica sem líderes, com valor zero, e sem Melhor Ritmo", () => {
     const none = { value: 0, driverIds: [] };
 
-    expect(seasonHighlights(season([]))).toEqual({ poles: none, fastestLaps: none, winStreak: none, recentForm: [], pace: null });
+    expect(seasonHighlights(season([]))).toEqual({
+      poles: none,
+      fastestLaps: none,
+      winStreak: none,
+      recentForm: [],
+      pace: null,
+      performance: none,
+    });
   });
 });

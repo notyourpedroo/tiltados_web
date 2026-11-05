@@ -23,13 +23,17 @@ export function plural(n: number, one: string, many: string): string {
   return `${n} ${n === 1 ? one : many}`;
 }
 
-const PERCENT = new Intl.NumberFormat("pt-BR", {
-  style: "percent",
-  minimumFractionDigits: 1,
-  maximumFractionDigits: 1,
-});
+/** Número no padrão brasileiro, com `digits` casas: 18.44 → "18,4". */
+export function decimal(n: number, digits = 1): string {
+  return n.toLocaleString("pt-BR", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
 
-/** 0.012 → "1,2%" (padrão brasileiro, uma casa decimal). */
-export function percent(fraction: number): string {
-  return PERCENT.format(fraction).replace(/\s/g, "");
+/**
+ * Fração em porcentagem no padrão brasileiro, com `digits` casas (uma por padrão):
+ * 0.012 → "1,2%"; com `digits` 0, 0.75 → "75%".
+ */
+export function percent(fraction: number, digits = 1): string {
+  return fraction
+    .toLocaleString("pt-BR", { style: "percent", minimumFractionDigits: digits, maximumFractionDigits: digits })
+    .replace(/\s/g, "");
 }

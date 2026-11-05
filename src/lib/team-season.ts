@@ -65,6 +65,11 @@ export interface TeamDuelSide {
 
 export interface TeamProfile {
   stats: TeamStats;
+  /**
+   * Aproveitamento da equipe: pontos por Sessão de cada piloto por ela (uma
+   * Sessão com dois pilotos conta duas vezes); null sem Sessão disputada.
+   */
+  pointsPerSession: number | null;
   /** Sessões disputadas pela equipe, em ordem. */
   sessions: TeamSession[];
   /** Pilotos da equipe, do maior pontuador para o menor. */
@@ -115,10 +120,17 @@ export function teamProfile(data: TeamSeasonData, teamId: number): TeamProfile {
   const drivers = teamDrivers(data, teamId);
   return {
     stats,
+    pointsPerSession: teamPointsPerSession(data, teamId),
     sessions: teamSessions(data, teamId),
     drivers,
     duels: teamDuels(data, teamId, drivers),
   };
+}
+
+function teamPointsPerSession(data: TeamSeasonData, teamId: number): number | null {
+  const own = data.sessions.flatMap((s) => teamResults(data, s, teamId));
+  if (!own.length) return null;
+  return own.reduce((sum, r) => sum + r.points, 0) / own.length;
 }
 
 /** Sessões disputadas pela equipe, com os pontos dela em cada uma e o acumulado. */

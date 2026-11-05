@@ -183,7 +183,26 @@ describe("Perfil do piloto", () => {
     expect(driverProfile(data, 10).stats.pace).toBeNull();
   });
 
-  test("piloto sem Sessão disputada tem as estatísticas zeradas, sem chegada média nem melhor resultado", () => {
+  test("Aproveitamento: pontos por Sessão disputada e a parte das Sessões em que pontuou, sem contar as Sessões em que faltou", () => {
+    const sprint = session(1, 1, true);
+    const race = session(2, 1);
+    const skipped = session(3, 2);
+    const race3 = session(4, 3);
+    const race4 = session(5, 4);
+    const data = season(
+      [],
+      // 8 + 0 + 25 + 18 = 51 pts em 4 Sessões, pontuando em 3.
+      [sprint, [result(sprint, 10, FERRARI, 1)]],
+      [race, [result(race, 10, FERRARI, 7)]],
+      [skipped, [result(skipped, 20, MCLAREN, 1)]],
+      [race3, [result(race3, 10, FERRARI, 1)]],
+      [race4, [result(race4, 10, MCLAREN, 2)]],
+    );
+
+    expect(driverProfile(data, 10).performance).toEqual({ pointsPerSession: 12.75, scoringRate: 0.75 });
+  });
+
+  test("piloto sem Sessão disputada tem as estatísticas zeradas, sem chegada média, melhor resultado nem Aproveitamento", () => {
     const race = session(1, 1);
     const withSessions = season([], [race, [result(race, 20, MCLAREN, 1)]]);
     const empty = {
@@ -193,6 +212,7 @@ describe("Perfil do piloto", () => {
         podium: { best: 0, current: 0 },
         win: { best: 0, current: 0 },
       },
+      performance: null,
       sessions: [],
       duels: [],
     };

@@ -63,10 +63,20 @@ export interface DriverStreaks {
   win: Streak;
 }
 
+/** Aproveitamento do piloto, sobre as Sessões que ele disputou. */
+export interface DriverPerformance {
+  /** Pontos por Sessão disputada. */
+  pointsPerSession: number;
+  /** Parte das Sessões disputadas em que pontuou, de 0 a 1. */
+  scoringRate: number;
+}
+
 export interface DriverProfile {
   stats: DriverStats;
   /** Sequências de pontos, pódios e vitórias, só em Corridas. */
   streaks: DriverStreaks;
+  /** Aproveitamento; null sem Sessão disputada. */
+  performance: DriverPerformance | null;
   /** Sessões disputadas pelo piloto, em ordem. */
   sessions: DriverSession[];
   /** Um duelo por companheiro, na ordem em que correram juntos pela primeira vez. */
@@ -97,6 +107,7 @@ export function driverProfile(data: DriverSeasonData, driverId: number): DriverP
   return {
     stats,
     streaks: driverStreaks(data, driverId),
+    performance: driverPerformance(results),
     sessions,
     duels: driverDuels(data, driverId, sessions),
   };
@@ -146,6 +157,15 @@ function driverDuels(data: DriverSeasonData, driverId: number, sessions: DriverS
 function recentForm(data: DriverSeasonData, sessions: DriverSession[]): number {
   const window = new Set(recentFormSessions(data.sessions).map((s) => s.id));
   return sessions.reduce((sum, s) => (window.has(s.session.id) ? sum + s.result.points : sum), 0);
+}
+
+function driverPerformance(results: SessionResult[]): DriverPerformance | null {
+  if (!results.length) return null;
+  const points = results.reduce((sum, r) => sum + r.points, 0);
+  return {
+    pointsPerSession: points / results.length,
+    scoringRate: results.filter((r) => r.points > 0).length / results.length,
+  };
 }
 
 function bestResult(results: SessionResult[]): DriverStats["best"] {
