@@ -1,8 +1,14 @@
 // Conversão do tempo de volta que vem da API ("1:30.123" ou "90.123").
 
-/** Tempo de volta em milissegundos; null quando não é um tempo válido. */
+/**
+ * Tempo de volta em milissegundos; null quando não é um tempo válido. Com minutos,
+ * os segundos ficam abaixo de 60: assim cai o "9:99.999" que a API de 2025 manda
+ * para quem não marcou volta.
+ */
 export function lapToMs(lap: string): number | null {
   const m = /^(?:(\d+):)?(\d+(?:\.\d+)?)$/.exec(lap.trim());
   if (!m) return null;
-  return (Number(m[1] ?? 0) * 60 + Number(m[2])) * 1000;
+  const seconds = Number(m[2]);
+  if (m[1] !== undefined && seconds >= 60) return null;
+  return (Number(m[1] ?? 0) * 60 + seconds) * 1000;
 }
