@@ -216,6 +216,18 @@ describe("Perfil do piloto", () => {
     expect(driverProfile(data, 10).stats.pace).toBeCloseTo(3 / 90, 10);
   });
 
+  test("Sessão com o tempo de quem não marcou volta (\"9:99.999\", da API de 2025) fica fora do Ritmo", () => {
+    const race = session(1, 1);
+    const race2 = session(2, 2);
+    const data = season(
+      [],
+      [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 10, FERRARI, 2, { bestLap: "1:33.000" })]],
+      [race2, [result(race2, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race2, 10, FERRARI, 2, { bestLap: "9:99.999" })]],
+    );
+
+    expect(driverProfile(data, 10).stats.pace).toBeCloseTo(3 / 90, 10);
+  });
+
   test("piloto sem nenhum tempo válido fica sem Ritmo", () => {
     const race = session(1, 1);
     const data = season(
