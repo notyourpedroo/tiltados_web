@@ -37,7 +37,7 @@ export interface DriverStats {
    * volta dele fica atrás da Volta mais rápida da Sessão, em fração (0,012 = 1,2%);
    * null sem tempo válido.
    */
-  pace: number | null;
+  ritmo: number | null;
 }
 
 /** Quem chegou na frente nas Sessões em que o piloto e um companheiro correram pela mesma equipe. */
@@ -51,20 +51,20 @@ export interface DriverDuel {
 }
 
 /** Uma Sequência: Corridas seguidas em que o piloto cumpriu o critério. */
-export interface Streak {
+export interface Sequencia {
   /** A maior da temporada. */
   best: number;
   /** A que chega à última Corrida disputada da temporada; 0 se ela quebrou ali. */
   current: number;
 }
 
-export interface DriverStreaks {
+export interface DriverSequencias {
   /** Corridas seguidas pontuando. */
-  scoring: Streak;
+  scoring: Sequencia;
   /** Corridas seguidas no pódio. */
-  podium: Streak;
+  podium: Sequencia;
   /** Corridas seguidas vencendo. */
-  win: Streak;
+  win: Sequencia;
 }
 
 /** Aproveitamento do piloto, sobre as Sessões que ele disputou. */
@@ -78,7 +78,7 @@ export interface DriverPerformance {
 export interface DriverProfile {
   stats: DriverStats;
   /** Sequências de pontos, pódios e vitórias, só em Corridas. */
-  streaks: DriverStreaks;
+  sequencias: DriverSequencias;
   /** Aproveitamento; null sem Sessão disputada. */
   performance: DriverPerformance | null;
   /** Sessões disputadas pelo piloto, em ordem. */
@@ -110,11 +110,11 @@ export function driverProfile(data: DriverSeasonData, driverId: number): DriverP
     gained: results.reduce((sum, r) => sum + r.gained, 0),
     best: bestResult(results),
     recentForm: recentForm(data, sessions),
-    pace: pace(data, sessions),
+    ritmo: ritmo(data, sessions),
   };
   return {
     stats,
-    streaks: driverStreaks(data, driverId),
+    sequencias: driverSequencias(data, driverId),
     performance: driverPerformance(results),
     sessions,
     duels: driverDuels(data, driverId, sessions),
@@ -132,7 +132,7 @@ export interface SeasonAverages {
   /** Chegada média em Corridas; null sem Corrida. */
   avgFinish: number | null;
   /** Ritmo; null sem tempo válido. */
-  pace: number | null;
+  ritmo: number | null;
 }
 
 /**
@@ -157,7 +157,7 @@ function seasonAverages({ stats, performance, sessions }: DriverProfile): Season
     raceWinRate: races.length ? races.filter((s) => s.result.position === 1).length / races.length : null,
     podiumRate: sessions.filter((s) => s.result.position <= 3).length / sessions.length,
     avgFinish: stats.avgFinish,
-    pace: stats.pace,
+    ritmo: stats.ritmo,
   };
 }
 
@@ -165,13 +165,13 @@ function seasonAverages({ stats, performance, sessions }: DriverProfile): Season
  * Sequências sobre as Corridas disputadas da temporada, em ordem: Sprints não
  * contam, e uma Corrida sem o piloto quebra a corrente.
  */
-function driverStreaks(data: DriverSeasonData, driverId: number): DriverStreaks {
+function driverSequencias(data: DriverSeasonData, driverId: number): DriverSequencias {
   const races = data.sessions
     .filter((s) => !s.isSprint)
     .map((s) => data.results[s.id] ?? [])
     .filter((list) => list.length > 0)
     .map((list) => list.find((r) => r.driverId === driverId));
-  const streak = (hit: (r: SessionResult) => boolean): Streak => {
+  const sequencia = (hit: (r: SessionResult) => boolean): Sequencia => {
     let best = 0;
     let current = 0;
     for (const r of races) {
@@ -181,9 +181,9 @@ function driverStreaks(data: DriverSeasonData, driverId: number): DriverStreaks 
     return { best, current };
   };
   return {
-    scoring: streak((r) => r.points > 0),
-    podium: streak((r) => r.position <= 3),
-    win: streak((r) => r.position === 1),
+    scoring: sequencia((r) => r.points > 0),
+    podium: sequencia((r) => r.position <= 3),
+    win: sequencia((r) => r.position === 1),
   };
 }
 
@@ -222,7 +222,7 @@ function bestResult(results: SessionResult[]): DriverStats["best"] {
   return { position, count: results.filter((r) => r.position === position).length };
 }
 
-function pace(data: DriverSeasonData, sessions: DriverSession[]): number | null {
+function ritmo(data: DriverSeasonData, sessions: DriverSession[]): number | null {
   const gaps: number[] = [];
   for (const { session, result } of sessions) {
     const lap = lapToMs(result.bestLap);

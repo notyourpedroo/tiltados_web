@@ -15,7 +15,7 @@ const ROWS: Row[] = [
   { label: "Vitórias em corridas", value: (a) => a.raceWinRate, format: (n) => percent(n, 0), higherIsBetter: true },
   { label: "Pódios", value: (a) => a.podiumRate, format: (n) => percent(n, 0), higherIsBetter: true },
   { label: "Chegada média", value: (a) => a.avgFinish, format: (n) => decimal(n), higherIsBetter: false },
-  { label: "Ritmo", value: (a) => a.pace, format: (n) => percent(n), higherIsBetter: false },
+  { label: "Ritmo", value: (a) => a.ritmo, format: (n) => percent(n), higherIsBetter: false },
 ];
 
 /**

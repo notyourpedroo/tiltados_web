@@ -52,7 +52,7 @@ describe("Destaques da temporada", () => {
       [race4, [result(race4, 20, MCLAREN, 1), result(race4, 10, FERRARI, 2)]],
     );
 
-    expect(seasonHighlights(data).winStreak).toEqual({ value: 2, driverIds: [10, 20] });
+    expect(seasonHighlights(data).winSequencia).toEqual({ value: 2, driverIds: [10, 20] });
   });
 
   test("Forma recente traz os 3 pilotos com mais pontos nas últimas 3 Etapas, empatados na ordem em que aparecem", () => {
@@ -100,9 +100,9 @@ describe("Destaques da temporada", () => {
     const ten = (1 / 89 + 0 + 0 + 0) / 4;
     const forty = (1.5 / 89 + 0.5 / 90) / 2;
     expect(ten).toBeLessThan(forty);
-    const { pace } = seasonHighlights(data);
-    expect(pace?.driverIds).toEqual([10]);
-    expect(pace?.value).toBeCloseTo(ten, 10);
+    const { ritmo } = seasonHighlights(data);
+    expect(ritmo?.driverIds).toEqual([10]);
+    expect(ritmo?.value).toBeCloseTo(ten, 10);
   });
 
   test("Melhor Ritmo lista todos os empatados", () => {
@@ -114,9 +114,9 @@ describe("Destaques da temporada", () => {
       [race2, [result(race2, 10, FERRARI, 1, { bestLap: "1:30.000" }), result(race2, 20, MCLAREN, 2, { bestLap: "1:31.000" })]],
     );
 
-    const { pace } = seasonHighlights(data);
-    expect(pace?.driverIds).toEqual([20, 10]);
-    expect(pace?.value).toBeCloseTo(1 / 180, 10);
+    const { ritmo } = seasonHighlights(data);
+    expect(ritmo?.driverIds).toEqual([20, 10]);
+    expect(ritmo?.value).toBeCloseTo(1 / 180, 10);
   });
 
   test("Melhor Aproveitamento só considera quem disputou ao menos metade das Sessões da temporada", () => {
@@ -177,9 +177,9 @@ describe("Destaques da temporada", () => {
     expect(seasonHighlights(season([]))).toEqual({
       poles: none,
       fastestLaps: none,
-      winStreak: none,
+      winSequencia: none,
       recentForm: [],
-      pace: null,
+      ritmo: null,
       performance: none,
       hatTricks: null,
     });

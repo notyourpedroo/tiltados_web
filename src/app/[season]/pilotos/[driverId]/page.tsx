@@ -109,7 +109,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
       : undefined;
   const penalties = data.punishments.filter((p) => p.driver_id === id);
 
-  const { stats, streaks, performance, sessions, duels } = driverProfile(data, id);
+  const { stats, sequencias, performance, sessions, duels } = driverProfile(data, id);
   const formWeekends = recentFormWeekends(data.sessions);
 
   return (
@@ -166,8 +166,8 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
         />
         <StatTile
           label="Ritmo"
-          value={stats.pace === null ? "—" : percent(stats.pace)}
-          sub={stats.pace !== null && "da melhor volta, em média"}
+          value={stats.ritmo === null ? "—" : percent(stats.ritmo)}
+          sub={stats.ritmo !== null && "da melhor volta, em média"}
         />
         <StatTile
           label="Aproveitamento"
@@ -179,16 +179,16 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
       <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
         {(
           [
-            ["Maior sequência pontuando", streaks.scoring],
-            ["Maior sequência no pódio", streaks.podium],
-            ["Maior sequência vencendo", streaks.win],
+            ["Maior sequência pontuando", sequencias.scoring],
+            ["Maior sequência no pódio", sequencias.podium],
+            ["Maior sequência vencendo", sequencias.win],
           ] as const
-        ).map(([label, streak]) => (
+        ).map(([label, sequencia]) => (
           <StatTile
             key={label}
             label={label}
-            value={streak.best}
-            sub={`atual: ${plural(streak.current, "corrida", "corridas")}`}
+            value={sequencia.best}
+            sub={`atual: ${plural(sequencia.current, "corrida", "corridas")}`}
           />
         ))}
       </div>
