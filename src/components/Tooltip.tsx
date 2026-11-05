@@ -121,6 +121,7 @@ export function Tooltip({
     >
       {children}
       <div
+        ref={bubble}
         id={id}
         role="tooltip"
         hidden={!open}
