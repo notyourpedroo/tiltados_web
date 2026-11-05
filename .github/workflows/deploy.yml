@@ -1,6 +1,6 @@
 name: CI/CD
 
-# Pull requests: só verifica (lint + testes + build).
+# Pull requests: só verifica (lint + testes + build) e audita as dependências.
 # Push na main (ou disparo manual): verifica, empacota e publica no servidor.
 on:
   push:
@@ -60,6 +60,20 @@ jobs:
           name: release
           path: release.tgz
           retention-days: 7
+
+  # Alerta de dependência de produção vulnerável. Fica fora do check obrigatório
+  # da main e do "needs" do deploy: um alerta novo não trava PRs nem a publicação.
+  audit:
+    name: Auditar dependencias
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - run: npm audit --omit=dev --audit-level=high
 
   deploy:
     name: Publicar no servidor
