@@ -49,6 +49,11 @@ jobs:
 
       - run: npm ci
 
+      # O npm ci aceita peer inválido só com aviso; o npm ls falha. Pega o major
+      # que os plugins ainda não suportam (ex.: eslint 10 com o eslint-config-next 16).
+      - name: Peers
+        run: npm ls --all > /dev/null
+
       - name: Lint
         run: npm run lint
 
