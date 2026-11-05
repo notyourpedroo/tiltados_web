@@ -40,19 +40,28 @@ export interface RecentFormEntry {
 /** Pilotos no mini-ranking da Forma recente. */
 const RECENT_FORM_TOP = 3;
 
+/** Um piloto da temporada com o seu perfil. */
+interface DriverEntry {
+  id: number;
+  profile: DriverProfile;
+}
+
+/** Tile sem líder: ninguém pontuou no indicador. */
+const NONE: Leaders = { value: 0, driverIds: [] };
+
 /** Líderes de cada tile de destaque da temporada. */
 export function seasonHighlights(data: DriverSeasonData): SeasonHighlights {
   const profiles = driverIds(data).map((id) => ({ id, profile: driverProfile(data, id) }));
   // Melhor Ritmo e Melhor Aproveitamento exigem ao menos metade das Sessões.
   const regulars = withMinimumSessions(data, profiles);
   return {
-    poles: leaders(profiles, (p) => p.stats.poles),
-    fastestLaps: leaders(profiles, (p) => p.stats.fastestLaps),
-    winSequencia: leaders(profiles, (p) => p.sequencias.win.best),
+    poles: leaders(profiles, (p) => p.stats.poles) ?? NONE,
+    fastestLaps: leaders(profiles, (p) => p.stats.fastestLaps) ?? NONE,
+    winSequencia: leaders(profiles, (p) => p.sequencias.win.best) ?? NONE,
     recentForm: recentFormTop(profiles),
-    ritmo: bestRitmo(regulars),
-    performance: leaders(regulars, (p) => p.performance?.pointsPerSession ?? 0),
-    hatTricks: orNull(leaders(profiles, (p) => p.stats.hatTricks)),
+    ritmo: leaders(regulars, (p) => p.stats.ritmo, "lowest"),
+    performance: leaders(regulars, (p) => p.performance?.pointsPerSession ?? null) ?? NONE,
+    hatTricks: leaders(profiles, (p) => p.stats.hatTricks),
   };
 }
 
@@ -60,7 +69,7 @@ export function seasonHighlights(data: DriverSeasonData): SeasonHighlights {
  * Os 3 pilotos com mais pontos na Forma recente, do maior para o menor; empatados
  * na ordem em que aparecem na temporada. Quem não pontuou na janela fica de fora.
  */
-function recentFormTop(profiles: { id: number; profile: DriverProfile }[]): RecentFormEntry[] {
+function recentFormTop(profiles: DriverEntry[]): RecentFormEntry[] {
   return profiles
     .map(({ id, profile }) => ({ driverId: id, points: profile.stats.recentForm }))
     .filter((e) => e.points > 0)
@@ -69,10 +78,7 @@ function recentFormTop(profiles: { id: number; profile: DriverProfile }[]): Rece
 }
 
 /** Pilotos que disputaram ao menos metade das Sessões disputadas da temporada. */
-function withMinimumSessions(
-  data: DriverSeasonData,
-  profiles: { id: number; profile: DriverProfile }[],
-): { id: number; profile: DriverProfile }[] {
+function withMinimumSessions(data: DriverSeasonData, profiles: DriverEntry[]): DriverEntry[] {
   const played = playedSessions(data);
   return profiles.filter(({ profile }) => profile.sessions.length * 2 >= played);
 }
@@ -84,33 +90,27 @@ function driverIds(data: DriverSeasonData): number[] {
   return [...ids];
 }
 
-/** Pilotos com o maior valor positivo de `pick`, empatados juntos. */
+/**
+ * Pilotos com o melhor valor de `pick`, o maior ou o menor, empatados juntos;
+ * null quando ninguém tem valor. `pick` devolve null para quem não tem valor e,
+ * quando o melhor é o maior, só valores positivos contam (zero é não ter pontuado).
+ */
 function leaders(
-  profiles: { id: number; profile: DriverProfile }[],
-  pick: (profile: DriverProfile) => number,
-): Leaders {
-  const values = profiles.map(({ id, profile }) => ({ id, value: pick(profile) }));
-  const value = Math.max(0, ...values.map((v) => v.value));
-  if (value === 0) return { value, driverIds: [] };
+  profiles: DriverEntry[],
+  pick: (profile: DriverProfile) => number | null,
+  best: "highest" | "lowest" = "highest",
+): Leaders | null {
+  const values = profiles.flatMap(({ id, profile }) => {
+    const value = pick(profile);
+    return value === null || (best === "highest" && value <= 0) ? [] : [{ id, value }];
+  });
+  if (!values.length) return null;
+  const all = values.map((v) => v.value);
+  const value = best === "highest" ? Math.max(...all) : Math.min(...all);
   return { value, driverIds: values.filter((v) => v.value === value).map((v) => v.id) };
 }
 
 /** Sessões da temporada que já têm resultado. */
 function playedSessions(data: DriverSeasonData): number {
   return data.sessions.filter((s) => (data.results[s.id] ?? []).length > 0).length;
-}
-
-/** Pilotos com o menor Ritmo, empatados juntos; null quando ninguém tem Ritmo. */
-function bestRitmo(profiles: { id: number; profile: DriverProfile }[]): Leaders | null {
-  const values = profiles.flatMap(({ id, profile }) =>
-    profile.stats.ritmo === null ? [] : [{ id, value: profile.stats.ritmo }],
-  );
-  if (!values.length) return null;
-  const value = Math.min(...values.map((v) => v.value));
-  return { value, driverIds: values.filter((v) => v.value === value).map((v) => v.id) };
-}
-
-/** Os líderes, ou null quando ninguém pontuou no indicador. */
-function orNull(l: Leaders): Leaders | null {
-  return l.driverIds.length ? l : null;
 }
