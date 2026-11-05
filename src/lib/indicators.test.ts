@@ -28,7 +28,7 @@ const SEASON_OVERVIEW_CARDS = [
   "winSequencia",
   "recentForm",
   "ritmo",
-  "performance",
+  "aproveitamento",
   "hatTricks",
 ];
 const TEAM_PROFILE_CARDS = [
@@ -120,7 +120,7 @@ describe("Descrições dos destaques da visão geral", () => {
     expect(SEASON_HIGHLIGHT_INDICATORS.hatTricks).toMatch(/Pole, vitória e Volta mais rápida/);
   });
 
-  test.each(["poles", "fastestLaps", "winSequencia", "ritmo", "performance", "hatTricks"] as const)(
+  test.each(["poles", "fastestLaps", "winSequencia", "ritmo", "aproveitamento", "hatTricks"] as const)(
     "%s avisa que empatados aparecem juntos",
     (key) => {
       expect(SEASON_HIGHLIGHT_INDICATORS[key]).toMatch(/empatados aparecem juntos/);
@@ -130,7 +130,7 @@ describe("Descrições dos destaques da visão geral", () => {
   // A regra dos destaques e o texto andam juntos: o cálculo corta em MINIMUM_SESSIONS_SHARE
   // (season-highlights.test.ts confere nos limites), e mudar o corte quebra este teste até
   // o texto acompanhar.
-  test.each(["ritmo", "performance"] as const)("%s cita o corte de metade das Sessões", (key) => {
+  test.each(["ritmo", "aproveitamento"] as const)("%s cita o corte de metade das Sessões", (key) => {
     expect(MINIMUM_SESSIONS_SHARE).toBe(1 / 2);
     expect(SEASON_HIGHLIGHT_INDICATORS[key]).toContain("ao menos metade das Sessões");
   });
