@@ -42,6 +42,8 @@ A skill `mattpocock-skills:code-review`, apontada para o merge-base com a `main`
 
 ## Spec com vários tickets
 
+Uma spec com um ticket só segue o fluxo do implementador, num branch a partir do `origin/main`, e o PR traz um `Closes` para o ticket e um para a spec.
+
 Uma spec cujos tickets se bloqueiam entre si chega à `main` num PR só, a partir de um **branch de integração** `tipo/descricao-curta` criado do `origin/main`. O PR abre como rascunho depois do primeiro ticket integrado e traz um `Closes` para a spec e um para cada ticket. As regras acima valem para esse PR, com estas diferenças:
 
 - **Fronteira**: os bloqueadores de um ticket só fecham no merge do PR, então a consulta de fronteira não serve aqui. Quem despacha é a sessão principal: um ticket fica pronto quando todos os bloqueadores dele já entraram no branch de integração, o que a lista do corpo do PR registra.
