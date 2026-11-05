@@ -26,6 +26,7 @@ import {
 import { getSuperLicense, getTeamPrediction } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { shortGpName } from "@/lib/chart";
+import { driverName } from "@/lib/drivers";
 import { decimal, formatDate, lastWeekends, ordinal, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason, type SeasonData } from "@/lib/season";
@@ -62,11 +63,6 @@ export default function TeamPage({ params }: PageProps<"/[season]/equipes/[teamI
       ))}
     </Suspense>
   );
-}
-
-/** Nome do piloto no cadastro, com o mesmo fallback do resto do site. */
-function driverName(data: SeasonData, id: number) {
-  return data.drivers[id]?.name ?? `#${id}`;
 }
 
 /** Chance de título de construtores da equipe em 2026, com o selo e o Motivo, para qualquer status. */

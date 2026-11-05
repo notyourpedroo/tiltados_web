@@ -18,6 +18,7 @@ import {
 import { getDriverPrediction } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { chartData } from "@/lib/chart";
+import { driverName } from "@/lib/drivers";
 import { decimal, formatDate, lastWeekends, percent, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { mainSessions } from "@/lib/season";
@@ -124,7 +125,7 @@ async function Overview({ season }: { season: string }) {
   );
   const { poles, fastestLaps, winSequencia, recentForm, ritmo, performance, hatTricks } = seasonHighlights(data);
   const formWeekends = recentFormWeekends(data.sessions);
-  const names = (ids: number[]) => ids.map((id) => data.drivers[id]?.name ?? `#${id}`).join(", ");
+  const names = (ids: number[]) => ids.map((id) => driverName(data, id)).join(", ");
 
   const chart = chartData(data);
 
