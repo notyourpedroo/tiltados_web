@@ -20,6 +20,10 @@ export interface DriverStats {
   poles: number;
   /** Voltas mais rápidas, em Corridas e Sprints. */
   fastestLaps: number;
+  /** Hat-tricks: Pole, vitória e Volta mais rápida na mesma Corrida. */
+  hatTricks: number;
+  /** Conversão de pole: das `poles`, quantas viraram vitória na mesma Corrida. */
+  poleConversion: { converted: number; poles: number };
   /** Posição média de chegada em Corridas; null sem Corrida disputada. */
   avgFinish: number | null;
   /** Saldo de posições do grid à chegada, em Corridas e Sprints. */
@@ -95,9 +99,13 @@ export function driverProfile(data: DriverSeasonData, driverId: number): DriverP
   }
   const results = sessions.map((s) => s.result);
   const races = sessions.filter((s) => !s.session.isSprint).map((s) => s.result);
+  const poles = races.filter((r) => r.grid === 1);
+  const converted = poles.filter((r) => r.position === 1);
   const stats: DriverStats = {
-    poles: races.filter((r) => r.grid === 1).length,
+    poles: poles.length,
     fastestLaps: results.filter((r) => r.fastestLap).length,
+    hatTricks: converted.filter((r) => r.fastestLap).length,
+    poleConversion: { converted: converted.length, poles: poles.length },
     avgFinish: races.length ? races.reduce((sum, r) => sum + r.position, 0) / races.length : null,
     gained: results.reduce((sum, r) => sum + r.gained, 0),
     best: bestResult(results),

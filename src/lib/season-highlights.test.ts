@@ -149,6 +149,28 @@ describe("Destaques da temporada", () => {
     expect(seasonHighlights(data).performance).toEqual({ value: 21.5, driverIds: [20, 10] });
   });
 
+  test("Hat-tricks lista os líderes empatados; a Sprint perfeita não conta", () => {
+    const sprint = session(1, 1, true);
+    const race = session(2, 1);
+    const race2 = session(3, 2);
+    const perfect = { grid: 1, fastestLap: true };
+    const data = season(
+      [],
+      [sprint, [result(sprint, 30, FERRARI, 1, perfect), result(sprint, 20, MCLAREN, 2)]],
+      [race, [result(race, 20, MCLAREN, 1, perfect), result(race, 10, FERRARI, 2)]],
+      [race2, [result(race2, 10, FERRARI, 1, perfect), result(race2, 20, MCLAREN, 2)]],
+    );
+
+    expect(seasonHighlights(data).hatTricks).toEqual({ value: 1, driverIds: [20, 10] });
+  });
+
+  test("Hat-tricks fica sem líder quando ninguém fez um", () => {
+    const race = session(1, 1);
+    const data = season([], [race, [result(race, 10, FERRARI, 1, { grid: 1 })]]);
+
+    expect(seasonHighlights(data).hatTricks).toBeNull();
+  });
+
   test("temporada sem Sessão disputada fica sem líderes, com valor zero, e sem Melhor Ritmo", () => {
     const none = { value: 0, driverIds: [] };
 
@@ -159,6 +181,7 @@ describe("Destaques da temporada", () => {
       recentForm: [],
       pace: null,
       performance: none,
+      hatTricks: null,
     });
   });
 });

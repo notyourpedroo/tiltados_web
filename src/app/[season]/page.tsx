@@ -122,7 +122,7 @@ async function Overview({ season }: { season: string }) {
   const winners = new Set(
     data.sessions.filter((s) => !s.isSprint).map((s) => data.results[s.id][0]?.driverId),
   );
-  const { poles, fastestLaps, winStreak, recentForm, pace, performance } = seasonHighlights(data);
+  const { poles, fastestLaps, winStreak, recentForm, pace, performance, hatTricks } = seasonHighlights(data);
   const formWeekends = recentFormWeekends(data.sessions);
   const names = (ids: number[]) => ids.map((id) => data.drivers[id]?.name ?? `#${id}`).join(", ");
 
@@ -269,6 +269,7 @@ async function Overview({ season }: { season: string }) {
           value={performance.driverIds.length ? decimal(performance.value) : "—"}
           sub={performance.driverIds.length > 0 && `pts por sessão · ${names(performance.driverIds)}`}
         />
+        {hatTricks && <StatTile label="Hat-tricks" value={hatTricks.value} sub={names(hatTricks.driverIds)} />}
       </div>
 
       <ChampionshipCharts kind="driver" sessions={chart.sessions} series={chart.series} />
