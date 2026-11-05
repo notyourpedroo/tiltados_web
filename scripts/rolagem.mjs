@@ -217,5 +217,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Sem rolagem horizontal: ${checked} rota(s) × ${WIDTHS.length} larguras (${WIDTHS.join(", ")} px); sem texto cortado a partir de ${DESKTOP} px.`,
+  `Sem rolagem horizontal: ${checked} rota(s) × ${WIDTHS.length} larguras (${WIDTHS.join(", ")} px); sem texto cortado a partir de ${DESKTOP} px; tooltips abertos dentro da janela.`,
 );
