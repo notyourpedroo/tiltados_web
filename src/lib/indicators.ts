@@ -5,10 +5,11 @@
  * GLOSSARY.md.
  */
 
-import { MINIMUM_SESSIONS_SHARE } from "./season-highlights";
-
-const SEQUENCIA_RULE =
-  "Só Corridas contam, e uma Corrida que ele não disputou quebra a Sequência. O atual é a Sequência que chega à última Corrida da temporada.";
+/** O que conta numa Sequência, como no GLOSSARY.md. */
+const SEQUENCIA_COUNTS = "Só Corridas contam, e uma Corrida que ele não disputou quebra a Sequência.";
+const SEQUENCIA_RULE = `${SEQUENCIA_COUNTS} O atual é a Sequência que chega à última Corrida da temporada.`;
+/** A Pole é só de Corrida. */
+const SPRINT_POLE = "largar em 1º numa Sprint não conta";
 
 /** Indicadores do perfil do piloto. */
 export const DRIVER_INDICATORS = {
@@ -19,7 +20,7 @@ export const DRIVER_INDICATORS = {
     "As vezes em que o piloto chegou entre os 3 primeiros, em Corridas e Sprints. O subtítulo mostra quantas Sessões ele disputou.",
   best: "A melhor posição de chegada do piloto numa Sessão, Corrida ou Sprint. O N× diz quantas vezes ele chegou nessa posição.",
   poles:
-    "As Corridas em que o piloto largou em 1º; largar em 1º numa Sprint não conta. A Conversão de pole diz quantas dessas Poles viraram vitória, como X de Y.",
+    `As Corridas em que o piloto largou em 1º; ${SPRINT_POLE}. A Conversão de pole diz quantas dessas Poles viraram vitória, como X de Y.`,
   fastestLaps:
     "As Sessões, Corrida ou Sprint, em que o piloto fez a Volta mais rápida: a melhor volta da Sessão entre todos os pilotos.",
   hatTricks: "As Corridas em que o piloto fez Pole, vitória e Volta mais rápida na mesma Corrida.",
@@ -39,12 +40,8 @@ export const DRIVER_INDICATORS = {
 
 const TIES = "Pilotos empatados aparecem juntos.";
 
-/** A parte mínima das Sessões de Melhor ritmo e Melhor aproveitamento, por extenso. */
-function sessionShare(share: number): string {
-  return share === 1 / 2 ? "metade" : `${Math.round(share * 100)}%`;
-}
-
-const REGULARS = `Só entra quem disputou ao menos ${sessionShare(MINIMUM_SESSIONS_SHARE)} das Sessões da temporada.`;
+/** O corte de MINIMUM_SESSIONS_SHARE (season-highlights.ts); o indicators.test.ts confere os dois. */
+const REGULARS = "Só entra quem disputou ao menos metade das Sessões da temporada.";
 
 /**
  * Destaques da visão geral da temporada. Os "Mais/Melhor X" reaproveitam o texto do
@@ -53,9 +50,9 @@ const REGULARS = `Só entra quem disputou ao menos ${sessionShare(MINIMUM_SESSIO
 export const SEASON_HIGHLIGHT_INDICATORS = {
   rounds:
     "As Etapas disputadas na temporada: cada fim de semana de GP, com uma Corrida e, em alguns, uma Sprint. O subtítulo conta as Sprints.",
-  poles: `O piloto com mais Poles: Corridas em que largou em 1º; largar em 1º numa Sprint não conta. ${TIES}`,
+  poles: `O piloto com mais Poles: Corridas em que largou em 1º; ${SPRINT_POLE}. ${TIES}`,
   fastestLaps: `O piloto com mais Voltas mais rápidas. ${DRIVER_INDICATORS.fastestLaps} ${TIES}`,
-  winSequencia: `A maior Sequência de Corridas seguidas com vitória da temporada. Só Corridas contam, e uma Corrida que o piloto não disputou quebra a Sequência. ${TIES}`,
+  winSequencia: `O piloto com a maior Sequência de Corridas seguidas com vitória da temporada. ${SEQUENCIA_COUNTS} ${TIES}`,
   recentForm: `Os 3 pilotos com mais pontos na Forma recente. ${DRIVER_INDICATORS.recentForm} Quem não pontuou na janela fica de fora.`,
   ritmo: `O piloto com o melhor Ritmo. ${DRIVER_INDICATORS.ritmo} ${REGULARS} ${TIES}`,
   performance: `O piloto com mais pontos por Sessão disputada no Aproveitamento. ${REGULARS} ${TIES}`,
@@ -70,8 +67,7 @@ export const TEAM_INDICATORS = {
   podiums:
     "Os pódios dos Pilotos da equipe em Corridas e Sprints, um por piloto no pódio: dois pilotos no pódio da mesma Sessão contam dois.",
   oneTwos: "As Corridas em que os Pilotos da equipe chegaram em 1º e 2º. A Sprint não conta.",
-  poles:
-    "As Corridas em que um piloto da equipe largou em 1º; largar em 1º numa Sprint não conta.",
+  poles: `As Corridas em que um piloto da equipe largou em 1º; ${SPRINT_POLE}.`,
   fastestLaps:
     "As Sessões, Corrida ou Sprint, em que um piloto da equipe fez a Volta mais rápida: a melhor volta da Sessão entre todos os pilotos.",
   best: "A melhor posição de chegada de um piloto da equipe numa Sessão, Corrida ou Sprint. O N× diz quantas vezes um piloto dela chegou nessa posição.",
