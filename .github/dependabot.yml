@@ -7,6 +7,10 @@ updates:
     commit-message:
       prefix: build
       include: scope
+    ignore:
+      # O major do @types/node acompanha o Node do CI (node-version no deploy.yml).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       # O eslint-config-next acompanha a versão do next.
       next:
