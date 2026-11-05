@@ -17,8 +17,8 @@ const fichaHas = (ficha: string, file: string) => existsSync(join(root, fichaFil
 const PARTS: Record<string, string> = {
   ChanceBadge: "ChanceRow",
   ChanceBar: "ChanceRow",
-  InfoIcon: "Tooltip",
   TeamMark: "TeamLogo",
+  TooltipLabel: "Tooltip",
   WithTeamCar: "TeamCar",
 };
 // Sem tela própria: não tem ficha nem props.

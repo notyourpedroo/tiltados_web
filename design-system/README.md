@@ -58,7 +58,7 @@ Tiltados F1 é o site de resultados de uma liga de F1 virtual entre amigos, no e
 
 ## Iconografia e imagens
 
-- Não há biblioteca de ícones. Os poucos ícones são SVG inline de traço 2px e pontas arredondadas, na cor do texto (sol, lua e monitor no botão de tema). Setas e marcas são caracteres: ▲ ▼ ✓ ! ‼ ⛔ ⏱ →, e o ⓘ (`InfoIcon`) ao lado do rótulo dos cards com Tooltip.
+- Não há biblioteca de ícones. Os poucos ícones são SVG inline de traço 2px e pontas arredondadas, na cor do texto (sol, lua e monitor no botão de tema). Setas e marcas são caracteres: ▲ ▼ ✓ ! ‼ ⛔ ⏱ →, e o ⓘ (`TooltipLabel`) ao lado do rótulo dos cards com Tooltip.
 - Logos de equipe (grupo Equipes): a versão branca no tema escuro e a colorida no tema claro, trocadas por CSS (`.only-dark` e `.only-light`). Tamanhos usados: 14px sob o nome do piloto, 18 a 20px em tabelas, 24 a 44px em cards. Sempre ao lado do nome da equipe em texto. Equipe sem logo mostra a barrinha `team-*`.
 - Carros das equipes (grupo Carros): a renderização lateral do carro da equipe no Jogo da temporada, a mesma imagem nos dois temas. Onde ele aparece está na ficha do TeamCar; até 320px nos cards grandes. Equipe fora do Jogo fica sem Carro.
 - O ícone do site (grupo Site) é o logo da F1, igual ao do site oficial.

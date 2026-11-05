@@ -1,13 +1,13 @@
 # Tooltip
 
-Card que explica o que o indicador mede num balão abaixo dele (ou acima, perto do rodapé), com o ícone ⓘ (`InfoIcon`) ao lado do rótulo.
+Card que explica o que o indicador mede num balão abaixo dele (ou acima, perto do rodapé), com o ícone ⓘ ao lado do rótulo (`TooltipLabel`).
 
 ## Quando usar
 Nos cards de indicador: o `StatTile` com `description` já usa, e um card próprio (como "Melhor forma recente") envolve o conteúdo nele. O texto vem de `src/lib/indicators.ts`, um registro por página: `DRIVER_INDICATORS` (perfil do piloto), `TEAM_INDICATORS` (perfil da equipe) e `SEASON_HIGHLIGHT_INDICATORS` (destaques da visão geral), nos termos do `GLOSSARY.md`.
 
 ## O que você fornece
 - `description`: uma ou duas frases curtas para o torcedor.
-- `children`: o conteúdo do card, com o `InfoIcon` depois do rótulo.
+- `children`: o conteúdo do card, que abre com o `TooltipLabel` (o rótulo em caixa alta, `muted`, seguido do ⓘ). O `StatTile` já usa.
 - `className`: as classes do card (borda, fundo, espaço).
 
 ## Comportamento

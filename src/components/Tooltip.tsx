@@ -133,8 +133,18 @@ export function Tooltip({
   );
 }
 
-/** Ícone ⓘ ao lado do rótulo de um card com Tooltip. Decorativo: o tooltip já descreve o card. */
-export function InfoIcon() {
+/** Rótulo de um card com Tooltip, seguido do ícone ⓘ. */
+export function TooltipLabel({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-xs font-bold uppercase tracking-wider text-muted">
+      {children}
+      <InfoIcon />
+    </p>
+  );
+}
+
+/** Ícone ⓘ do rótulo. Decorativo: o tooltip já descreve o card. */
+function InfoIcon() {
   return (
     <span aria-hidden className="ml-1 align-middle text-sm font-normal not-italic">
       ⓘ
