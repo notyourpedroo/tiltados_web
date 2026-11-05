@@ -83,7 +83,11 @@ describe("Descrições dos indicadores do piloto", () => {
     expect(DRIVER_INDICATORS.gained).toContain("negativo");
   });
 
-  test.each(["sequenciaScoring", "sequenciaPodium", "sequenciaWin"] as const)(
+  test("Ritmo diz que o número é a média em porcentagem", () => {
+    expect(DRIVER_INDICATORS.ritmo).toMatch(/em média e em porcentagem/);
+  });
+
+  test.each(["sequenciaScoring","sequenciaPodium", "sequenciaWin"] as const)(
     "%s só conta Corridas e explica o atual",
     (key) => {
       expect(DRIVER_INDICATORS[key]).toMatch(/Só Corridas contam/);
