@@ -121,6 +121,7 @@ src/
     ├── driver-season.ts   # perfil do piloto na temporada (testado com o Vitest)
     ├── drivers.ts         # nome do piloto para a tela
     ├── format.ts          # datas, números e plurais no padrão brasileiro
+    ├── indicators.ts      # descrição de cada indicador, por sujeito, para o tooltip dos cards (testado com o Vitest)
     ├── lap.ts             # tempo de volta da API em milissegundos (testado com o Vitest)
     ├── license.ts         # como o status da Superlicença aparece no card (testado com o Vitest)
     ├── load.ts            # carrega a temporada da rota, ou 404 para temporada desconhecida
