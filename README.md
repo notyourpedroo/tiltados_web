@@ -76,6 +76,11 @@ Cada fixture em `scripts/fixtures/` é um objeto `{ "/rota": resposta }`. Para c
 real da rota e altere os campos. Ao trocar de fixture, reinicie também o `npm run dev`: com o `cacheComponents`,
 o servidor de dev guarda as respostas da API e continua mostrando as da fixture anterior.
 
+Os `retrato-<ano>.json` são cópias das Sessões e dos resultados reais, que o `src/lib/real-seasons.test.ts`
+usa para conferir se os números dos perfis e dos destaques fazem sentido com o que a API manda de verdade.
+Refaça-os com `node scripts/retrato-api.mjs 2025 2026` quando a API mudar de formato; um teste que passar a
+falhar aponta um dado que as contas ainda não tratam.
+
 As rotas, o formato das respostas e as regras estão no README da API ("Endpoints Disponíveis", "Regras de
 Negócio" e "Exemplos de Uso e Respostas"); o código parte do `main.py`.
 
@@ -122,6 +127,7 @@ src/
     ├── season.ts          # modelo derivado da temporada
     ├── season-fixtures.ts # temporadas montadas à mão para os testes
     ├── season-highlights.ts # líderes dos tiles de destaque da home (testado com o Vitest)
+    ├── sessions.ts        # Sessões e resultados a partir das respostas da API (testado com retratos reais)
     ├── team-season.ts     # perfil da equipe e evolução do campeonato de construtores (testado com o Vitest)
     ├── teams.ts           # cores, logos e Carros das equipes, e o Jogo de cada temporada (testado com o Vitest)
     ├── theme.ts           # tema claro/escuro salvo no navegador

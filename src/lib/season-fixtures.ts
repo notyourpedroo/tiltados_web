@@ -1,9 +1,7 @@
 // Temporadas montadas à mão para os testes das contas sobre os dados da temporada
 // (perfil da equipe, perfil do piloto, destaques da home). Só os testes importam.
 import type { SeasonData, Session, SessionResult, Team } from "./season";
-
-const RACE_POINTS = [25, 18, 15, 12, 10, 8];
-const SPRINT_POINTS = [8, 7, 6, 5, 4, 3];
+import { pointsFor } from "./sessions";
 
 export function team(id: number, name: string): Team {
   return { id, name, short: name, color: `var(--team-${id})` };
@@ -29,7 +27,7 @@ export function result(
   position: number,
   extra: Partial<SessionResult> = {},
 ): SessionResult {
-  const points = (s.isSprint ? SPRINT_POINTS : RACE_POINTS)[position - 1] ?? 0;
+  const points = pointsFor(position, s.isSprint);
   return {
     driverId,
     teamId,
