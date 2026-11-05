@@ -112,8 +112,10 @@ src/
 └── lib/
     ├── api.ts             # chamadas à Tiltados API (com cache)
     ├── chance.ts          # como a Chance de título aparece na tela (testado com o Vitest)
+    ├── driver-season.ts   # perfil do piloto na temporada (testado com o Vitest)
     ├── license.ts         # como o status da Superlicença aparece no card (testado com o Vitest)
     ├── season.ts          # modelo derivado da temporada
+    ├── season-fixtures.ts # temporadas montadas à mão para os testes
     ├── team-season.ts     # perfil da equipe e evolução do campeonato de construtores (testado com o Vitest)
     ├── teams.ts           # cores, logos e Carros das equipes, e o Jogo de cada temporada (testado com o Vitest)
     ├── types.ts           # tipos das respostas da API
