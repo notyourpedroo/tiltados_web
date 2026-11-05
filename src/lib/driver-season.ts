@@ -121,6 +121,46 @@ export function driverProfile(data: DriverSeasonData, driverId: number): DriverP
   };
 }
 
+/** Médias por Sessão de um piloto numa temporada, para comparar temporadas (nunca totais). */
+export interface SeasonAverages {
+  /** Pontos por Sessão disputada. */
+  pointsPerSession: number;
+  /** Parte das Corridas disputadas que venceu, de 0 a 1; null sem Corrida. */
+  raceWinRate: number | null;
+  /** Parte das Sessões disputadas em que chegou no pódio, de 0 a 1. */
+  podiumRate: number;
+  /** Chegada média em Corridas; null sem Corrida. */
+  avgFinish: number | null;
+  /** Ritmo; null sem tempo válido. */
+  pace: number | null;
+}
+
+/**
+ * Comparativo da temporada atual até agora com a Temporada passada inteira, a
+ * partir dos perfis do mesmo piloto nas duas. null quando ele não tem Sessão
+ * disputada em alguma delas.
+ */
+export function seasonComparison(
+  current: DriverProfile,
+  previous: DriverProfile,
+): { current: SeasonAverages; previous: SeasonAverages } | null {
+  const now = seasonAverages(current);
+  const before = seasonAverages(previous);
+  return now && before ? { current: now, previous: before } : null;
+}
+
+function seasonAverages({ stats, performance, sessions }: DriverProfile): SeasonAverages | null {
+  if (!performance) return null;
+  const races = sessions.filter((s) => !s.session.isSprint);
+  return {
+    pointsPerSession: performance.pointsPerSession,
+    raceWinRate: races.length ? races.filter((s) => s.result.position === 1).length / races.length : null,
+    podiumRate: sessions.filter((s) => s.result.position <= 3).length / sessions.length,
+    avgFinish: stats.avgFinish,
+    pace: stats.pace,
+  };
+}
+
 /**
  * Sequências sobre as Corridas disputadas da temporada, em ordem: Sprints não
  * contam, e uma Corrida sem o piloto quebra a corrente.
