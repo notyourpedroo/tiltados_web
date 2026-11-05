@@ -90,7 +90,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
       : undefined;
   const penalties = data.punishments.filter((p) => p.driver_id === id);
 
-  const { stats, sessions, duels } = driverProfile(data, id);
+  const { stats, streaks, sessions, duels } = driverProfile(data, id);
 
   return (
     <>
@@ -138,6 +138,23 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           value={stats.gained > 0 ? `+${stats.gained}` : stats.gained}
           sub="saldo grid → chegada"
         />
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+        {(
+          [
+            ["Maior sequência pontuando", streaks.scoring],
+            ["Maior sequência no pódio", streaks.podium],
+            ["Maior sequência vencendo", streaks.win],
+          ] as const
+        ).map(([label, streak]) => (
+          <StatTile
+            key={label}
+            label={label}
+            value={streak.best}
+            sub={`atual: ${plural(streak.current, "corrida", "corridas")}`}
+          />
+        ))}
       </div>
 
       {/* Carrega à parte: se a rota demorar, o resto da página não espera; se
