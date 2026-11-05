@@ -3,7 +3,7 @@ import { Suspense, type ReactNode } from "react";
 import { ChampionshipCharts } from "@/components/ChampionshipCharts";
 import { HideOnError } from "@/components/HideOnError";
 import { DriverStandingsTable, TeamStandingsTable } from "@/components/standings";
-import { InfoIcon, Tooltip } from "@/components/Tooltip";
+import { Tooltip, TooltipLabel } from "@/components/Tooltip";
 import {
   CARD,
   Card,
@@ -249,10 +249,7 @@ async function Overview({ season }: { season: string }) {
           sub={names(winSequencia.driverIds)}
         />
         <Tooltip description={SEASON_HIGHLIGHT_INDICATORS.recentForm} className={`${CARD} p-4`}>
-          <p className="text-xs font-bold uppercase tracking-wider text-muted">
-            Melhor forma recente
-            <InfoIcon />
-          </p>
+          <TooltipLabel>Melhor forma recente</TooltipLabel>
           {recentForm.length ? (
             <>
               <ol className="mt-1.5 space-y-1">

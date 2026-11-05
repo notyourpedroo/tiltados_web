@@ -67,13 +67,15 @@ export interface StatTileProps {
 export interface TooltipProps {
   /** Uma ou duas frases para o torcedor, nos termos do GLOSSARY.md. */
   description: string;
-  /** Conteúdo do card, com o InfoIcon depois do rótulo. */
+  /** Conteúdo do card, que abre com o TooltipLabel. */
   children: ReactNode;
   /** Classes do card que recebe o tooltip (borda, fundo, espaço). */
   className?: string;
 }
-/** Sem propriedades: o ícone ⓘ, decorativo. */
-export type InfoIconProps = Record<string, never>;
+export interface TooltipLabelProps {
+  /** O rótulo do card; o ícone ⓘ, decorativo, vem depois dele. */
+  children: ReactNode;
+}
 export interface TeamBarProps {
   /** Cor team-* da equipe (var(--team-…)). */
   color: string;

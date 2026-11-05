@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ordinal } from "@/lib/format";
 import type { TeamLogo as TeamLogoSrc } from "@/lib/teams";
-import { InfoIcon, Tooltip } from "./Tooltip";
+import { Tooltip, TooltipLabel } from "./Tooltip";
 import type { ReactNode } from "react";
 
 export function PageTitle({
@@ -218,10 +218,7 @@ export function StatTile({
 }) {
   return (
     <Tooltip description={description} className={`${CARD} p-4`}>
-      <p className="text-xs font-bold uppercase tracking-wider text-muted">
-        {label}
-        <InfoIcon />
-      </p>
+      <TooltipLabel>{label}</TooltipLabel>
       <p className="mt-1 text-3xl font-black leading-tight">{value}</p>
       {sub && <p className="mt-0.5 truncate text-sm text-text-2">{sub}</p>}
     </Tooltip>
