@@ -288,7 +288,7 @@ async function Overview({ season }: { season: string }) {
           label="Melhor aproveitamento"
           value={performance.driverIds.length ? decimal(performance.value) : "—"}
           sub={performance.driverIds.length > 0 && `pts por sessão · ${names(performance.driverIds)}`}
-          description={SEASON_HIGHLIGHT_INDICATORS.performance}
+          description={SEASON_HIGHLIGHT_INDICATORS.aproveitamento}
         />
         {hatTricks && (
           <StatTile

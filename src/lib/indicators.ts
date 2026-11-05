@@ -55,7 +55,7 @@ export const SEASON_HIGHLIGHT_INDICATORS = {
   winSequencia: `O piloto com a maior Sequência de Corridas seguidas com vitória da temporada. ${SEQUENCIA_COUNTS} ${TIES}`,
   recentForm: `Os 3 pilotos com mais pontos na Forma recente. ${DRIVER_INDICATORS.recentForm} Quem não pontuou na janela fica de fora.`,
   ritmo: `O piloto com o melhor Ritmo. ${DRIVER_INDICATORS.ritmo} ${REGULARS} ${TIES}`,
-  performance: `O piloto com mais pontos por Sessão disputada no Aproveitamento. ${REGULARS} ${TIES}`,
+  aproveitamento: `O piloto com mais pontos por Sessão disputada no Aproveitamento. ${REGULARS} ${TIES}`,
   hatTricks: `O piloto com mais Hat-tricks. ${DRIVER_INDICATORS.hatTricks} ${TIES}`,
 } as const satisfies Record<string, string>;
 
