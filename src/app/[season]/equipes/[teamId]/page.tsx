@@ -27,6 +27,7 @@ import { getSuperLicense, getTeamPrediction } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { shortGpName } from "@/lib/chart";
 import { driverName } from "@/lib/drivers";
+import { TEAM_INDICATORS } from "@/lib/indicators";
 import { decimal, formatDate, lastWeekends, ordinal, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason, type SeasonData } from "@/lib/season";
@@ -109,29 +110,33 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
       />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatTile label="Pontos" value={stats.points} sub={`${ordinal(standing.position)} lugar`} />
-        <StatTile label="Vitórias" value={stats.wins} sub="em corridas" />
-        <StatTile label="Pódios" value={stats.podiums} sub="corridas e sprints" />
-        <StatTile label="Dobradinhas" value={stats.oneTwos} sub="1º e 2º em corridas" />
-        <StatTile label="Poles" value={stats.poles} />
-        <StatTile label="Voltas mais rápidas" value={stats.fastestLaps} />
+        <StatTile label="Pontos" description={TEAM_INDICATORS.points} value={stats.points} sub={`${ordinal(standing.position)} lugar`} />
+        <StatTile label="Vitórias" description={TEAM_INDICATORS.wins} value={stats.wins} sub="em corridas" />
+        <StatTile label="Pódios" description={TEAM_INDICATORS.podiums} value={stats.podiums} sub="corridas e sprints" />
+        <StatTile label="Dobradinhas" description={TEAM_INDICATORS.oneTwos} value={stats.oneTwos} sub="1º e 2º em corridas" />
+        <StatTile label="Poles" description={TEAM_INDICATORS.poles} value={stats.poles} />
+        <StatTile label="Voltas mais rápidas" description={TEAM_INDICATORS.fastestLaps} value={stats.fastestLaps} />
         <StatTile
           label="Melhor resultado"
+          description={TEAM_INDICATORS.best}
           value={stats.best ? ordinal(stats.best.position) : "—"}
           sub={stats.best && `${stats.best.count}×`}
         />
         <StatTile
           label="Dois nos pontos"
+          description={TEAM_INDICATORS.bothScored}
           value={stats.bothScored}
           sub={`de ${plural(sessions.length, "sessão", "sessões")}`}
         />
         <StatTile
           label="Forma recente"
+          description={TEAM_INDICATORS.recentForm}
           value={formWeekends ? stats.recentForm : "—"}
           sub={formWeekends ? `pts ${lastWeekends(formWeekends)}` : "sem etapa disputada"}
         />
         <StatTile
           label="Aproveitamento"
+          description={TEAM_INDICATORS.aproveitamento}
           value={pointsPerSession === null ? "—" : decimal(pointsPerSession)}
           sub={pointsPerSession !== null && "pts por sessão de cada piloto"}
         />
