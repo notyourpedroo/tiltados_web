@@ -18,6 +18,8 @@ const MUTED = "text-muted sobre bg-surface-2";
 const ACCENT = "bg-accent é só";
 const AVOID = "Termo marcado como _Avoid_";
 const LINEUP = "line-up é _Avoid_";
+const PACE = "pace é _Avoid_";
+const STREAK = "streak é _Avoid_";
 
 describe("Regras do ESLint", () => {
   test.each([
@@ -46,6 +48,17 @@ describe("Regras do ESLint", () => {
     ["export const pipelineUpdate = 1;", null],
     ["export const inlineUpload = 1;", null],
     ["export const outline = 1;", null],
+    // Ritmo e Sequência nos identificadores
+    ["export const pace = 1;", PACE],
+    ["export const bestPace = 1;", PACE],
+    ["export const PACE = 1;", PACE],
+    ["export const pace_ms = 1;", PACE],
+    ["export const space = 1;", null],
+    ["export const replaceAll = 1;", null],
+    ["export const namespace = 1;", null],
+    ["export const streak = 1;", STREAK],
+    ["export const winStreaks = 1;", STREAK],
+    ["export const STREAK = 1;", STREAK],
   ])("%s", async (code, expected) => {
     const messages = await restricted(code);
     if (expected) expect(messages.join("\n")).toContain(expected);
