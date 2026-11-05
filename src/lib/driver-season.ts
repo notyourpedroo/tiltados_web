@@ -87,6 +87,11 @@ export interface DriverProfile {
   duels: DriverDuel[];
 }
 
+/** Pole: largada em 1º numa Corrida; a Sprint não conta. */
+export function isPole(session: Session, result: SessionResult): boolean {
+  return result.grid === 1 && !session.isSprint;
+}
+
 /** Perfil do piloto na temporada. */
 export function driverProfile(data: DriverSeasonData, driverId: number): DriverProfile {
   const sessions: DriverSession[] = [];
@@ -99,7 +104,7 @@ export function driverProfile(data: DriverSeasonData, driverId: number): DriverP
   }
   const results = sessions.map((s) => s.result);
   const races = sessions.filter((s) => !s.session.isSprint).map((s) => s.result);
-  const poles = races.filter((r) => r.grid === 1);
+  const poles = sessions.filter((s) => isPole(s.session, s.result)).map((s) => s.result);
   const converted = poles.filter((r) => r.position === 1);
   const stats: DriverStats = {
     poles: poles.length,
