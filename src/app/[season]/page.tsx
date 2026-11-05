@@ -121,7 +121,7 @@ async function Overview({ season }: { season: string }) {
   const winners = new Set(
     data.sessions.filter((s) => !s.isSprint).map((s) => data.results[s.id][0]?.driverId),
   );
-  const { poles, fastestLaps } = seasonHighlights(data);
+  const { poles, fastestLaps, winStreak } = seasonHighlights(data);
   const names = (ids: number[]) => ids.map((id) => data.drivers[id]?.name ?? `#${id}`).join(", ");
 
   const chart = chartData(data);
@@ -225,6 +225,11 @@ async function Overview({ season }: { season: string }) {
         <StatTile label="Vencedores diferentes" value={winners.size} sub="em corridas" />
         <StatTile label="Mais poles" value={poles.value} sub={names(poles.driverIds)} />
         <StatTile label="Mais voltas rápidas" value={fastestLaps.value} sub={names(fastestLaps.driverIds)} />
+        <StatTile
+          label="Maior sequência de vitórias"
+          value={winStreak.value}
+          sub={names(winStreak.driverIds)}
+        />
       </div>
 
       <ChampionshipCharts kind="driver" sessions={chart.sessions} series={chart.series} />
