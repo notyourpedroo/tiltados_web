@@ -93,6 +93,13 @@ _Avoid_: média de pontos, eficiência
 Quanto, em média e em porcentagem, a melhor volta de um piloto fica atrás da Volta mais rápida de cada Sessão em que ele marcou tempo.
 _Avoid_: pace, velocidade
 
+**Chegada média**:
+A posição média de chegada de um piloto nas Corridas que disputou. Sprints não contam.
+
+**Posições ganhas**:
+O saldo, somado em todas as Sessões disputadas, entre a posição de largada e a de chegada de um piloto; negativo quando ele perdeu posições.
+_Avoid_: ultrapassagens
+
 **Temporada passada**:
 A temporada imediatamente anterior, usada para comparar o mesmo piloto pelas médias por Sessão, nunca pelos totais.
 
