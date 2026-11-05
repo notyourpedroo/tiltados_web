@@ -1,6 +1,7 @@
 // Contas de um piloto numa temporada, a partir dos dados já carregados (não busca
 // nada na API). Espelho do perfil da equipe (team-season.ts).
 import type { SeasonData, Session, SessionResult } from "./season";
+import { recentFormSessions } from "./weekend";
 
 /** Dados da temporada de que o perfil do piloto precisa. */
 export type DriverSeasonData = Pick<SeasonData, "sessions" | "results">;
@@ -24,6 +25,8 @@ export interface DriverStats {
   gained: number;
   /** Melhor posição do piloto numa Sessão; null sem Sessão disputada. */
   best: { position: number; count: number } | null;
+  /** Forma recente: pontos nas últimas 3 Etapas disputadas da temporada, Corrida e Sprint somadas. */
+  recentForm: number;
 }
 
 /** Quem chegou na frente nas Sessões em que o piloto e um companheiro correram pela mesma equipe. */
@@ -81,6 +84,7 @@ export function driverProfile(data: DriverSeasonData, driverId: number): DriverP
     avgFinish: races.length ? races.reduce((sum, r) => sum + r.position, 0) / races.length : null,
     gained: results.reduce((sum, r) => sum + r.gained, 0),
     best: bestResult(results),
+    recentForm: recentForm(data, sessions),
   };
   return {
     stats,
@@ -128,6 +132,12 @@ function driverDuels(data: DriverSeasonData, driverId: number, sessions: DriverS
     }
   }
   return [...byId.values()];
+}
+
+/** Pontos do piloto nas Sessões da janela da Forma recente; a Etapa sem ele conta zero. */
+function recentForm(data: DriverSeasonData, sessions: DriverSession[]): number {
+  const window = new Set(recentFormSessions(data.sessions).map((s) => s.id));
+  return sessions.reduce((sum, s) => (window.has(s.session.id) ? sum + s.result.points : sum), 0);
 }
 
 function bestResult(results: SessionResult[]): DriverStats["best"] {
