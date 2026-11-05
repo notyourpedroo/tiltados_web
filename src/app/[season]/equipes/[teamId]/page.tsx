@@ -26,12 +26,13 @@ import {
 import { getSuperLicense, getTeamPrediction } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { shortGpName } from "@/lib/chart";
-import { formatDate, ordinal, plural } from "@/lib/format";
+import { formatDate, lastWeekends, ordinal, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason, type SeasonData } from "@/lib/season";
 import { teamProfile, type TeamSession } from "@/lib/team-season";
 import { teamCar, teamStyle } from "@/lib/teams";
 import { isSeason } from "@/lib/types";
+import { recentFormWeekends } from "@/lib/weekend";
 
 export async function generateStaticParams({
   params,
@@ -90,6 +91,7 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
   const car = teamCar(standing.team_name, data.season);
   const { stats, sessions, drivers, duels } = teamProfile(data, standing.team_id);
   const played = sessions.length > 0;
+  const formWeekends = recentFormWeekends(data.sessions);
   const driverLink = (id: number) => (
     <Link href={`/${data.season}/pilotos/${id}`} className="hover:underline">
       {driverName(data, id)}
@@ -126,6 +128,11 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
           label="Dois nos pontos"
           value={stats.bothScored}
           sub={`de ${plural(sessions.length, "sessão", "sessões")}`}
+        />
+        <StatTile
+          label="Forma recente"
+          value={formWeekends ? stats.recentForm : "—"}
+          sub={formWeekends ? `pts ${lastWeekends(formWeekends)}` : "sem etapa disputada"}
         />
       </div>
 

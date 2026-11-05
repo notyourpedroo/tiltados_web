@@ -27,11 +27,12 @@ import { getDriverPrediction, getSuperLicense } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
 import { driverProfile } from "@/lib/driver-season";
 import { shortGpName } from "@/lib/chart";
-import { formatDate, ordinal, plural } from "@/lib/format";
+import { formatDate, lastWeekends, ordinal, plural } from "@/lib/format";
 import { loadSeason } from "@/lib/load";
 import { getSeason } from "@/lib/season";
 import { teamCar, teamStyle } from "@/lib/teams";
 import { isSeason } from "@/lib/types";
+import { recentFormWeekends } from "@/lib/weekend";
 
 export async function generateStaticParams({
   params,
@@ -91,6 +92,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
   const penalties = data.punishments.filter((p) => p.driver_id === id);
 
   const { stats, streaks, sessions, duels } = driverProfile(data, id);
+  const formWeekends = recentFormWeekends(data.sessions);
 
   return (
     <>
@@ -137,6 +139,11 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           label="Posições ganhas"
           value={stats.gained > 0 ? `+${stats.gained}` : stats.gained}
           sub="saldo grid → chegada"
+        />
+        <StatTile
+          label="Forma recente"
+          value={formWeekends ? stats.recentForm : "—"}
+          sub={formWeekends ? `pts ${lastWeekends(formWeekends)}` : "sem etapa disputada"}
         />
       </div>
 

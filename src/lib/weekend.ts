@@ -31,6 +31,11 @@ export function recentFormSessions(sessions: Session[]): Session[] {
   return sessions.filter((s) => rounds.has(s.round));
 }
 
+/** Quantas Etapas entram na janela da Forma recente: 3, ou as que houver. */
+export function recentFormWeekends(sessions: Session[]): number {
+  return Math.min(RECENT_FORM_WEEKENDS, weekends(sessions).length);
+}
+
 /** A Sessão que representa a Etapa: a Corrida, ou a Sprint enquanto a Corrida está pendente. */
 export function mainSession(weekend: Weekend): Session {
   return (weekend.race ?? weekend.sprint)!;
