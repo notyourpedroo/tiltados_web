@@ -61,8 +61,8 @@ export interface StatTileProps {
   label: ReactNode;
   value: ReactNode;
   sub?: ReactNode;
-  /** O que o indicador mede (src/lib/indicators.ts): vira o Tooltip do card, com o ícone ⓘ. */
-  description?: string;
+  /** O que o indicador mede (src/lib/indicators.ts): vira o Tooltip do card, com o ícone ⓘ. Obrigatória. */
+  description: string;
 }
 export interface TooltipProps {
   /** Uma ou duas frases para o torcedor, nos termos do GLOSSARY.md. */
