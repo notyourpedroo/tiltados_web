@@ -151,7 +151,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
         <StatTile label="Hat-tricks" value={stats.hatTricks} sub="pole, vitória e volta mais rápida" />
         <StatTile
           label="Chegada média"
-          value={stats.avgFinish === null ? "—" : stats.avgFinish.toFixed(1).replace(".", ",")}
+          value={stats.avgFinish === null ? "—" : decimal(stats.avgFinish)}
           sub="em corridas"
         />
         <StatTile
