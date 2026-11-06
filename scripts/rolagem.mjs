@@ -8,13 +8,13 @@
 //   node scripts/rolagem.mjs [rota]...
 //   node scripts/rolagem.mjs 2025/equipes/5 2026/pilotos/5
 //
-// As rotas vão sem a barra inicial (no Git Bash, "/2026" vira um caminho do Windows).
 // Variáveis: CAPTURAS_BASE (padrão http://localhost:3000, o site rodando) e CHROME
 // (padrão o Chrome instalado no Windows), as mesmas do capturas.mjs.
 import { spawn } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { routesFrom } from "./rotas.mjs";
 
 const base = (process.env.CAPTURAS_BASE ?? "http://localhost:3000").replace(/\/+$/, "");
 const chrome = process.env.CHROME ?? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -23,7 +23,7 @@ const WIDTHS = [375, 640, 768, 1024, 1280];
 const DESKTOP = 1024;
 const PARALLEL = 4;
 
-const given = process.argv.slice(2).map((route) => route.replace(/^\/+|\/+$/g, ""));
+const given = routesFrom(process.argv.slice(2));
 const crawl = given.length === 0;
 const queue = crawl ? ["2025", "2026"] : given;
 const seen = new Set(queue);

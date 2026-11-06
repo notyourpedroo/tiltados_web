@@ -5,17 +5,18 @@
 //   node scripts/capturas.mjs <pasta> [--pr <n>] <rota>...
 //   node scripts/capturas.mjs capturas --pr 42 2026 2026/pilotos/2 2026/titulo
 //
-// As rotas vão sem a barra inicial: no Git Bash, "/2026" vira "C:/Program Files/Git/2026".
 // Variáveis: CAPTURAS_BASE (padrão http://localhost:3000, o site rodando) e CHROME
 // (padrão o Chrome instalado no Windows). O site precisa estar de pé antes.
 import { execFileSync } from "node:child_process";
 import { mkdirSync, readdirSync } from "node:fs";
 import path from "node:path";
+import { routesFrom } from "./rotas.mjs";
 
 const args = process.argv.slice(2);
 const prFlag = args.indexOf("--pr");
 const pr = prFlag === -1 ? undefined : args.splice(prFlag, 2)[1];
-const [outDir, ...routes] = args;
+const [outDir, ...rawRoutes] = args;
+const routes = routesFrom(rawRoutes);
 if (!outDir || routes.length === 0 || (prFlag !== -1 && !pr)) {
   console.error("Uso: node scripts/capturas.mjs <pasta> [--pr <n>] <rota>...");
   process.exit(1);
@@ -34,8 +35,8 @@ const THEMES = {
 
 mkdirSync(outDir, { recursive: true });
 for (const route of routes) {
-  const name = route.replace(/^\/+|\/+$/g, "").replaceAll("/", "-") || "inicio";
-  const url = `${base}/${route.replace(/^\/+/, "")}`;
+  const name = route.replaceAll("/", "-") || "inicio";
+  const url = `${base}/${route}`;
   for (const [size, windowSize] of Object.entries(SIZES)) {
     for (const [theme, themeFlags] of Object.entries(THEMES)) {
       const file = path.resolve(outDir, `${name}-${size}-${theme}.png`);
