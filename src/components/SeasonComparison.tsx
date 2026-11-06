@@ -1,4 +1,4 @@
-import type { SeasonAverages } from "@/lib/driver-season";
+import type { PreviousSeasonAverages, SeasonAverages } from "@/lib/driver-season";
 import { decimal, percent } from "@/lib/format";
 import { Card } from "./ui";
 
@@ -19,21 +19,22 @@ const ROWS: Row[] = [
 ];
 
 /**
- * Médias por Sessão do piloto na temporada atual até agora contra a Temporada
- * passada inteira, com a indicação de melhora ou piora em cada uma.
+ * Médias por Sessão do piloto em cada Temporada anterior inteira e na temporada
+ * atual até agora, com a indicação de melhora ou piora contra a referência.
  */
 export function SeasonComparison({
   season,
-  previousSeason,
   current,
   previous,
+  reference,
 }: {
   /** Temporada atual, ex.: "2026". */
   season: string;
-  /** Temporada passada, ex.: "2025". */
-  previousSeason: string;
   current: SeasonAverages;
-  previous: SeasonAverages;
+  /** Temporadas anteriores disputadas pelo piloto, em ordem cronológica. */
+  previous: PreviousSeasonAverages[];
+  /** Temporada anterior contra a qual a evolução compara: a mais recente disputada. */
+  reference: PreviousSeasonAverages;
 }) {
   return (
     <Card className="p-5">
@@ -42,7 +43,11 @@ export function SeasonComparison({
         <thead>
           <tr className="text-xs font-bold uppercase tracking-wider text-muted">
             <th className="py-1 text-left font-bold">Média</th>
-            <th className="py-1 text-right font-bold">{previousSeason}</th>
+            {previous.map((p) => (
+              <th key={p.season} className="py-1 text-right font-bold">
+                {p.season}
+              </th>
+            ))}
             <th className="py-1 text-right font-bold">{season}</th>
             <th className="py-1 text-right font-bold">
               <span className="sr-only">Evolução</span>
@@ -51,19 +56,23 @@ export function SeasonComparison({
         </thead>
         <tbody>
           {ROWS.map((row) => {
-            const before = row.value(previous);
             const now = row.value(current);
             return (
               <tr key={row.label} className="border-t border-line">
                 <td className="py-2 font-bold">{row.label}</td>
-                <td className="tabular py-2 text-right text-text-2">
-                  {before === null ? "—" : row.format(before)}
-                </td>
+                {previous.map((p) => {
+                  const value = row.value(p.averages);
+                  return (
+                    <td key={p.season} className="tabular py-2 text-right text-text-2">
+                      {value === null ? "—" : row.format(value)}
+                    </td>
+                  );
+                })}
                 <td className="tabular py-2 text-right font-black">
                   {now === null ? "—" : row.format(now)}
                 </td>
                 <td className="py-2 pl-3 text-right text-xs text-text-2 whitespace-nowrap">
-                  <Trend row={row} before={before} now={now} />
+                  <Trend row={row} before={row.value(reference.averages)} now={now} />
                 </td>
               </tr>
             );
@@ -71,7 +80,9 @@ export function SeasonComparison({
         </tbody>
       </table>
       <p className="mt-2 text-xs text-muted">
-        {season} até agora contra {previousSeason} inteira, sempre por sessão disputada
+        {previous.length === 1
+          ? `${season} até agora contra ${previous[0].season} inteira, sempre por sessão disputada`
+          : `${season} até agora; temporadas anteriores inteiras, sempre por sessão disputada`}
       </p>
     </Card>
   );

@@ -80,18 +80,22 @@ async function DriverTitleChance({ driverId }: { driverId: number }) {
 }
 
 /**
- * Card comparativo com a Temporada passada (a anterior na lista de temporadas), pelo
- * mesmo ID. Some na primeira temporada e para quem não tem Sessão disputada nas duas.
+ * Card comparativo com as Temporadas anteriores (todas antes da atual na lista de
+ * temporadas), pelo mesmo ID. Some na primeira temporada e para quem não tem Sessão
+ * disputada na atual ou em nenhuma Temporada anterior.
  */
 async function DriverSeasonComparison({ season, driverId }: { season: Season; driverId: number }) {
-  const previousSeason = SEASONS[SEASONS.indexOf(season) - 1];
-  if (!previousSeason) return null;
-  const [current, previous] = await Promise.all([getSeason(season), getSeason(previousSeason)]);
-  const comparison = seasonComparison(driverProfile(current, driverId), driverProfile(previous, driverId));
+  const previousSeasons = SEASONS.slice(0, SEASONS.indexOf(season));
+  if (previousSeasons.length === 0) return null;
+  const [current, ...previous] = await Promise.all([season, ...previousSeasons].map((s) => getSeason(s)));
+  const comparison = seasonComparison(
+    driverProfile(current, driverId),
+    previous.map((data, i) => ({ season: previousSeasons[i], profile: driverProfile(data, driverId) })),
+  );
   if (!comparison) return null;
   return (
     <div className="mt-10">
-      <SeasonComparison season={season} previousSeason={previousSeason} {...comparison} />
+      <SeasonComparison season={season} {...comparison} />
     </div>
   );
 }
@@ -202,7 +206,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
         ))}
       </div>
 
-      {/* Comparativo com a Temporada passada: carrega à parte e, se falhar, some. */}
+      {/* Comparativo com as Temporadas anteriores: carrega à parte e, se falhar, some. */}
       <HideOnError>
         <Suspense fallback={null}>
           <DriverSeasonComparison season={data.season} driverId={id} />

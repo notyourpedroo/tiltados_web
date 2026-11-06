@@ -140,18 +140,40 @@ export interface SeasonAverages {
   ritmo: number | null;
 }
 
+/** Médias do piloto numa Temporada anterior. */
+export interface PreviousSeasonAverages {
+  /** Temporada, ex.: "2025". */
+  season: string;
+  averages: SeasonAverages;
+}
+
+/** Comparativo da temporada atual com as Temporadas anteriores do piloto. */
+export interface SeasonComparisonData {
+  /** Médias da temporada atual até agora. */
+  current: SeasonAverages;
+  /** Temporadas anteriores em que o piloto disputou Sessão, em ordem cronológica. */
+  previous: PreviousSeasonAverages[];
+  /** Referência de "▲ melhor / ▼ pior": a mais recente de `previous`. */
+  reference: PreviousSeasonAverages;
+}
+
 /**
- * Comparativo da temporada atual até agora com a Temporada passada inteira, a
- * partir dos perfis do mesmo piloto nas duas. null quando ele não tem Sessão
- * disputada em alguma delas.
+ * Comparativo da temporada atual até agora com as Temporadas anteriores inteiras,
+ * a partir dos perfis do mesmo piloto em cada uma, em ordem cronológica. As
+ * Temporadas anteriores sem Sessão disputada por ele ficam de fora. null quando
+ * ele não tem Sessão disputada na atual ou em nenhuma Temporada anterior.
  */
 export function seasonComparison(
   current: DriverProfile,
-  previous: DriverProfile,
-): { current: SeasonAverages; previous: SeasonAverages } | null {
+  previous: { season: string; profile: DriverProfile }[],
+): SeasonComparisonData | null {
   const now = seasonAverages(current);
-  const before = seasonAverages(previous);
-  return now && before ? { current: now, previous: before } : null;
+  const played = previous.flatMap(({ season, profile }) => {
+    const averages = seasonAverages(profile);
+    return averages ? [{ season, averages }] : [];
+  });
+  const reference = played.at(-1);
+  return now && reference ? { current: now, previous: played, reference } : null;
 }
 
 function seasonAverages({ stats, performance, sessions }: DriverProfile): SeasonAverages | null {
