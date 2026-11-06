@@ -37,9 +37,7 @@ export function SeasonComparison({
 }) {
   return (
     <Card className="p-5">
-      <p className="text-xs font-bold uppercase tracking-wider text-muted">
-        Comparativo com {previousSeason}
-      </p>
+      <p className="text-xs font-bold uppercase tracking-wider text-muted">Comparativo</p>
       <table className="mt-2 w-full text-sm">
         <thead>
           <tr className="text-xs font-bold uppercase tracking-wider text-muted">
