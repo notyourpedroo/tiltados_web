@@ -13,11 +13,19 @@ type Palette = Record<string, string>;
 const root = join(__dirname, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
 
-/** Variáveis `--nome: valor;` do bloco que começa logo depois do seletor. */
+/**
+ * Variáveis `--nome: valor;` do bloco que começa logo depois do seletor. Numa lista de
+ * seletores, aceita a quebra de linha que o Prettier põe depois de cada vírgula.
+ */
 function block(css: string, selector: string): Palette {
-  const start = css.indexOf(`${selector} {`);
-  if (start < 0) throw new Error(`Seletor não encontrado: ${selector}`);
-  const body = css.slice(start + selector.length + 2, css.indexOf("}", start));
+  const pattern = selector
+    .split(", ")
+    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join(",\\s*");
+  const match = new RegExp(`${pattern}\\s*\\{`).exec(css);
+  if (!match) throw new Error(`Seletor não encontrado: ${selector}`);
+  const start = match.index + match[0].length;
+  const body = css.slice(start, css.indexOf("}", start));
   const vars: Palette = {};
   for (const [, name, value] of body
     .replace(/\/\*[\s\S]*?\*\//g, "")
@@ -71,7 +79,9 @@ describe("Tokens de cor", () => {
         // No tema claro, globals.css só redefine o que muda; o resto vem do tema escuro.
         const expected =
           file.startsWith("globals.css") && theme === "light"
-            ? Object.fromEntries(Object.entries(json).filter(([name]) => json[name] !== jsonPalette("dark")[name]))
+            ? Object.fromEntries(
+                Object.entries(json).filter(([name]) => json[name] !== jsonPalette("dark")[name]),
+              )
             : json;
         expect(palette).toEqual(expected);
       });
