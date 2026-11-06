@@ -395,11 +395,11 @@ describe("Comparativo com as Temporadas anteriores", () => {
    * Perfis do piloto nas Temporadas anteriores, em ordem cronológica. Aceita
    * temporadas que não estão no site (2023, 2024) para simular várias anteriores.
    */
-  const before = (driverId: number, ...seasons: [string, ReturnType<typeof season>][]): PreviousSeasonProfile[] =>
+  const previousProfiles = (driverId: number, ...seasons: [string, ReturnType<typeof season>][]): PreviousSeasonProfile[] =>
     seasons.map(([id, data]) => ({ season: id as Season, profile: driverProfile(data, driverId) }));
 
   test("compara as médias por Sessão da temporada atual com as da Temporada anterior", () => {
-    const comparison = seasonComparison(driverProfile(current, 10), before(10, ["2025", previous]));
+    const comparison = seasonComparison(driverProfile(current, 10), previousProfiles(10, ["2025", previous]));
 
     expect(comparison?.current).toEqual({ pointsPerSession: 15, raceWinRate: 0, podiumRate: 1, avgFinish: 3, ritmo: 0.01 });
     expect(comparison?.previous.map((p) => p.season)).toEqual(["2025"]);
@@ -415,7 +415,7 @@ describe("Comparativo com as Temporadas anteriores", () => {
   });
 
   test("traz as várias Temporadas anteriores em ordem cronológica, com a seta contra a mais recente", () => {
-    const comparison = seasonComparison(driverProfile(current, 10), before(10, ["2024", older], ["2025", previous]));
+    const comparison = seasonComparison(driverProfile(current, 10), previousProfiles(10, ["2024", older], ["2025", previous]));
 
     expect(comparison?.previous.map((p) => p.season)).toEqual(["2024", "2025"]);
     expect(comparison?.previous[0].averages.pointsPerSession).toBe(18);
@@ -426,7 +426,7 @@ describe("Comparativo com as Temporadas anteriores", () => {
   test("Temporada anterior sem Sessão do piloto fica de fora, e a seta vai contra a mais recente disputada", () => {
     const comparison = seasonComparison(
       driverProfile(current, 10),
-      before(10, ["2023", older], ["2024", previous], ["2025", skipped]),
+      previousProfiles(10, ["2023", older], ["2024", previous], ["2025", skipped]),
     );
 
     expect(comparison?.previous.map((p) => p.season)).toEqual(["2023", "2024"]);
@@ -436,11 +436,11 @@ describe("Comparativo com as Temporadas anteriores", () => {
 
   test("só aparece para quem tem Sessão disputada na temporada atual e em alguma Temporada anterior", () => {
     // Estreante: não correu nenhuma Temporada anterior.
-    expect(seasonComparison(driverProfile(current, 30), before(30, ["2024", older], ["2025", previous]))).toBeNull();
+    expect(seasonComparison(driverProfile(current, 30), previousProfiles(30, ["2024", older], ["2025", previous]))).toBeNull();
     // Correu as anteriores, mas ainda não a atual.
-    expect(seasonComparison(driverProfile(skipped, 10), before(10, ["2024", older], ["2025", previous]))).toBeNull();
+    expect(seasonComparison(driverProfile(skipped, 10), previousProfiles(10, ["2024", older], ["2025", previous]))).toBeNull();
     // Correu a atual, mas nenhuma das Temporadas anteriores tem Sessão dele.
-    expect(seasonComparison(driverProfile(current, 10), before(10, ["2025", skipped]))).toBeNull();
+    expect(seasonComparison(driverProfile(current, 10), previousProfiles(10, ["2025", skipped]))).toBeNull();
     // Primeira temporada: não há Temporada anterior.
     expect(seasonComparison(driverProfile(current, 10), [])).toBeNull();
   });
@@ -448,7 +448,7 @@ describe("Comparativo com as Temporadas anteriores", () => {
   test("piloto que só correu Sprint não tem % de vitórias em Corridas nem chegada média", () => {
     const sprintOnly = season([], [sprint, [result(sprint, 10, FERRARI, 1)]]);
 
-    const comparison = seasonComparison(driverProfile(sprintOnly, 10), before(10, ["2025", previous]));
+    const comparison = seasonComparison(driverProfile(sprintOnly, 10), previousProfiles(10, ["2025", previous]));
 
     expect(comparison?.current).toMatchObject({ pointsPerSession: 8, raceWinRate: null, podiumRate: 1, avgFinish: null });
   });
