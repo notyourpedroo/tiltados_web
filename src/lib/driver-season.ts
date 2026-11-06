@@ -2,6 +2,7 @@
 // nada na API). Espelho do perfil da equipe (team-season.ts).
 import { lapToMs } from "./lap";
 import type { SeasonData, Session, SessionResult } from "./season";
+import type { Season } from "./types";
 import { recentFormSessions } from "./weekend";
 
 /** Dados da temporada de que o perfil do piloto precisa. */
@@ -140,10 +141,17 @@ export interface SeasonAverages {
   ritmo: number | null;
 }
 
+/** Perfil do piloto numa Temporada anterior, entrada do comparativo. */
+export interface PreviousSeasonProfile {
+  /** Temporada, ex.: "2025". */
+  season: Season;
+  profile: DriverProfile;
+}
+
 /** Médias do piloto numa Temporada anterior. */
 export interface PreviousSeasonAverages {
   /** Temporada, ex.: "2025". */
-  season: string;
+  season: Season;
   averages: SeasonAverages;
 }
 
@@ -165,7 +173,7 @@ export interface SeasonComparisonData {
  */
 export function seasonComparison(
   current: DriverProfile,
-  previous: { season: string; profile: DriverProfile }[],
+  previous: PreviousSeasonProfile[],
 ): SeasonComparisonData | null {
   const now = seasonAverages(current);
   const played = previous.flatMap(({ season, profile }) => {

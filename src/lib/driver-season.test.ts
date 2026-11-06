@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { driverProfile, seasonComparison } from "./driver-season";
+import { driverProfile, type PreviousSeasonProfile, seasonComparison } from "./driver-season";
 import { result, season, session } from "./season-fixtures";
+import type { Season } from "./types";
 
 const FERRARI = 1;
 const MCLAREN = 2;
@@ -390,9 +391,12 @@ describe("Comparativo com as Temporadas anteriores", () => {
   // Temporada anterior sem nenhuma Sessão do piloto 10.
   const skipped = season([], [race, [result(race, 20, MCLAREN, 1)]]);
 
-  /** Perfis do piloto nas Temporadas anteriores, em ordem cronológica. */
-  const before = (driverId: number, ...seasons: [string, ReturnType<typeof season>][]) =>
-    seasons.map(([id, data]) => ({ season: id, profile: driverProfile(data, driverId) }));
+  /**
+   * Perfis do piloto nas Temporadas anteriores, em ordem cronológica. Aceita
+   * temporadas que não estão no site (2023, 2024) para simular várias anteriores.
+   */
+  const before = (driverId: number, ...seasons: [string, ReturnType<typeof season>][]): PreviousSeasonProfile[] =>
+    seasons.map(([id, data]) => ({ season: id as Season, profile: driverProfile(data, driverId) }));
 
   test("compara as médias por Sessão da temporada atual com as da Temporada anterior", () => {
     const comparison = seasonComparison(driverProfile(current, 10), before(10, ["2025", previous]));
