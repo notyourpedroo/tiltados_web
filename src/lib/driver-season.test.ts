@@ -368,11 +368,11 @@ describe("Sequências do piloto", () => {
   });
 });
 
-describe("Comparativo com a Temporada passada", () => {
+describe("Comparativo com as Temporadas anteriores", () => {
   const sprint = session(1, 1, true);
   const race = session(2, 1);
   const race2 = session(3, 2);
-  // Temporada passada: piloto 10 numa Sprint (2º) e em duas Corridas (1º e 4º).
+  // Temporada anterior: piloto 10 numa Sprint (2º) e em duas Corridas (1º e 4º).
   const previous = season(
     [],
     [sprint, [result(sprint, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(sprint, 10, FERRARI, 2, { bestLap: "1:30.900" })]],
@@ -385,35 +385,66 @@ describe("Comparativo com a Temporada passada", () => {
     [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 30, MCLAREN, 2), result(race, 10, FERRARI, 3, { bestLap: "1:30.900" })]],
   );
 
-  test("compara as médias por Sessão da temporada atual com as da passada", () => {
-    const comparison = seasonComparison(driverProfile(current, 10), driverProfile(previous, 10));
+  // Outra Temporada anterior: piloto 10 só numa Corrida (2º).
+  const older = season([], [race, [result(race, 20, MCLAREN, 1), result(race, 10, FERRARI, 2)]]);
+  // Temporada anterior sem nenhuma Sessão do piloto 10.
+  const skipped = season([], [race, [result(race, 20, MCLAREN, 1)]]);
 
-    expect(comparison).toEqual({
-      current: { pointsPerSession: 15, raceWinRate: 0, podiumRate: 1, avgFinish: 3, ritmo: 0.01 },
-      // 7 + 25 + 12 pontos em 3 Sessões; Ritmo: 1%, 0% e 2%.
-      previous: {
-        pointsPerSession: expect.closeTo(44 / 3),
-        raceWinRate: 0.5,
-        podiumRate: expect.closeTo(2 / 3),
-        avgFinish: 2.5,
-        ritmo: expect.closeTo(0.01),
-      },
+  /** Perfis do piloto nas Temporadas anteriores, em ordem cronológica. */
+  const before = (driverId: number, ...seasons: [string, ReturnType<typeof season>][]) =>
+    seasons.map(([id, data]) => ({ season: id, profile: driverProfile(data, driverId) }));
+
+  test("compara as médias por Sessão da temporada atual com as da Temporada anterior", () => {
+    const comparison = seasonComparison(driverProfile(current, 10), before(10, ["2025", previous]));
+
+    expect(comparison?.current).toEqual({ pointsPerSession: 15, raceWinRate: 0, podiumRate: 1, avgFinish: 3, ritmo: 0.01 });
+    expect(comparison?.previous.map((p) => p.season)).toEqual(["2025"]);
+    // 7 + 25 + 12 pontos em 3 Sessões; Ritmo: 1%, 0% e 2%.
+    expect(comparison?.previous[0].averages).toEqual({
+      pointsPerSession: expect.closeTo(44 / 3),
+      raceWinRate: 0.5,
+      podiumRate: expect.closeTo(2 / 3),
+      avgFinish: 2.5,
+      ritmo: expect.closeTo(0.01),
     });
+    expect(comparison?.reference.season).toBe("2025");
   });
 
-  test("só aparece para quem tem Sessão disputada nas duas temporadas", () => {
-    // Estreante: não correu a Temporada passada.
-    expect(seasonComparison(driverProfile(current, 30), driverProfile(previous, 30))).toBeNull();
-    // Correu a passada, mas ainda não a atual.
-    expect(seasonComparison(driverProfile(current, 99), driverProfile(previous, 99))).toBeNull();
-    const absent = season([], [race, [result(race, 20, MCLAREN, 1)]]);
-    expect(seasonComparison(driverProfile(absent, 10), driverProfile(previous, 10))).toBeNull();
+  test("traz as várias Temporadas anteriores em ordem cronológica, com a seta contra a mais recente", () => {
+    const comparison = seasonComparison(driverProfile(current, 10), before(10, ["2024", older], ["2025", previous]));
+
+    expect(comparison?.previous.map((p) => p.season)).toEqual(["2024", "2025"]);
+    expect(comparison?.previous[0].averages.pointsPerSession).toBe(18);
+    expect(comparison?.reference.season).toBe("2025");
+    expect(comparison?.reference.averages.avgFinish).toBe(2.5);
+  });
+
+  test("Temporada anterior sem Sessão do piloto fica de fora, e a seta vai contra a mais recente disputada", () => {
+    const comparison = seasonComparison(
+      driverProfile(current, 10),
+      before(10, ["2023", older], ["2024", previous], ["2025", skipped]),
+    );
+
+    expect(comparison?.previous.map((p) => p.season)).toEqual(["2023", "2024"]);
+    expect(comparison?.reference.season).toBe("2024");
+    expect(comparison?.reference.averages.avgFinish).toBe(2.5);
+  });
+
+  test("só aparece para quem tem Sessão disputada na temporada atual e em alguma Temporada anterior", () => {
+    // Estreante: não correu nenhuma Temporada anterior.
+    expect(seasonComparison(driverProfile(current, 30), before(30, ["2024", older], ["2025", previous]))).toBeNull();
+    // Correu as anteriores, mas ainda não a atual.
+    expect(seasonComparison(driverProfile(skipped, 10), before(10, ["2024", older], ["2025", previous]))).toBeNull();
+    // Correu a atual, mas nenhuma das Temporadas anteriores tem Sessão dele.
+    expect(seasonComparison(driverProfile(current, 10), before(10, ["2025", skipped]))).toBeNull();
+    // Primeira temporada: não há Temporada anterior.
+    expect(seasonComparison(driverProfile(current, 10), [])).toBeNull();
   });
 
   test("piloto que só correu Sprint não tem % de vitórias em Corridas nem chegada média", () => {
     const sprintOnly = season([], [sprint, [result(sprint, 10, FERRARI, 1)]]);
 
-    const comparison = seasonComparison(driverProfile(sprintOnly, 10), driverProfile(previous, 10));
+    const comparison = seasonComparison(driverProfile(sprintOnly, 10), before(10, ["2025", previous]));
 
     expect(comparison?.current).toMatchObject({ pointsPerSession: 8, raceWinRate: null, podiumRate: 1, avgFinish: null });
   });

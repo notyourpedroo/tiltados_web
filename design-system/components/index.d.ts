@@ -272,13 +272,20 @@ export interface SeasonAverages {
   /** Ritmo, em fração (0,012 = 1,2%); null sem tempo válido. */
   ritmo: number | null;
 }
+/** Médias do piloto numa Temporada anterior (PreviousSeasonAverages em src/lib/driver-season.ts). */
+export interface PreviousSeasonAverages {
+  /** Temporada, ex.: "2025". */
+  season: string;
+  averages: SeasonAverages;
+}
 export interface SeasonComparisonProps {
   /** Temporada atual, ex.: "2026". */
   season: string;
-  /** Temporada passada, ex.: "2025". */
-  previousSeason: string;
   current: SeasonAverages;
-  previous: SeasonAverages;
+  /** Temporadas anteriores disputadas pelo piloto, em ordem cronológica. */
+  previous: PreviousSeasonAverages[];
+  /** Temporada anterior contra a qual a evolução compara: a mais recente disputada. */
+  reference: PreviousSeasonAverages;
 }
 /** Status da Superlicença como a API escreve (LicenseStatus em src/lib/types.ts). */
 export type LicenseStatus =
