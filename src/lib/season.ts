@@ -12,12 +12,7 @@ import {
 import { buildSessions, type Session, type SessionResult } from "./sessions";
 import { teamStyle, type TeamLogo } from "./teams";
 import { mainSession, weekends } from "./weekend";
-import type {
-  ApiDriverStanding,
-  ApiPunishment,
-  ApiTeamStanding,
-  Season,
-} from "./types";
+import type { ApiDriverStanding, ApiPunishment, ApiTeamStanding, Season } from "./types";
 
 export type { Session, SessionResult } from "./sessions";
 
@@ -90,7 +85,12 @@ export async function getSeason(season: Season): Promise<SeasonData> {
     cumulative: [] as number[],
     positions: [] as number[],
   }));
-  const tally = progression.map((_, finalIndex) => ({ finalIndex, points: 0, wins: 0, podiums: 0 }));
+  const tally = progression.map((_, finalIndex) => ({
+    finalIndex,
+    points: 0,
+    wins: 0,
+    podiums: 0,
+  }));
   sessions.forEach((s, i) => {
     progression.forEach((p, d) => {
       const r = results[s.id].find((res) => res.driverId === p.driverId);

@@ -51,7 +51,9 @@ describe("Carro da equipe", () => {
     for (const team of teams) {
       const car = teamCar(team, season);
       expect(car, team).toBeDefined();
-      expect(existsSync(fileURLToPath(new URL(`../../public${car}`, import.meta.url))), car).toBe(true);
+      expect(existsSync(fileURLToPath(new URL(`../../public${car}`, import.meta.url))), car).toBe(
+        true,
+      );
     }
   });
 });

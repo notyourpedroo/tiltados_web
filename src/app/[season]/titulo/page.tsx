@@ -38,8 +38,8 @@ async function TitleChance({ season }: { season: string }) {
     <>
       <PageTitle eyebrow="Temporada 2026" title="Chance de título">
         Simulamos as sessões pendentes milhares de vezes, sorteando para cada piloto uma das
-        posições que ele já fez em 2026. A Chance de título é a porcentagem de simulações em
-        que ele termina campeão.
+        posições que ele já fez em 2026. A Chance de título é a porcentagem de simulações em que ele
+        termina campeão.
       </PageTitle>
 
       <section>

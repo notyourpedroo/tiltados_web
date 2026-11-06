@@ -32,7 +32,11 @@ http
       res.end(await answer.text());
     } catch (error) {
       res.writeHead(502, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ detail: `API em ${upstream} não respondeu: ${error.cause?.code ?? error.message}` }));
+      res.end(
+        JSON.stringify({
+          detail: `API em ${upstream} não respondeu: ${error.cause?.code ?? error.message}`,
+        }),
+      );
     }
   })
   .listen(port, "127.0.0.1", () => {

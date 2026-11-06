@@ -18,8 +18,8 @@ export default function SeasonError({
       <p className="text-sm font-bold uppercase tracking-widest text-accent">Bandeira vermelha</p>
       <h1 className="mt-2 text-3xl font-black uppercase">Não deu para carregar os dados</h1>
       <p className="mt-3 text-text-2">
-        A Tiltados API não respondeu como esperado. Ela pode estar fora do ar ou com algum
-        CSV inválido.
+        A Tiltados API não respondeu como esperado. Ela pode estar fora do ar ou com algum CSV
+        inválido.
       </p>
       <button
         type="button"

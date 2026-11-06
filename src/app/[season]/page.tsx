@@ -84,7 +84,13 @@ function LeaderHeading({
 }
 
 /** Líder Campeão pela matemática ganha "🏆 Campeão"; senão, a linha da Chance de título. */
-async function LeaderTitleChance({ driverId, children }: { driverId: number; children: ReactNode }) {
+async function LeaderTitleChance({
+  driverId,
+  children,
+}: {
+  driverId: number;
+  children: ReactNode;
+}) {
   const row = (await getDriverPrediction()).find((r) => r.driver_id === driverId);
   if (row?.status === "Campeao") {
     return (
@@ -100,11 +106,16 @@ async function LeaderTitleChance({ driverId, children }: { driverId: number; chi
       {children}
       {row && (
         <Link href="/2026/titulo" className="group mt-4 inline-flex items-baseline gap-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted">Chance de título</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-muted">
+            Chance de título
+          </span>
           <span className="tabular text-2xl font-black group-hover:underline">
             {describeChance(row, "driver").text}
           </span>
-          <span aria-hidden className="text-sm font-bold text-text-2 transition-colors group-hover:text-text">
+          <span
+            aria-hidden
+            className="text-sm font-bold text-text-2 transition-colors group-hover:text-text"
+          >
             →
           </span>
         </Link>
@@ -123,7 +134,8 @@ async function Overview({ season }: { season: string }) {
   const lastPodium = last ? data.results[last.id].slice(0, 3) : [];
   const rounds = mains.length;
 
-  const { poles, fastestLaps, winSequencia, recentForm, ritmo, performance, hatTricks } = seasonHighlights(data);
+  const { poles, fastestLaps, winSequencia, recentForm, ritmo, performance, hatTricks } =
+    seasonHighlights(data);
   const formWeekends = recentFormWeekends(data.sessions);
   const names = (ids: number[]) => ids.map((id) => driverName(data, id)).join(", ");
 
@@ -135,7 +147,9 @@ async function Overview({ season }: { season: string }) {
         {plural(rounds, "etapa", "etapas")} · {plural(data.sessions.length, "sessão", "sessões")}
         {last && (
           <>
-            {" "}· {finished ? "encerrada em" : "última etapa:"} {last.gpName} ({formatDate(last.date, false)})
+            {" "}
+            · {finished ? "encerrada em" : "última etapa:"} {last.gpName} (
+            {formatDate(last.date, false)})
           </>
         )}
       </PageTitle>
@@ -285,7 +299,9 @@ async function Overview({ season }: { season: string }) {
           label="Melhor aproveitamento"
           description={SEASON_HIGHLIGHT_INDICATORS.aproveitamento}
           value={performance.driverIds.length ? decimal(performance.value) : "—"}
-          sub={performance.driverIds.length > 0 && `pts por sessão · ${names(performance.driverIds)}`}
+          sub={
+            performance.driverIds.length > 0 && `pts por sessão · ${names(performance.driverIds)}`
+          }
         />
         {hatTricks && (
           <StatTile

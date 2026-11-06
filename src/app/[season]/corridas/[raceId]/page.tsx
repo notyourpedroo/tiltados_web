@@ -25,11 +25,7 @@ import { loadSeason } from "@/lib/load";
 import { getSeason, weekendOf } from "@/lib/season";
 import { isSeason } from "@/lib/types";
 
-export async function generateStaticParams({
-  params,
-}: {
-  params: { season: string };
-}) {
+export async function generateStaticParams({ params }: { params: { season: string } }) {
   if (!isSeason(params.season)) return [];
   const data = await getSeason(params.season);
   return data.sessions.map((s) => ({ raceId: String(s.id) }));
@@ -90,7 +86,11 @@ async function Race({ season, raceId }: { season: string; raceId: string }) {
 
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         {weekend.length > 1 ? (
-          <div className="flex rounded-full border border-line p-0.5 text-sm font-bold" role="group" aria-label="Sessão">
+          <div
+            className="flex rounded-full border border-line p-0.5 text-sm font-bold"
+            role="group"
+            aria-label="Sessão"
+          >
             {weekend.map((s) => (
               <Link
                 key={s.id}
@@ -134,7 +134,10 @@ async function Race({ season, raceId }: { season: string; raceId: string }) {
           const team = data.teams[r.teamId];
           const style = PODIUM_STYLE[i];
           return (
-            <Card key={r.driverId} className={`stripe relative overflow-hidden p-5 ${style.order} ${style.lift}`}>
+            <Card
+              key={r.driverId}
+              className={`stripe relative overflow-hidden p-5 ${style.order} ${style.lift}`}
+            >
               <div
                 aria-hidden
                 className="absolute inset-x-0 top-0 h-1"
@@ -192,7 +195,9 @@ async function Race({ season, raceId }: { season: string; raceId: string }) {
                   >
                     <TeamBar color={team?.color ?? "var(--team-other)"} />
                     <span>
-                      <span className="block text-base font-bold leading-tight">{name(r.driverId)}</span>
+                      <span className="block text-base font-bold leading-tight">
+                        {name(r.driverId)}
+                      </span>
                       <span className="flex items-center gap-1 text-xs text-muted sm:hidden">
                         {team?.logo && <TeamLogo logo={team.logo} size={14} />}
                         {team?.short}
@@ -235,8 +240,7 @@ async function Race({ season, raceId }: { season: string; raceId: string }) {
               Maior recuperação
             </p>
             <p className="mt-1 text-xl font-black">
-              {name(climber.driverId)}{" "}
-              <span className="text-gain">▲ {climber.gained}</span>
+              {name(climber.driverId)} <span className="text-gain">▲ {climber.gained}</span>
             </p>
             <p className="text-sm text-text-2">
               Do {climber.grid}º ao {climber.position}º lugar

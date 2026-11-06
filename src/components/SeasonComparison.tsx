@@ -12,10 +12,30 @@ interface Row {
 }
 
 const ROWS: Row[] = [
-  { label: "Pontos por sessão", value: (a) => a.pointsPerSession, format: (n) => decimal(n), higherIsBetter: true },
-  { label: "Vitórias em corridas", value: (a) => a.raceWinRate, format: (n) => percent(n, 0), higherIsBetter: true },
-  { label: "Pódios", value: (a) => a.podiumRate, format: (n) => percent(n, 0), higherIsBetter: true },
-  { label: "Chegada média", value: (a) => a.avgFinish, format: (n) => decimal(n), higherIsBetter: false },
+  {
+    label: "Pontos por sessão",
+    value: (a) => a.pointsPerSession,
+    format: (n) => decimal(n),
+    higherIsBetter: true,
+  },
+  {
+    label: "Vitórias em corridas",
+    value: (a) => a.raceWinRate,
+    format: (n) => percent(n, 0),
+    higherIsBetter: true,
+  },
+  {
+    label: "Pódios",
+    value: (a) => a.podiumRate,
+    format: (n) => percent(n, 0),
+    higherIsBetter: true,
+  },
+  {
+    label: "Chegada média",
+    value: (a) => a.avgFinish,
+    format: (n) => decimal(n),
+    higherIsBetter: false,
+  },
   { label: "Ritmo", value: (a) => a.ritmo, format: (n) => percent(n), higherIsBetter: false },
 ];
 

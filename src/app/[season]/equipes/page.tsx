@@ -70,12 +70,17 @@ async function Teams({ season }: { season: string }) {
                   </Link>
                   <p className="text-right">
                     <span className="block text-3xl font-black leading-none">{t.points}</span>
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted">pts</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted">
+                      pts
+                    </span>
                   </p>
                 </div>
 
                 {/* Contribuição de cada piloto: a fatia mais forte é a do maior pontuador. */}
-                <div className="mt-4 flex h-2 gap-0.5 overflow-hidden rounded-full bg-bg" aria-hidden>
+                <div
+                  className="mt-4 flex h-2 gap-0.5 overflow-hidden rounded-full bg-bg"
+                  aria-hidden
+                >
                   {drivers.map(([id, pts], i) =>
                     pts > 0 ? (
                       <div

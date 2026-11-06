@@ -21,9 +21,7 @@ export default function SeasonLayout({ children }: LayoutProps<"/[season]">) {
       <Suspense fallback={<div className="h-[97px] border-b border-line" />}>
         <SiteHeader />
       </Suspense>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-8">
-        {children}
-      </main>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-8">{children}</main>
       <footer className="border-t border-line py-6 text-center text-xs text-muted">
         Dados da Tiltados API | <CurrentYear />
       </footer>

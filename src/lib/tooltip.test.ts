@@ -7,7 +7,11 @@ const card = (left: number, top: number) => ({ left, top, bottom: top + 100 });
 
 describe("Posição do tooltip na janela", () => {
   test("abre abaixo do card, alinhado à esquerda dele, quando cabe", () => {
-    expect(tooltipPlacement(card(100, 100), 80, viewport)).toEqual({ left: 0, width: 288, above: false });
+    expect(tooltipPlacement(card(100, 100), 80, viewport)).toEqual({
+      left: 0,
+      width: 288,
+      above: false,
+    });
   });
 
   test("na borda direita, é empurrado para dentro com 16 px de folga", () => {

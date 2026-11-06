@@ -1,0 +1,7 @@
+# Markdown e HTML ficam à mão: o Prettier alinha cada coluna das tabelas Markdown (uma
+# edição reescreve a tabela inteira) e desmonta as prévias do design system, e o
+# design-system/index.html sai do npm run ds:index.
+*.md
+*.html
+package-lock.json
+.claude/

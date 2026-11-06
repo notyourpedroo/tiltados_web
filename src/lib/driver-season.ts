@@ -189,7 +189,9 @@ function seasonAverages({ stats, performance, sessions }: DriverProfile): Season
   const races = sessions.filter((s) => !s.session.isSprint);
   return {
     pointsPerSession: performance.pointsPerSession,
-    raceWinRate: races.length ? races.filter((s) => s.result.position === 1).length / races.length : null,
+    raceWinRate: races.length
+      ? races.filter((s) => s.result.position === 1).length / races.length
+      : null,
     podiumRate: sessions.filter((s) => s.result.position <= 3).length / sessions.length,
     avgFinish: stats.avgFinish,
     ritmo: stats.ritmo,
@@ -222,7 +224,11 @@ function driverSequencias(data: DriverSeasonData, driverId: number): DriverSeque
   };
 }
 
-function driverDuels(data: DriverSeasonData, driverId: number, sessions: DriverSession[]): DriverDuel[] {
+function driverDuels(
+  data: DriverSeasonData,
+  driverId: number,
+  sessions: DriverSession[],
+): DriverDuel[] {
   const byId = new Map<number, DriverDuel>();
   for (const { session, result } of sessions) {
     for (const other of data.results[session.id] ?? []) {

@@ -12,9 +12,18 @@ describe("Destaques da temporada", () => {
     const race2 = session(3, 2);
     const data = season(
       [],
-      [sprint, [result(sprint, 10, FERRARI, 1, { grid: 1 }), result(sprint, 20, MCLAREN, 2, { grid: 2 })]],
-      [race, [result(race, 20, MCLAREN, 1, { grid: 2 }), result(race, 10, FERRARI, 2, { grid: 1 })]],
-      [race2, [result(race2, 20, MCLAREN, 1, { grid: 1 }), result(race2, 10, FERRARI, 2, { grid: 2 })]],
+      [
+        sprint,
+        [result(sprint, 10, FERRARI, 1, { grid: 1 }), result(sprint, 20, MCLAREN, 2, { grid: 2 })],
+      ],
+      [
+        race,
+        [result(race, 20, MCLAREN, 1, { grid: 2 }), result(race, 10, FERRARI, 2, { grid: 1 })],
+      ],
+      [
+        race2,
+        [result(race2, 20, MCLAREN, 1, { grid: 1 }), result(race2, 10, FERRARI, 2, { grid: 2 })],
+      ],
     );
 
     expect(seasonHighlights(data).poles).toEqual({ value: 1, driverIds: [10, 20] });
@@ -29,7 +38,10 @@ describe("Destaques da temporada", () => {
     const data = season(
       [],
       // O 30 aparece primeiro, mas só faz uma Volta mais rápida.
-      [sprint, [result(sprint, 30, FERRARI, 1, { fastestLap: true }), result(sprint, 20, MCLAREN, 2)]],
+      [
+        sprint,
+        [result(sprint, 30, FERRARI, 1, { fastestLap: true }), result(sprint, 20, MCLAREN, 2)],
+      ],
       [race, [result(race, 20, MCLAREN, 1, { fastestLap: true }), result(race, 10, FERRARI, 2)]],
       [race2, [result(race2, 10, FERRARI, 1, { fastestLap: true }), result(race2, 20, MCLAREN, 2)]],
       [race3, [result(race3, 10, FERRARI, 1), result(race3, 20, MCLAREN, 2, { fastestLap: true })]],
@@ -110,8 +122,20 @@ describe("Destaques da temporada", () => {
     const race2 = session(2, 2);
     const data = season(
       [],
-      [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 10, FERRARI, 2, { bestLap: "1:31.000" })]],
-      [race2, [result(race2, 10, FERRARI, 1, { bestLap: "1:30.000" }), result(race2, 20, MCLAREN, 2, { bestLap: "1:31.000" })]],
+      [
+        race,
+        [
+          result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+          result(race, 10, FERRARI, 2, { bestLap: "1:31.000" }),
+        ],
+      ],
+      [
+        race2,
+        [
+          result(race2, 10, FERRARI, 1, { bestLap: "1:30.000" }),
+          result(race2, 20, MCLAREN, 2, { bestLap: "1:31.000" }),
+        ],
+      ],
     );
 
     const { ritmo } = seasonHighlights(data);
@@ -128,9 +152,26 @@ describe("Destaques da temporada", () => {
       [],
       // O 40 vence a única Sessão que disputa (25 pts por Sessão), mas fica abaixo do mínimo de 2.
       [sprint, [result(sprint, 10, FERRARI, 2), result(sprint, 20, MCLAREN, 3)]],
-      [race, [result(race, 30, FERRARI, 1), result(race, 10, FERRARI, 2), result(race, 20, MCLAREN, 3)]],
-      [race2, [result(race2, 30, FERRARI, 2), result(race2, 10, FERRARI, 3), result(race2, 20, MCLAREN, 4)]],
-      [race3, [result(race3, 40, MCLAREN, 1), result(race3, 10, FERRARI, 2), result(race3, 20, MCLAREN, 3)]],
+      [
+        race,
+        [result(race, 30, FERRARI, 1), result(race, 10, FERRARI, 2), result(race, 20, MCLAREN, 3)],
+      ],
+      [
+        race2,
+        [
+          result(race2, 30, FERRARI, 2),
+          result(race2, 10, FERRARI, 3),
+          result(race2, 20, MCLAREN, 4),
+        ],
+      ],
+      [
+        race3,
+        [
+          result(race3, 40, MCLAREN, 1),
+          result(race3, 10, FERRARI, 2),
+          result(race3, 20, MCLAREN, 3),
+        ],
+      ],
     );
 
     // O 30 disputa exatamente metade: (25 + 18) / 2 = 21,5 pts por Sessão.
@@ -142,8 +183,18 @@ describe("Destaques da temporada", () => {
     const race2 = session(2, 2);
     const data = season(
       [],
-      [race, [result(race, 20, MCLAREN, 1), result(race, 10, FERRARI, 2), result(race, 30, FERRARI, 3)]],
-      [race2, [result(race2, 10, FERRARI, 1), result(race2, 20, MCLAREN, 2), result(race2, 30, FERRARI, 3)]],
+      [
+        race,
+        [result(race, 20, MCLAREN, 1), result(race, 10, FERRARI, 2), result(race, 30, FERRARI, 3)],
+      ],
+      [
+        race2,
+        [
+          result(race2, 10, FERRARI, 1),
+          result(race2, 20, MCLAREN, 2),
+          result(race2, 30, FERRARI, 3),
+        ],
+      ],
     );
 
     expect(seasonHighlights(data).performance).toEqual({ value: 21.5, driverIds: [20, 10] });

@@ -37,7 +37,10 @@ describe.each(["2025", "2026"])("temporada real de %s", (season) => {
 
   test("cada Sessão disputada tem uma só Volta mais rápida", () => {
     for (const s of played) {
-      expect(data.results[s.id].filter((r) => r.fastestLap), `Sessão ${s.id}`).toHaveLength(1);
+      expect(
+        data.results[s.id].filter((r) => r.fastestLap),
+        `Sessão ${s.id}`,
+      ).toHaveLength(1);
     }
   });
 

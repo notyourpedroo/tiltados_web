@@ -40,17 +40,21 @@ for (const route of routes) {
   for (const [size, windowSize] of Object.entries(SIZES)) {
     for (const [theme, themeFlags] of Object.entries(THEMES)) {
       const file = path.resolve(outDir, `${name}-${size}-${theme}.png`);
-      execFileSync(chrome, [
-        "--headless=new",
-        "--disable-gpu",
-        "--hide-scrollbars",
-        "--force-device-scale-factor=2",
-        `--window-size=${windowSize}`,
-        "--virtual-time-budget=8000",
-        ...themeFlags,
-        `--screenshot=${file}`,
-        url,
-      ], { stdio: "ignore" });
+      execFileSync(
+        chrome,
+        [
+          "--headless=new",
+          "--disable-gpu",
+          "--hide-scrollbars",
+          "--force-device-scale-factor=2",
+          `--window-size=${windowSize}`,
+          "--virtual-time-budget=8000",
+          ...themeFlags,
+          `--screenshot=${file}`,
+          url,
+        ],
+        { stdio: "ignore" },
+      );
       console.log(file);
     }
   }
@@ -62,20 +66,32 @@ if (pr) publish(pr);
 // Um push novo para o mesmo PR troca as capturas de uma vez.
 function publish(prNumber) {
   const git = (...gitArgs) => execFileSync("git", gitArgs, { encoding: "utf8" }).trim();
-  const pngs = readdirSync(outDir).filter((file) => file.endsWith(".png")).sort();
+  const pngs = readdirSync(outDir)
+    .filter((file) => file.endsWith(".png"))
+    .sort();
   const tree = execFileSync("git", ["mktree"], {
     encoding: "utf8",
-    input: pngs
-      .map((file) => `100644 blob ${git("hash-object", "-w", path.join(outDir, file))}\t${file}`)
-      .join("\n") + "\n",
+    input:
+      pngs
+        .map((file) => `100644 blob ${git("hash-object", "-w", path.join(outDir, file))}\t${file}`)
+        .join("\n") + "\n",
   }).trim();
-  const commit = git("commit-tree", tree, "-m", `docs(capturas): capturas de tela do PR #${prNumber}`);
+  const commit = git(
+    "commit-tree",
+    tree,
+    "-m",
+    `docs(capturas): capturas de tela do PR #${prNumber}`,
+  );
   const branch = `capturas/pr-${prNumber}`;
   git("push", "--force", "origin", `${commit}:refs/heads/${branch}`);
 
-  const repo = git("remote", "get-url", "origin").replace(/^.*github\.com[:/]/, "").replace(/\.git$/, "");
+  const repo = git("remote", "get-url", "origin")
+    .replace(/^.*github\.com[:/]/, "")
+    .replace(/\.git$/, "");
   console.log(`\nPublicadas em ${branch}. Markdown para o corpo do PR:\n`);
   for (const file of pngs) {
-    console.log(`![${file.replace(/\.png$/, "")}](https://github.com/${repo}/blob/${branch}/${file}?raw=true)`);
+    console.log(
+      `![${file.replace(/\.png$/, "")}](https://github.com/${repo}/blob/${branch}/${file}?raw=true)`,
+    );
   }
 }

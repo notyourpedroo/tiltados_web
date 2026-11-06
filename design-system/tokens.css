@@ -1,5 +1,6 @@
 /* Tiltados F1 — espelha tokens.json e src/app/globals.css; tokens.test.ts confere as cores. */
-:root, [data-theme="dark"] {
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
   --bg: #101017;
   --surface: #1c1c27;
@@ -103,18 +104,102 @@
   --font-sans: "Titillium Web", system-ui, sans-serif;
 }
 
-.hero-name { font-family: var(--font-sans); font-size: 60px; line-height: 60px; font-weight: 900; letter-spacing: -0.025em; }
-.page-title { font-family: var(--font-sans); font-size: 48px; line-height: 48px; font-weight: 900; letter-spacing: -0.025em; }
-.stat-hero { font-family: var(--font-sans); font-size: 36px; line-height: 40px; font-weight: 900; }
-.stat { font-family: var(--font-sans); font-size: 30px; line-height: 37.5px; font-weight: 900; }
-.card-title { font-family: var(--font-sans); font-size: 24px; line-height: 32px; font-weight: 900; }
-.section-title { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 900; letter-spacing: -0.025em; }
-.table-name { font-family: var(--font-sans); font-size: 16px; line-height: 20px; font-weight: 700; }
-.body { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 400; }
-.table { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
-.caption { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 400; }
-.wordmark { font-family: var(--font-sans); font-size: 18px; line-height: 28px; font-weight: 900; letter-spacing: -0.025em; font-style: italic; }
-.eyebrow { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: 0.1em; }
-.label { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.05em; }
-.table-head { font-family: var(--font-sans); font-size: 11px; line-height: 20px; font-weight: 700; letter-spacing: 0.05em; }
-.badge { font-family: var(--font-sans); font-size: 10px; line-height: 14px; font-weight: 900; letter-spacing: 0.05em; }
+.hero-name {
+  font-family: var(--font-sans);
+  font-size: 60px;
+  line-height: 60px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+.page-title {
+  font-family: var(--font-sans);
+  font-size: 48px;
+  line-height: 48px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+.stat-hero {
+  font-family: var(--font-sans);
+  font-size: 36px;
+  line-height: 40px;
+  font-weight: 900;
+}
+.stat {
+  font-family: var(--font-sans);
+  font-size: 30px;
+  line-height: 37.5px;
+  font-weight: 900;
+}
+.card-title {
+  font-family: var(--font-sans);
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 900;
+}
+.section-title {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+.table-name {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+}
+.body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+.table {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+.caption {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+}
+.wordmark {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  font-style: italic;
+}
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.table-head {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 20px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.badge {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  line-height: 14px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}

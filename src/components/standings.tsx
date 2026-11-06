@@ -43,9 +43,7 @@ export function DriverStandingsTable({
                 >
                   <TeamBar color={team.color} />
                   <span>
-                    <span className="block text-base font-bold leading-tight">
-                      {d.driver_name}
-                    </span>
+                    <span className="block text-base font-bold leading-tight">{d.driver_name}</span>
                     <span
                       className={`flex items-center gap-1 text-xs text-muted ${compact ? "" : "sm:hidden"}`}
                     >

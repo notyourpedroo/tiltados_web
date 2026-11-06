@@ -12,6 +12,8 @@ test("a árvore Estrutura do README.md lista todo módulo de src/lib/", () => {
   const modules = readdirSync(join(__dirname, "src/lib")).filter(
     (f) => f.endsWith(".ts") && !f.endsWith(".test.ts"),
   );
-  const missing = modules.filter((f) => !new RegExp(`[─ ]${f.replace(".", "\\.")}\\s+#`).test(tree));
+  const missing = modules.filter(
+    (f) => !new RegExp(`[─ ]${f.replace(".", "\\.")}\\s+#`).test(tree),
+  );
   expect(missing).toEqual([]);
 });

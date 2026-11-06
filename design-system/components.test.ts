@@ -53,7 +53,9 @@ describe("Fichas do design system", () => {
     expect(fichaHas(ficha, "README.md"), `${ficha}/README.md`).toBe(true);
     expect(fichaHas(ficha, "preview.html"), `${ficha}/preview.html`).toBe(true);
     if (PARTS[name]) expect(read(fichaFile(ficha, "README.md"))).toContain(name);
-    expect(propTypes, `${name}Props em components/index.d.ts`).toMatch(new RegExp(`\\b${name}Props\\b`));
+    expect(propTypes, `${name}Props em components/index.d.ts`).toMatch(
+      new RegExp(`\\b${name}Props\\b`),
+    );
   });
 
   // As seções de fichas saem dos comentários @dsCard das prévias.

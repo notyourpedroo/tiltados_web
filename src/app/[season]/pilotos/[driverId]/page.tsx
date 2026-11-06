@@ -36,11 +36,7 @@ import { teamCar, teamStyle } from "@/lib/teams";
 import { isSeason, SEASONS, type Season } from "@/lib/types";
 import { recentFormWeekends } from "@/lib/weekend";
 
-export async function generateStaticParams({
-  params,
-}: {
-  params: { season: string };
-}) {
+export async function generateStaticParams({ params }: { params: { season: string } }) {
   if (!isSeason(params.season)) return [];
   const data = await getSeason(params.season);
   return data.driverStandings.map((d) => ({ driverId: String(d.driver_id) }));
@@ -90,9 +86,10 @@ async function DriverSeasonComparison({ season, driverId }: { season: Season; dr
   const [current, previous] = await Promise.all([
     getSeason(season),
     Promise.all(
-      previousSeasons.map(
-        async (s): Promise<PreviousSeasonProfile> => ({ season: s, profile: driverProfile(await getSeason(s), driverId) }),
-      ),
+      previousSeasons.map(async (s): Promise<PreviousSeasonProfile> => ({
+        season: s,
+        profile: driverProfile(await getSeason(s), driverId),
+      })),
     ),
   ]);
   const comparison = seasonComparison(driverProfile(current, driverId), previous);
@@ -113,9 +110,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
   // Carro da equipe do cadastro, a mesma do logo e do nome no cabeçalho.
   const car = teamCar(standing.team_name, data.season);
   const license =
-    data.season === "2026"
-      ? (await getSuperLicense()).find((l) => l.driver_id === id)
-      : undefined;
+    data.season === "2026" ? (await getSuperLicense()).find((l) => l.driver_id === id) : undefined;
   const penalties = data.punishments.filter((p) => p.driver_id === id);
 
   const { stats, sequencias, performance, sessions, duels } = driverProfile(data, id);
@@ -143,23 +138,47 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
       </PageTitle>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatTile label="Pontos" description={DRIVER_INDICATORS.points} value={standing.points} sub={`${ordinal(standing.position)} lugar`} />
+        <StatTile
+          label="Pontos"
+          description={DRIVER_INDICATORS.points}
+          value={standing.points}
+          sub={`${ordinal(standing.position)} lugar`}
+        />
         <StatTile
           label="Vitórias"
           description={DRIVER_INDICATORS.wins}
           value={standing.wins}
           sub={plural(standing.sprint_wins, "vitória em sprint", "vitórias em sprint")}
         />
-        <StatTile label="Pódios" description={DRIVER_INDICATORS.podiums} value={standing.podiums} sub={plural(standing.races, "sessão disputada", "sessões disputadas")} />
+        <StatTile
+          label="Pódios"
+          description={DRIVER_INDICATORS.podiums}
+          value={standing.podiums}
+          sub={plural(standing.races, "sessão disputada", "sessões disputadas")}
+        />
         <StatTile
           label="Melhor resultado"
           description={DRIVER_INDICATORS.best}
           value={stats.best ? ordinal(stats.best.position) : "—"}
           sub={stats.best && `${stats.best.count}×`}
         />
-        <StatTile label="Poles" description={DRIVER_INDICATORS.poles} value={stats.poles} sub={stats.poles > 0 && poleConversion(stats.poleConversion)} />
-        <StatTile label="Voltas mais rápidas" description={DRIVER_INDICATORS.fastestLaps} value={stats.fastestLaps} />
-        <StatTile label="Hat-tricks" description={DRIVER_INDICATORS.hatTricks} value={stats.hatTricks} sub="pole, vitória e volta mais rápida" />
+        <StatTile
+          label="Poles"
+          description={DRIVER_INDICATORS.poles}
+          value={stats.poles}
+          sub={stats.poles > 0 && poleConversion(stats.poleConversion)}
+        />
+        <StatTile
+          label="Voltas mais rápidas"
+          description={DRIVER_INDICATORS.fastestLaps}
+          value={stats.fastestLaps}
+        />
+        <StatTile
+          label="Hat-tricks"
+          description={DRIVER_INDICATORS.hatTricks}
+          value={stats.hatTricks}
+          sub="pole, vitória e volta mais rápida"
+        />
         <StatTile
           label="Chegada média"
           description={DRIVER_INDICATORS.avgFinish}

@@ -66,14 +66,20 @@ describe("Regras do ESLint", () => {
   });
 
   test("bg-accent passa no SiteHeader", async () => {
-    expect(await restricted('export const c = "bg-accent";', "src/components/SiteHeader.tsx")).toEqual([]);
+    expect(
+      await restricted('export const c = "bg-accent";', "src/components/SiteHeader.tsx"),
+    ).toEqual([]);
   });
 
   test("testes citam strings da API com termos _Avoid_", async () => {
-    expect(await restricted('export const s = "Suspenso (Ban)";', "src/lib/probe.test.ts")).toEqual([]);
+    expect(await restricted('export const s = "Suspenso (Ban)";', "src/lib/probe.test.ts")).toEqual(
+      [],
+    );
   });
 
   test("testes também barram lineup em identificadores", async () => {
-    expect((await restricted("export const lineup = 1;", "src/lib/probe.test.ts")).join("\n")).toContain(LINEUP);
+    expect(
+      (await restricted("export const lineup = 1;", "src/lib/probe.test.ts")).join("\n"),
+    ).toContain(LINEUP);
   });
 });

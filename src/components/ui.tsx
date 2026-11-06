@@ -21,9 +21,7 @@ export function PageTitle({
     <div className="mb-8">
       <WithTeamCar car={car}>
         {eyebrow && (
-          <p className="mb-1 text-sm font-bold uppercase tracking-widest text-accent">
-            {eyebrow}
-          </p>
+          <p className="mb-1 text-sm font-bold uppercase tracking-widest text-accent">{eyebrow}</p>
         )}
         <h1 className="text-3xl font-black uppercase leading-none tracking-tight sm:text-5xl">
           {title}
@@ -34,18 +32,10 @@ export function PageTitle({
   );
 }
 
-export function SectionTitle({
-  children,
-  action,
-}: {
-  children: ReactNode;
-  action?: ReactNode;
-}) {
+export function SectionTitle({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return (
     <div className="mb-3 flex items-end justify-between gap-4">
-      <h2 className="text-lg font-black uppercase tracking-tight sm:text-xl">
-        {children}
-      </h2>
+      <h2 className="text-lg font-black uppercase tracking-tight sm:text-xl">{children}</h2>
       {action}
     </div>
   );
@@ -53,22 +43,13 @@ export function SectionTitle({
 
 export function MoreLink({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <Link
-      href={href}
-      className="text-sm font-bold text-text-2 transition-colors hover:text-text"
-    >
+    <Link href={href} className="text-sm font-bold text-text-2 transition-colors hover:text-text">
       {children} <span aria-hidden>→</span>
     </Link>
   );
 }
 
-export function Card({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`${CARD} ${className}`}>{children}</div>;
 }
 
@@ -178,18 +159,16 @@ export function TeamMark({
 const PODIUM = ["text-gold", "text-silver", "text-bronze"];
 
 export function Position({ value }: { value: number }) {
-  return (
-    <span
-      className={`tabular font-black ${PODIUM[value - 1] ?? "text-text"}`}
-    >
-      {value}
-    </span>
-  );
+  return <span className={`tabular font-black ${PODIUM[value - 1] ?? "text-text"}`}>{value}</span>;
 }
 
 export function Gained({ value }: { value: number }) {
   if (value === 0)
-    return <span className="tabular text-muted" aria-label="Sem alteração">–</span>;
+    return (
+      <span className="tabular text-muted" aria-label="Sem alteração">
+        –
+      </span>
+    );
   const up = value > 0;
   return (
     <span

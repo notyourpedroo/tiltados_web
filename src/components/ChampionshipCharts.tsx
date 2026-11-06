@@ -48,8 +48,8 @@ export function ChampionshipCharts({
               onToggle={toggle}
             />
             <p className="mt-2 text-xs text-muted">
-              Toque nos nomes para destacar até 3 {KIND_TEXT[kind].subject} (vale para os dois gráficos). A
-              tabela de classificação traz os valores exatos.
+              Toque nos nomes para destacar até 3 {KIND_TEXT[kind].subject} (vale para os dois
+              gráficos). A tabela de classificação traz os valores exatos.
             </p>
           </Card>
         </section>

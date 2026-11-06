@@ -49,7 +49,9 @@ export function describeChance(
 }
 
 /** Um campeonato (pilotos ou construtores) como aparece na tela, na ordem da API. */
-export function describeTitleRace<T extends { status: TitleStatus; championship_probability: number }>(
+export function describeTitleRace<
+  T extends { status: TitleStatus; championship_probability: number },
+>(
   rows: T[],
   entrant: Entrant,
 ): {

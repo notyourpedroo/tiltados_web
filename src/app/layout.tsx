@@ -14,8 +14,7 @@ export const metadata: Metadata = {
     default: "Tiltados F1",
     template: "%s · Tiltados F1",
   },
-  description:
-    "Resultados, classificações e estatísticas da liga Tiltados de F1 virtual.",
+  description: "Resultados, classificações e estatísticas da liga Tiltados de F1 virtual.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

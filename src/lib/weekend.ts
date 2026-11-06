@@ -27,7 +27,11 @@ export const RECENT_FORM_WEEKENDS = 3;
  * janela da Forma recente. Com menos de 3 Etapas, todas entram.
  */
 export function recentFormSessions(sessions: Session[]): Session[] {
-  const rounds = new Set(weekends(sessions).slice(-RECENT_FORM_WEEKENDS).map((w) => w.round));
+  const rounds = new Set(
+    weekends(sessions)
+      .slice(-RECENT_FORM_WEEKENDS)
+      .map((w) => w.round),
+  );
   return sessions.filter((s) => rounds.has(s.round));
 }
 

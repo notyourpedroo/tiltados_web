@@ -1,7 +1,4 @@
-const MONTHS = [
-  "jan", "fev", "mar", "abr", "mai", "jun",
-  "jul", "ago", "set", "out", "nov", "dez",
-];
+const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 
 /** "2026-03-09" → "09 mar 2026" (sem passar por Date, para não depender de fuso). */
 export function formatDate(iso: string, withYear = true): string {
@@ -25,7 +22,10 @@ export function plural(n: number, one: string, many: string): string {
 
 /** Número no padrão brasileiro, com `digits` casas: 18.44 → "18,4". */
 export function decimal(n: number, digits = 1): string {
-  return n.toLocaleString("pt-BR", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  return n.toLocaleString("pt-BR", {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
 }
 
 /**
@@ -34,6 +34,10 @@ export function decimal(n: number, digits = 1): string {
  */
 export function percent(fraction: number, digits = 1): string {
   return fraction
-    .toLocaleString("pt-BR", { style: "percent", minimumFractionDigits: digits, maximumFractionDigits: digits })
+    .toLocaleString("pt-BR", {
+      style: "percent",
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    })
     .replace(/\s/g, "");
 }

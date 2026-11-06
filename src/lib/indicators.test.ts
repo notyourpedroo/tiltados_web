@@ -87,7 +87,7 @@ describe("Descrições dos indicadores do piloto", () => {
     expect(DRIVER_INDICATORS.ritmo).toMatch(/em média e em porcentagem/);
   });
 
-  test.each(["sequenciaScoring","sequenciaPodium", "sequenciaWin"] as const)(
+  test.each(["sequenciaScoring", "sequenciaPodium", "sequenciaWin"] as const)(
     "%s só conta Corridas e explica o atual",
     (key) => {
       expect(DRIVER_INDICATORS[key]).toMatch(/Só Corridas contam/);
@@ -120,20 +120,27 @@ describe("Descrições dos destaques da visão geral", () => {
     expect(SEASON_HIGHLIGHT_INDICATORS.hatTricks).toMatch(/Pole, vitória e Volta mais rápida/);
   });
 
-  test.each(["poles", "fastestLaps", "winSequencia", "ritmo", "aproveitamento", "hatTricks"] as const)(
-    "%s avisa que empatados aparecem juntos",
-    (key) => {
-      expect(SEASON_HIGHLIGHT_INDICATORS[key]).toMatch(/empatados aparecem juntos/);
-    },
-  );
+  test.each([
+    "poles",
+    "fastestLaps",
+    "winSequencia",
+    "ritmo",
+    "aproveitamento",
+    "hatTricks",
+  ] as const)("%s avisa que empatados aparecem juntos", (key) => {
+    expect(SEASON_HIGHLIGHT_INDICATORS[key]).toMatch(/empatados aparecem juntos/);
+  });
 
   // A regra dos destaques e o texto andam juntos: o cálculo corta em MINIMUM_SESSIONS_SHARE
   // (season-highlights.test.ts confere nos limites), e mudar o corte quebra este teste até
   // o texto acompanhar.
-  test.each(["ritmo", "aproveitamento"] as const)("%s cita o corte de metade das Sessões", (key) => {
-    expect(MINIMUM_SESSIONS_SHARE).toBe(1 / 2);
-    expect(SEASON_HIGHLIGHT_INDICATORS[key]).toContain("ao menos metade das Sessões");
-  });
+  test.each(["ritmo", "aproveitamento"] as const)(
+    "%s cita o corte de metade das Sessões",
+    (key) => {
+      expect(MINIMUM_SESSIONS_SHARE).toBe(1 / 2);
+      expect(SEASON_HIGHLIGHT_INDICATORS[key]).toContain("ao menos metade das Sessões");
+    },
+  );
 });
 
 describe("Descrições dos indicadores da equipe", () => {
