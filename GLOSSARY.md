@@ -100,8 +100,9 @@ A posição média de chegada de um piloto nas Corridas que disputou. Sprints n�
 O saldo, somado em todas as Sessões disputadas, entre a posição de largada e a de chegada de um piloto; negativo quando ele perdeu posições.
 _Avoid_: ultrapassagens
 
-**Temporada passada**:
-A temporada imediatamente anterior, usada para comparar o mesmo piloto pelas médias por Sessão, nunca pelos totais.
+**Temporadas anteriores**:
+Todas as temporadas antes da atual na lista de temporadas, usadas para comparar o mesmo piloto pelas médias por Sessão, nunca pelos totais.
+_Avoid_: temporada passada
 
 ## Equipes
 
