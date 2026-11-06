@@ -1,6 +1,6 @@
 # Padrões de código
 
-Regras de julgamento para a revisão. As regras mecânicas ficam no ESLint (`eslint.config.mjs`) e no hook `commit-msg` (`.githooks/`); não repita aqui o que eles já barram.
+Regras de julgamento para a revisão. As regras mecânicas ficam no ESLint (`eslint.config.mjs`), no Prettier (`npm run lint` confere; `npm run format` corrige) e no hook `commit-msg` (`.githooks/`); não repita aqui o que eles já barram.
 
 ## Design system
 
