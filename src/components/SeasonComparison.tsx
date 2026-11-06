@@ -1,5 +1,6 @@
 import type { PreviousSeasonAverages, SeasonAverages } from "@/lib/driver-season";
 import { decimal, percent } from "@/lib/format";
+import type { Season } from "@/lib/types";
 import { Card } from "./ui";
 
 interface Row {
@@ -29,7 +30,7 @@ export function SeasonComparison({
   reference,
 }: {
   /** Temporada atual, ex.: "2026". */
-  season: string;
+  season: Season;
   current: SeasonAverages;
   /** Temporadas anteriores disputadas pelo piloto, em ordem cronológica. */
   previous: PreviousSeasonAverages[];
