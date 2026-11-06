@@ -26,7 +26,7 @@ import {
 } from "@/components/ui";
 import { getDriverPrediction, getSuperLicense } from "@/lib/api";
 import { describeChance } from "@/lib/chance";
-import { driverProfile, seasonComparison } from "@/lib/driver-season";
+import { driverProfile, type PreviousSeasonProfile, seasonComparison } from "@/lib/driver-season";
 import { shortGpName } from "@/lib/chart";
 import { DRIVER_INDICATORS } from "@/lib/indicators";
 import { decimal, formatDate, lastWeekends, ordinal, percent, plural } from "@/lib/format";
@@ -87,11 +87,15 @@ async function DriverTitleChance({ driverId }: { driverId: number }) {
 async function DriverSeasonComparison({ season, driverId }: { season: Season; driverId: number }) {
   const previousSeasons = SEASONS.slice(0, SEASONS.indexOf(season));
   if (previousSeasons.length === 0) return null;
-  const [current, ...previous] = await Promise.all([season, ...previousSeasons].map((s) => getSeason(s)));
-  const comparison = seasonComparison(
-    driverProfile(current, driverId),
-    previous.map((data, i) => ({ season: previousSeasons[i], profile: driverProfile(data, driverId) })),
-  );
+  const [current, previous] = await Promise.all([
+    getSeason(season),
+    Promise.all(
+      previousSeasons.map(
+        async (s): Promise<PreviousSeasonProfile> => ({ season: s, profile: driverProfile(await getSeason(s), driverId) }),
+      ),
+    ),
+  ]);
+  const comparison = seasonComparison(driverProfile(current, driverId), previous);
   if (!comparison) return null;
   return (
     <div className="mt-10">
