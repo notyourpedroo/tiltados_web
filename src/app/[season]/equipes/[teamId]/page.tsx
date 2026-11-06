@@ -36,11 +36,7 @@ import { teamCar, teamStyle } from "@/lib/teams";
 import { isSeason } from "@/lib/types";
 import { recentFormWeekends } from "@/lib/weekend";
 
-export async function generateStaticParams({
-  params,
-}: {
-  params: { season: string };
-}) {
+export async function generateStaticParams({ params }: { params: { season: string } }) {
   if (!isSeason(params.season)) return [];
   const data = await getSeason(params.season);
   return data.teamStandings.map((t) => ({ teamId: String(t.team_id) }));
@@ -110,12 +106,36 @@ async function TeamProfile({ season, teamId }: { season: string; teamId: string 
       />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatTile label="Pontos" description={TEAM_INDICATORS.points} value={stats.points} sub={`${ordinal(standing.position)} lugar`} />
-        <StatTile label="Vitórias" description={TEAM_INDICATORS.wins} value={stats.wins} sub="em corridas" />
-        <StatTile label="Pódios" description={TEAM_INDICATORS.podiums} value={stats.podiums} sub="corridas e sprints" />
-        <StatTile label="Dobradinhas" description={TEAM_INDICATORS.oneTwos} value={stats.oneTwos} sub="1º e 2º em corridas" />
+        <StatTile
+          label="Pontos"
+          description={TEAM_INDICATORS.points}
+          value={stats.points}
+          sub={`${ordinal(standing.position)} lugar`}
+        />
+        <StatTile
+          label="Vitórias"
+          description={TEAM_INDICATORS.wins}
+          value={stats.wins}
+          sub="em corridas"
+        />
+        <StatTile
+          label="Pódios"
+          description={TEAM_INDICATORS.podiums}
+          value={stats.podiums}
+          sub="corridas e sprints"
+        />
+        <StatTile
+          label="Dobradinhas"
+          description={TEAM_INDICATORS.oneTwos}
+          value={stats.oneTwos}
+          sub="1º e 2º em corridas"
+        />
         <StatTile label="Poles" description={TEAM_INDICATORS.poles} value={stats.poles} />
-        <StatTile label="Voltas mais rápidas" description={TEAM_INDICATORS.fastestLaps} value={stats.fastestLaps} />
+        <StatTile
+          label="Voltas mais rápidas"
+          description={TEAM_INDICATORS.fastestLaps}
+          value={stats.fastestLaps}
+        />
         <StatTile
           label="Melhor resultado"
           description={TEAM_INDICATORS.best}

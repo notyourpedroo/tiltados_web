@@ -19,13 +19,21 @@ describe("Chance de título", () => {
   });
 
   test("Eliminado com 0 e Campeão com 100 aparecem sem aproximação", () => {
-    expect(describeChance({ status: "Eliminado", championship_probability: 0 }, "driver").text).toBe("0%");
-    expect(describeChance({ status: "Campeao", championship_probability: 100 }, "driver").text).toBe("100%");
+    expect(
+      describeChance({ status: "Eliminado", championship_probability: 0 }, "driver").text,
+    ).toBe("0%");
+    expect(
+      describeChance({ status: "Campeao", championship_probability: 100 }, "driver").text,
+    ).toBe("100%");
   });
 
   test("mostra a casa decimal só quando ela existe", () => {
-    expect(describeChance({ status: "Na disputa", championship_probability: 12 }, "driver").text).toBe("12%");
-    expect(describeChance({ status: "Na disputa", championship_probability: 0.4 }, "driver").text).toBe("0,4%");
+    expect(
+      describeChance({ status: "Na disputa", championship_probability: 12 }, "driver").text,
+    ).toBe("12%");
+    expect(
+      describeChance({ status: "Na disputa", championship_probability: 0.4 }, "driver").text,
+    ).toBe("0,4%");
   });
 
   test("piloto Eliminado ganha o selo Eliminado e a linha esmaecida", () => {
@@ -35,7 +43,10 @@ describe("Chance de título", () => {
   });
 
   test("piloto Na disputa e Campeão ganham os seus selos, sem esmaecer", () => {
-    const contention = describeChance({ status: "Na disputa", championship_probability: 40 }, "driver");
+    const contention = describeChance(
+      { status: "Na disputa", championship_probability: 40 },
+      "driver",
+    );
     expect(contention.badge).toEqual({ label: "Na disputa", tone: "contention" });
     expect(contention.dimmed).toBe(false);
 
@@ -62,7 +73,9 @@ describe("Chance de título", () => {
   });
 
   test("a barra ocupa a porcentagem da Chance de título", () => {
-    expect(describeChance({ status: "Na disputa", championship_probability: 62.5 }, "driver").bar).toBe(62.5);
+    expect(
+      describeChance({ status: "Na disputa", championship_probability: 62.5 }, "driver").bar,
+    ).toBe(62.5);
   });
 });
 
@@ -92,7 +105,10 @@ describe("Disputa pelo título", () => {
   });
 
   test("título não está decidido com alguém Na disputa", () => {
-    const race = describeTitleRace([row(1, "Na disputa", 100), row(2, "Na disputa", 0), row(3, "Eliminado", 0)], "driver");
+    const race = describeTitleRace(
+      [row(1, "Na disputa", 100), row(2, "Na disputa", 0), row(3, "Eliminado", 0)],
+      "driver",
+    );
     expect(race.decided).toBe(false);
   });
 

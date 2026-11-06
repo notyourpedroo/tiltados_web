@@ -29,7 +29,14 @@ describe("Perfil da equipe", () => {
       [],
       [sprint, [result(sprint, 10, FERRARI, 1), result(sprint, 11, FERRARI, 2)]],
       [race, [result(race, 10, FERRARI, 1), result(race, 11, FERRARI, 2)]],
-      [race2, [result(race2, 20, MCLAREN, 1), result(race2, 11, FERRARI, 2), result(race2, 10, FERRARI, 3)]],
+      [
+        race2,
+        [
+          result(race2, 20, MCLAREN, 1),
+          result(race2, 11, FERRARI, 2),
+          result(race2, 10, FERRARI, 3),
+        ],
+      ],
     );
 
     const { stats } = teamProfile(data, FERRARI);
@@ -72,7 +79,14 @@ describe("Perfil da equipe", () => {
     const race2 = session(3, 2);
     const data = season(
       [],
-      [sprint, [result(sprint, 20, MCLAREN, 1), result(sprint, 10, FERRARI, 2), result(sprint, 11, FERRARI, 5)]],
+      [
+        sprint,
+        [
+          result(sprint, 20, MCLAREN, 1),
+          result(sprint, 10, FERRARI, 2),
+          result(sprint, 11, FERRARI, 5),
+        ],
+      ],
       [race, [result(race, 20, MCLAREN, 1), result(race, 11, FERRARI, 2)]],
       [race2, [result(race2, 20, MCLAREN, 1), result(race2, 10, FERRARI, 3)]],
     );
@@ -118,14 +132,30 @@ describe("Perfil da equipe", () => {
   test("equipe sem Sessão disputada fica sem pontos por Sessão", () => {
     const race = session(1, 1);
 
-    expect(teamProfile(season([], [race, [result(race, 10, FERRARI, 1)]]), WILLIAMS).pointsPerSession).toBeNull();
+    expect(
+      teamProfile(season([], [race, [result(race, 10, FERRARI, 1)]]), WILLIAMS).pointsPerSession,
+    ).toBeNull();
     expect(teamProfile(season([]), WILLIAMS).pointsPerSession).toBeNull();
   });
 
   test("equipe sem Sessão disputada tem as estatísticas zeradas e fica sem melhor resultado", () => {
     const race = session(1, 1);
-    const withSessions = season([], [race, [result(race, 10, FERRARI, 1), result(race, 20, MCLAREN, 2)]]);
-    const empty = { stats: { points: 0, wins: 0, oneTwos: 0, podiums: 0, poles: 0, fastestLaps: 0, best: null, bothScored: 0 } };
+    const withSessions = season(
+      [],
+      [race, [result(race, 10, FERRARI, 1), result(race, 20, MCLAREN, 2)]],
+    );
+    const empty = {
+      stats: {
+        points: 0,
+        wins: 0,
+        oneTwos: 0,
+        podiums: 0,
+        poles: 0,
+        fastestLaps: 0,
+        best: null,
+        bothScored: 0,
+      },
+    };
 
     expect(teamProfile(withSessions, WILLIAMS)).toMatchObject(empty);
     expect(teamProfile(season([]), WILLIAMS)).toMatchObject(empty);
@@ -138,8 +168,18 @@ describe("Perfil da equipe", () => {
     const race3 = session(4, 3);
     const data = season(
       [],
-      [sprint, [result(sprint, 10, FERRARI, 1), result(sprint, 20, MCLAREN, 2), result(sprint, 11, FERRARI, 4)]],
-      [race, [result(race, 20, MCLAREN, 1), result(race, 10, FERRARI, 3), result(race, 11, FERRARI, 9)]],
+      [
+        sprint,
+        [
+          result(sprint, 10, FERRARI, 1),
+          result(sprint, 20, MCLAREN, 2),
+          result(sprint, 11, FERRARI, 4),
+        ],
+      ],
+      [
+        race,
+        [result(race, 20, MCLAREN, 1), result(race, 10, FERRARI, 3), result(race, 11, FERRARI, 9)],
+      ],
       // Etapa sem a Ferrari: não entra.
       [skipped, [result(skipped, 20, MCLAREN, 1)]],
       [race3, [result(race3, 11, FERRARI, 2), result(race3, 10, FERRARI, 12)]],
@@ -160,25 +200,47 @@ describe("Perfil da equipe", () => {
     const race2 = session(3, 2);
     const data = season(
       [],
-      [race, [result(race, 11, FERRARI, 2), result(race, 20, MCLAREN, 3), result(race, 10, FERRARI, 5)]],
+      [
+        race,
+        [result(race, 11, FERRARI, 2), result(race, 20, MCLAREN, 3), result(race, 10, FERRARI, 5)],
+      ],
       // O piloto 10 passa para a McLaren; o 12 entra na Ferrari.
-      [sprint, [result(sprint, 10, MCLAREN, 1), result(sprint, 12, FERRARI, 3), result(sprint, 11, FERRARI, 7)]],
-      [race2, [result(race2, 12, FERRARI, 1), result(race2, 11, FERRARI, 4), result(race2, 10, MCLAREN, 6)]],
+      [
+        sprint,
+        [
+          result(sprint, 10, MCLAREN, 1),
+          result(sprint, 12, FERRARI, 3),
+          result(sprint, 11, FERRARI, 7),
+        ],
+      ],
+      [
+        race2,
+        [
+          result(race2, 12, FERRARI, 1),
+          result(race2, 11, FERRARI, 4),
+          result(race2, 10, MCLAREN, 6),
+        ],
+      ],
     );
 
     const drivers = (teamId: number) =>
       teamProfile(data, teamId).sessions.map((s) => s.drivers.map((d) => [d.driverId, d.position]));
 
     expect(drivers(FERRARI)).toEqual([
-      [[11, 2], [10, 5]],
-      [[12, 3], [11, 7]],
-      [[12, 1], [11, 4]],
+      [
+        [11, 2],
+        [10, 5],
+      ],
+      [
+        [12, 3],
+        [11, 7],
+      ],
+      [
+        [12, 1],
+        [11, 4],
+      ],
     ]);
-    expect(drivers(MCLAREN)).toEqual([
-      [[20, 3]],
-      [[10, 1]],
-      [[10, 6]],
-    ]);
+    expect(drivers(MCLAREN)).toEqual([[[20, 3]], [[10, 1]], [[10, 6]]]);
   });
 
   test("o total acumulado da última Sessão bate com os pontos da equipe", () => {
@@ -237,7 +299,14 @@ describe("Pilotos da equipe e duelos", () => {
       [],
       [r1, [result(r1, 10, FERRARI, 1), result(r1, 11, MCLAREN, 2), result(r1, 12, FERRARI, 3)]],
       // O piloto 11 passa da McLaren para a Ferrari; o 12 vai para a McLaren.
-      [sprint, [result(sprint, 11, FERRARI, 1), result(sprint, 12, MCLAREN, 2), result(sprint, 10, FERRARI, 3)]],
+      [
+        sprint,
+        [
+          result(sprint, 11, FERRARI, 1),
+          result(sprint, 12, MCLAREN, 2),
+          result(sprint, 10, FERRARI, 3),
+        ],
+      ],
       [r2, [result(r2, 12, MCLAREN, 1), result(r2, 10, FERRARI, 2), result(r2, 11, FERRARI, 4)]],
     );
 
@@ -308,8 +377,20 @@ describe("Pilotos da equipe e duelos", () => {
       [11, 15 + 25 + 4],
     ]);
     expect(duels).toEqual([
-      { drivers: [{ id: 10, ahead: 2 }, { id: 11, ahead: 1 }], sessions: 3 },
-      { drivers: [{ id: 10, ahead: 0 }, { id: 12, ahead: 2 }], sessions: 2 },
+      {
+        drivers: [
+          { id: 10, ahead: 2 },
+          { id: 11, ahead: 1 },
+        ],
+        sessions: 3,
+      },
+      {
+        drivers: [
+          { id: 10, ahead: 0 },
+          { id: 12, ahead: 2 },
+        ],
+        sessions: 2,
+      },
     ]);
   });
 
@@ -342,9 +423,30 @@ describe("Evolução dos construtores", () => {
     const race2 = session(12, 2);
     const data = season(
       [ferrari, mclaren],
-      [sprint, [result(sprint, 100, FERRARI, 1), result(sprint, 200, MCLAREN, 2), result(sprint, 101, FERRARI, 3)]],
-      [race, [result(race, 200, MCLAREN, 1), result(race, 201, MCLAREN, 2), result(race, 100, FERRARI, 3)]],
-      [race2, [result(race2, 101, FERRARI, 1), result(race2, 100, FERRARI, 2), result(race2, 200, MCLAREN, 3)]],
+      [
+        sprint,
+        [
+          result(sprint, 100, FERRARI, 1),
+          result(sprint, 200, MCLAREN, 2),
+          result(sprint, 101, FERRARI, 3),
+        ],
+      ],
+      [
+        race,
+        [
+          result(race, 200, MCLAREN, 1),
+          result(race, 201, MCLAREN, 2),
+          result(race, 100, FERRARI, 3),
+        ],
+      ],
+      [
+        race2,
+        [
+          result(race2, 101, FERRARI, 1),
+          result(race2, 100, FERRARI, 2),
+          result(race2, 200, MCLAREN, 3),
+        ],
+      ],
     );
 
     const { sessions, series } = constructorsProgression(data);
@@ -370,7 +472,14 @@ describe("Evolução dos construtores", () => {
     const data = season(
       [ferrari, mclaren],
       // 25 a 25: a McLaren venceu a Corrida, a Ferrari não.
-      [race, [result(race, 200, MCLAREN, 1), result(race, 100, FERRARI, 3), result(race, 101, FERRARI, 5)]],
+      [
+        race,
+        [
+          result(race, 200, MCLAREN, 1),
+          result(race, 100, FERRARI, 3),
+          result(race, 101, FERRARI, 5),
+        ],
+      ],
       [race2, [result(race2, 100, FERRARI, 1)]],
     );
 

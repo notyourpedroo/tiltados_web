@@ -172,7 +172,13 @@ function teamDuels(data: TeamSeasonData, teamId: number, drivers: TeamDriver[]):
   const pairs = new Map<string, TeamDuel>();
   drivers.forEach((a, i) =>
     drivers.slice(i + 1).forEach((b) => {
-      const duel: TeamDuel = { drivers: [{ id: a.id, ahead: 0 }, { id: b.id, ahead: 0 }], sessions: 0 };
+      const duel: TeamDuel = {
+        drivers: [
+          { id: a.id, ahead: 0 },
+          { id: b.id, ahead: 0 },
+        ],
+        sessions: 0,
+      };
       pairs.set(`${a.id}-${b.id}`, duel);
       duels.push(duel);
     }),

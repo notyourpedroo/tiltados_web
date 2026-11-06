@@ -34,8 +34,7 @@ const VOCABULARY = [
 // "lineup" como palavra de um identificador (lineup, isLineUp, line_up, LINEUP), e não
 // dentro de outra (timelineUpdate). Os demais termos ficam só nos textos: em nomes eles
 // colidem com palavras comuns ("ban" em "banner").
-const LINEUP_WORD =
-  "/(^|_)([Ll]ine_?[Uu]p|LINE_?UP)s?($|[A-Z_])|[a-z0-9]Line_?[Uu]ps?($|[A-Z_])/";
+const LINEUP_WORD = "/(^|_)([Ll]ine_?[Uu]p|LINE_?UP)s?($|[A-Z_])|[a-z0-9]Line_?[Uu]ps?($|[A-Z_])/";
 const LINEUP_MESSAGE = "line-up é _Avoid_ no GLOSSARY.md: use o termo Dupla (inDupla).";
 const identifierRule = (word, message) => [
   { selector: `Identifier[name=${word}]`, message },
@@ -49,8 +48,14 @@ const englishWord = (word) => {
 };
 const IDENTIFIERS = [
   ...identifierRule(LINEUP_WORD, LINEUP_MESSAGE),
-  ...identifierRule(englishWord("pace"), "pace é _Avoid_ no GLOSSARY.md: use o termo Ritmo (ritmo)."),
-  ...identifierRule(englishWord("streak"), "streak é _Avoid_ no GLOSSARY.md: use o termo Sequência (sequencia)."),
+  ...identifierRule(
+    englishWord("pace"),
+    "pace é _Avoid_ no GLOSSARY.md: use o termo Ritmo (ritmo).",
+  ),
+  ...identifierRule(
+    englishWord("streak"),
+    "streak é _Avoid_ no GLOSSARY.md: use o termo Sequência (sequencia).",
+  ),
 ];
 // O que vale em todo arquivo de src/; cada bloco abaixo só acrescenta o que é dele.
 const EVERYWHERE = [...HEX, ...MUTED_ON_SURFACE_2, ...IDENTIFIERS];

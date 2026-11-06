@@ -10,7 +10,7 @@ describe("Tempo de volta", () => {
     expect(lapToMs("90.123")).toBe(90123);
   });
 
-  test("recusa o tempo de quem não marcou volta (\"9:99.999\", da API de 2025)", () => {
+  test('recusa o tempo de quem não marcou volta ("9:99.999", da API de 2025)', () => {
     expect(lapToMs("9:99.999")).toBeNull();
   });
 

@@ -163,7 +163,8 @@ async function check(route) {
     for (const tooltip of tooltips) failures.push(`/${route} em ${width}px: ${tooltip}`);
     // No celular o corte é previsto (design-system/components/StatTile); no desktop
     // largo, é texto longo demais para o espaço.
-    if (width >= DESKTOP) for (const text of cut) failures.push(`/${route} em ${width}px: texto cortado "${text}"`);
+    if (width >= DESKTOP)
+      for (const text of cut) failures.push(`/${route} em ${width}px: texto cortado "${text}"`);
     if (crawl && width === WIDTHS[0]) {
       for (const href of links) {
         const next = href.split(/[?#]/)[0].replace(/^\/+|\/+$/g, "");
@@ -207,7 +208,9 @@ try {
 } catch {}
 
 if (failures.length) {
-  console.error(`Rolagem horizontal, texto cortado, tooltip fora da janela ou erro HTTP em ${failures.length} caso(s), de ${checked} rota(s) × ${WIDTHS.length} larguras:\n`);
+  console.error(
+    `Rolagem horizontal, texto cortado, tooltip fora da janela ou erro HTTP em ${failures.length} caso(s), de ${checked} rota(s) × ${WIDTHS.length} larguras:\n`,
+  );
   for (const failure of failures.sort()) console.error(`  ${failure}`);
   if (failures.some((failure) => failure.includes(": HTTP 5"))) {
     console.error(

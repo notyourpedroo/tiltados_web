@@ -23,7 +23,9 @@ describe("Perfil do piloto", () => {
 
     const { sessions } = driverProfile(data, 10);
 
-    expect(sessions.map((s) => [s.session.id, s.result.position, s.result.teamId, s.total])).toEqual([
+    expect(
+      sessions.map((s) => [s.session.id, s.result.position, s.result.teamId, s.total]),
+    ).toEqual([
       [1, 2, FERRARI, 7],
       [2, 3, FERRARI, 22],
       [4, 1, MCLAREN, 47],
@@ -36,9 +38,27 @@ describe("Perfil do piloto", () => {
     const race2 = session(3, 2);
     const data = season(
       [],
-      [sprint, [result(sprint, 20, MCLAREN, 1, { grid: 2 }), result(sprint, 10, FERRARI, 2, { grid: 1, fastestLap: true })]],
-      [race, [result(race, 10, FERRARI, 1, { grid: 1 }), result(race, 20, MCLAREN, 2, { grid: 2, fastestLap: true })]],
-      [race2, [result(race2, 20, MCLAREN, 1, { grid: 1 }), result(race2, 10, FERRARI, 2, { grid: 2, fastestLap: true })]],
+      [
+        sprint,
+        [
+          result(sprint, 20, MCLAREN, 1, { grid: 2 }),
+          result(sprint, 10, FERRARI, 2, { grid: 1, fastestLap: true }),
+        ],
+      ],
+      [
+        race,
+        [
+          result(race, 10, FERRARI, 1, { grid: 1 }),
+          result(race, 20, MCLAREN, 2, { grid: 2, fastestLap: true }),
+        ],
+      ],
+      [
+        race2,
+        [
+          result(race2, 20, MCLAREN, 1, { grid: 1 }),
+          result(race2, 10, FERRARI, 2, { grid: 2, fastestLap: true }),
+        ],
+      ],
     );
 
     const { stats } = driverProfile(data, 10);
@@ -67,7 +87,10 @@ describe("Perfil do piloto", () => {
 
   test("Sprint com largada e vitória em 1º e Volta mais rápida não conta Hat-trick nem Conversão de pole", () => {
     const sprint = session(1, 1, true);
-    const data = season([], [sprint, [result(sprint, 10, FERRARI, 1, { grid: 1, fastestLap: true })]]);
+    const data = season(
+      [],
+      [sprint, [result(sprint, 10, FERRARI, 1, { grid: 1, fastestLap: true })]],
+    );
 
     const { stats } = driverProfile(data, 10);
 
@@ -82,7 +105,10 @@ describe("Perfil do piloto", () => {
     const data = season(
       [],
       [race, [result(race, 10, FERRARI, 1, { grid: 1 })]],
-      [race2, [result(race2, 20, MCLAREN, 1, { grid: 2 }), result(race2, 10, FERRARI, 2, { grid: 1 })]],
+      [
+        race2,
+        [result(race2, 20, MCLAREN, 1, { grid: 2 }), result(race2, 10, FERRARI, 2, { grid: 1 })],
+      ],
       // Vitória largando de 3º não conta.
       [race3, [result(race3, 10, FERRARI, 1, { grid: 3 })]],
     );
@@ -134,10 +160,27 @@ describe("Perfil do piloto", () => {
     const race2 = session(3, 2);
     const data = season(
       [],
-      [race, [result(race, 11, FERRARI, 1), result(race, 10, FERRARI, 2), result(race, 20, MCLAREN, 3)]],
+      [
+        race,
+        [result(race, 11, FERRARI, 1), result(race, 10, FERRARI, 2), result(race, 20, MCLAREN, 3)],
+      ],
       // O piloto 10 passa para a McLaren: o 11 deixa de ser companheiro.
-      [sprint, [result(sprint, 10, MCLAREN, 1), result(sprint, 11, FERRARI, 2), result(sprint, 20, MCLAREN, 3)]],
-      [race2, [result(race2, 20, MCLAREN, 1), result(race2, 10, MCLAREN, 2), result(race2, 11, FERRARI, 3)]],
+      [
+        sprint,
+        [
+          result(sprint, 10, MCLAREN, 1),
+          result(sprint, 11, FERRARI, 2),
+          result(sprint, 20, MCLAREN, 3),
+        ],
+      ],
+      [
+        race2,
+        [
+          result(race2, 20, MCLAREN, 1),
+          result(race2, 10, MCLAREN, 2),
+          result(race2, 11, FERRARI, 3),
+        ],
+      ],
     );
 
     expect(driverProfile(data, 10).duels).toEqual([
@@ -185,8 +228,20 @@ describe("Perfil do piloto", () => {
     const data = season(
       [],
       // 1:31.000 contra 1:30.000 → 1/90 atrás; 1:42.000 contra 1:40.000 → 2/100 atrás.
-      [sprint, [result(sprint, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(sprint, 10, FERRARI, 2, { bestLap: "1:31.000" })]],
-      [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:40.000" }), result(race, 10, FERRARI, 2, { bestLap: "1:42.000" })]],
+      [
+        sprint,
+        [
+          result(sprint, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+          result(sprint, 10, FERRARI, 2, { bestLap: "1:31.000" }),
+        ],
+      ],
+      [
+        race,
+        [
+          result(race, 20, MCLAREN, 1, { bestLap: "1:40.000" }),
+          result(race, 10, FERRARI, 2, { bestLap: "1:42.000" }),
+        ],
+      ],
     );
 
     expect(driverProfile(data, 10).stats.ritmo).toBeCloseTo((1 / 90 + 0.02) / 2, 10);
@@ -197,8 +252,20 @@ describe("Perfil do piloto", () => {
     const race2 = session(2, 2);
     const data = season(
       [],
-      [race, [result(race, 10, FERRARI, 1, { bestLap: "1:29.500" }), result(race, 20, MCLAREN, 2, { bestLap: "1:30.000" })]],
-      [race2, [result(race2, 20, MCLAREN, 1, { bestLap: "1:31.000" }), result(race2, 10, FERRARI, 2, { bestLap: "1:30.250" })]],
+      [
+        race,
+        [
+          result(race, 10, FERRARI, 1, { bestLap: "1:29.500" }),
+          result(race, 20, MCLAREN, 2, { bestLap: "1:30.000" }),
+        ],
+      ],
+      [
+        race2,
+        [
+          result(race2, 20, MCLAREN, 1, { bestLap: "1:31.000" }),
+          result(race2, 10, FERRARI, 2, { bestLap: "1:30.250" }),
+        ],
+      ],
     );
 
     expect(driverProfile(data, 10).stats.ritmo).toBe(0);
@@ -209,21 +276,45 @@ describe("Perfil do piloto", () => {
     const race2 = session(2, 2);
     const data = season(
       [],
-      [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 10, FERRARI, 2, { bestLap: "1:33.000" })]],
+      [
+        race,
+        [
+          result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+          result(race, 10, FERRARI, 2, { bestLap: "1:33.000" }),
+        ],
+      ],
       // Sem volta: se entrasse, puxaria a média para baixo (ou quebraria a conta).
-      [race2, [result(race2, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race2, 10, FERRARI, 2, { bestLap: "" })]],
+      [
+        race2,
+        [
+          result(race2, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+          result(race2, 10, FERRARI, 2, { bestLap: "" }),
+        ],
+      ],
     );
 
     expect(driverProfile(data, 10).stats.ritmo).toBeCloseTo(3 / 90, 10);
   });
 
-  test("Sessão com o tempo de quem não marcou volta (\"9:99.999\", da API de 2025) fica fora do Ritmo", () => {
+  test('Sessão com o tempo de quem não marcou volta ("9:99.999", da API de 2025) fica fora do Ritmo', () => {
     const race = session(1, 1);
     const race2 = session(2, 2);
     const data = season(
       [],
-      [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 10, FERRARI, 2, { bestLap: "1:33.000" })]],
-      [race2, [result(race2, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race2, 10, FERRARI, 2, { bestLap: "9:99.999" })]],
+      [
+        race,
+        [
+          result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+          result(race, 10, FERRARI, 2, { bestLap: "1:33.000" }),
+        ],
+      ],
+      [
+        race2,
+        [
+          result(race2, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+          result(race2, 10, FERRARI, 2, { bestLap: "9:99.999" }),
+        ],
+      ],
     );
 
     expect(driverProfile(data, 10).stats.ritmo).toBeCloseTo(3 / 90, 10);
@@ -233,7 +324,13 @@ describe("Perfil do piloto", () => {
     const race = session(1, 1);
     const data = season(
       [],
-      [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 10, FERRARI, 2, { bestLap: "-" })]],
+      [
+        race,
+        [
+          result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+          result(race, 10, FERRARI, 2, { bestLap: "-" }),
+        ],
+      ],
     );
 
     expect(driverProfile(data, 10).stats.ritmo).toBeNull();
@@ -255,7 +352,10 @@ describe("Perfil do piloto", () => {
       [race4, [result(race4, 10, MCLAREN, 2)]],
     );
 
-    expect(driverProfile(data, 10).performance).toEqual({ pointsPerSession: 12.75, scoringRate: 0.75 });
+    expect(driverProfile(data, 10).performance).toEqual({
+      pointsPerSession: 12.75,
+      scoringRate: 0.75,
+    });
   });
 
   test("piloto sem Sessão disputada tem as estatísticas zeradas, sem chegada média, melhor resultado nem Aproveitamento", () => {
@@ -376,14 +476,39 @@ describe("Comparativo com as Temporadas anteriores", () => {
   // Temporada anterior: piloto 10 numa Sprint (2º) e em duas Corridas (1º e 4º).
   const previous = season(
     [],
-    [sprint, [result(sprint, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(sprint, 10, FERRARI, 2, { bestLap: "1:30.900" })]],
-    [race, [result(race, 10, FERRARI, 1, { bestLap: "1:30.000" }), result(race, 20, MCLAREN, 2, { bestLap: "1:30.450" })]],
-    [race2, [result(race2, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race2, 10, FERRARI, 4, { bestLap: "1:31.800" })]],
+    [
+      sprint,
+      [
+        result(sprint, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+        result(sprint, 10, FERRARI, 2, { bestLap: "1:30.900" }),
+      ],
+    ],
+    [
+      race,
+      [
+        result(race, 10, FERRARI, 1, { bestLap: "1:30.000" }),
+        result(race, 20, MCLAREN, 2, { bestLap: "1:30.450" }),
+      ],
+    ],
+    [
+      race2,
+      [
+        result(race2, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+        result(race2, 10, FERRARI, 4, { bestLap: "1:31.800" }),
+      ],
+    ],
   );
   // Temporada atual até agora: piloto 10 só numa Corrida (3º); piloto 30 estreante.
   const current = season(
     [],
-    [race, [result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }), result(race, 30, MCLAREN, 2), result(race, 10, FERRARI, 3, { bestLap: "1:30.900" })]],
+    [
+      race,
+      [
+        result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+        result(race, 30, MCLAREN, 2),
+        result(race, 10, FERRARI, 3, { bestLap: "1:30.900" }),
+      ],
+    ],
   );
 
   // Outra Temporada anterior: piloto 10 só numa Corrida (2º).
@@ -395,13 +520,25 @@ describe("Comparativo com as Temporadas anteriores", () => {
    * Perfis do piloto nas Temporadas anteriores, em ordem cronológica. Aceita
    * temporadas que não estão no site (2023, 2024) para simular várias anteriores.
    */
-  const previousProfiles = (driverId: number, ...seasons: [string, ReturnType<typeof season>][]): PreviousSeasonProfile[] =>
+  const previousProfiles = (
+    driverId: number,
+    ...seasons: [string, ReturnType<typeof season>][]
+  ): PreviousSeasonProfile[] =>
     seasons.map(([id, data]) => ({ season: id as Season, profile: driverProfile(data, driverId) }));
 
   test("compara as médias por Sessão da temporada atual com as da Temporada anterior", () => {
-    const comparison = seasonComparison(driverProfile(current, 10), previousProfiles(10, ["2025", previous]));
+    const comparison = seasonComparison(
+      driverProfile(current, 10),
+      previousProfiles(10, ["2025", previous]),
+    );
 
-    expect(comparison?.current).toEqual({ pointsPerSession: 15, raceWinRate: 0, podiumRate: 1, avgFinish: 3, ritmo: 0.01 });
+    expect(comparison?.current).toEqual({
+      pointsPerSession: 15,
+      raceWinRate: 0,
+      podiumRate: 1,
+      avgFinish: 3,
+      ritmo: 0.01,
+    });
     expect(comparison?.previous.map((p) => p.season)).toEqual(["2025"]);
     // 7 + 25 + 12 pontos em 3 Sessões; Ritmo: 1%, 0% e 2%.
     expect(comparison?.previous[0].averages).toEqual({
@@ -415,7 +552,10 @@ describe("Comparativo com as Temporadas anteriores", () => {
   });
 
   test("traz as várias Temporadas anteriores em ordem cronológica, com a seta contra a mais recente", () => {
-    const comparison = seasonComparison(driverProfile(current, 10), previousProfiles(10, ["2024", older], ["2025", previous]));
+    const comparison = seasonComparison(
+      driverProfile(current, 10),
+      previousProfiles(10, ["2024", older], ["2025", previous]),
+    );
 
     expect(comparison?.previous.map((p) => p.season)).toEqual(["2024", "2025"]);
     expect(comparison?.previous[0].averages.pointsPerSession).toBe(18);
@@ -436,11 +576,23 @@ describe("Comparativo com as Temporadas anteriores", () => {
 
   test("só aparece para quem tem Sessão disputada na temporada atual e em alguma Temporada anterior", () => {
     // Estreante: não correu nenhuma Temporada anterior.
-    expect(seasonComparison(driverProfile(current, 30), previousProfiles(30, ["2024", older], ["2025", previous]))).toBeNull();
+    expect(
+      seasonComparison(
+        driverProfile(current, 30),
+        previousProfiles(30, ["2024", older], ["2025", previous]),
+      ),
+    ).toBeNull();
     // Correu as anteriores, mas ainda não a atual.
-    expect(seasonComparison(driverProfile(skipped, 10), previousProfiles(10, ["2024", older], ["2025", previous]))).toBeNull();
+    expect(
+      seasonComparison(
+        driverProfile(skipped, 10),
+        previousProfiles(10, ["2024", older], ["2025", previous]),
+      ),
+    ).toBeNull();
     // Correu a atual, mas nenhuma das Temporadas anteriores tem Sessão dele.
-    expect(seasonComparison(driverProfile(current, 10), previousProfiles(10, ["2025", skipped]))).toBeNull();
+    expect(
+      seasonComparison(driverProfile(current, 10), previousProfiles(10, ["2025", skipped])),
+    ).toBeNull();
     // Primeira temporada: não há Temporada anterior.
     expect(seasonComparison(driverProfile(current, 10), [])).toBeNull();
   });
@@ -448,8 +600,16 @@ describe("Comparativo com as Temporadas anteriores", () => {
   test("piloto que só correu Sprint não tem % de vitórias em Corridas nem chegada média", () => {
     const sprintOnly = season([], [sprint, [result(sprint, 10, FERRARI, 1)]]);
 
-    const comparison = seasonComparison(driverProfile(sprintOnly, 10), previousProfiles(10, ["2025", previous]));
+    const comparison = seasonComparison(
+      driverProfile(sprintOnly, 10),
+      previousProfiles(10, ["2025", previous]),
+    );
 
-    expect(comparison?.current).toMatchObject({ pointsPerSession: 8, raceWinRate: null, podiumRate: 1, avgFinish: null });
+    expect(comparison?.current).toMatchObject({
+      pointsPerSession: 8,
+      raceWinRate: null,
+      podiumRate: 1,
+      avgFinish: null,
+    });
   });
 });

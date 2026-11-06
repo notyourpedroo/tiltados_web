@@ -161,11 +161,7 @@ body {
 
 /* Faixa diagonal usada nos cabeçalhos, à la transmissão de F1. */
 .stripe {
-  background-image: repeating-linear-gradient(
-    -60deg,
-    transparent 0 6px,
-    var(--stripe) 6px 8px
-  );
+  background-image: repeating-linear-gradient(-60deg, transparent 0 6px, var(--stripe) 6px 8px);
 }
 
 /* Imagens com versão por tema (logos das equipes): só a do tema ativo aparece. */

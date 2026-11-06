@@ -34,5 +34,7 @@ for (const season of seasons) {
   }
   const path = `scripts/fixtures/retrato-${season}.json`;
   writeFileSync(path, JSON.stringify(fixture, null, 2) + "\n");
-  console.log(`${path}: ${fixture[`/load/${season}/races`].length} Sessões, ${fixture[`/load/${season}/results`].length} resultados`);
+  console.log(
+    `${path}: ${fixture[`/load/${season}/races`].length} Sessões, ${fixture[`/load/${season}/results`].length} resultados`,
+  );
 }

@@ -261,9 +261,23 @@ export function ProgressionChart({
             return (
               <g key={s.id}>
                 {Math.abs(yy - y0) > 1 && (
-                  <line x1={ex + 6} y1={y0} x2={ex + 14} y2={yy} stroke="var(--muted)" strokeWidth={1} />
+                  <line
+                    x1={ex + 6}
+                    y1={y0}
+                    x2={ex + 14}
+                    y2={yy}
+                    stroke="var(--muted)"
+                    strokeWidth={1}
+                  />
                 )}
-                <circle cx={ex} cy={y0} r={4} fill={s.color} stroke="var(--surface)" strokeWidth={2} />
+                <circle
+                  cx={ex}
+                  cy={y0}
+                  r={4}
+                  fill={s.color}
+                  stroke="var(--surface)"
+                  strokeWidth={2}
+                />
                 <text x={ex + 16} y={yy} dy="0.32em" className="fill-text text-[12px] font-bold">
                   {s.name}
                   <tspan className="tabular fill-text-2 font-normal">
@@ -312,11 +326,7 @@ export function ProgressionChart({
         {hover !== null && (
           <div
             className="pointer-events-none absolute top-2 z-10 w-52 rounded-lg border border-line bg-bg/95 p-3 shadow-xl"
-            style={
-              tipOnLeft
-                ? { right: width - tipLeft + 12 }
-                : { left: tipLeft + 12 }
-            }
+            style={tipOnLeft ? { right: width - tipLeft + 12 } : { left: tipLeft + 12 }}
           >
             <p className="text-xs font-bold uppercase tracking-wider text-muted">
               R{sessions[hover].round} · {sessions[hover].label}
@@ -327,9 +337,7 @@ export function ProgressionChart({
                 <li key={s.id} className="flex items-center gap-2 text-sm">
                   <LineKey color={isOn(s.id) ? s.color : REST} dashed={isOn(s.id) && s.dashed} />
                   <span className="tabular w-8 font-bold">{format(v)}</span>
-                  <span className={isOn(s.id) ? "text-text" : "text-text-2"}>
-                    {s.name}
-                  </span>
+                  <span className={isOn(s.id) ? "text-text" : "text-text-2"}>{s.name}</span>
                 </li>
               ))}
             </ul>
@@ -337,7 +345,11 @@ export function ProgressionChart({
         )}
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={KIND_TEXT[kind].highlight}>
+      <div
+        className="mt-4 flex flex-wrap gap-2"
+        role="group"
+        aria-label={KIND_TEXT[kind].highlight}
+      >
         {series.map((s) => {
           const on = isOn(s.id);
           return (

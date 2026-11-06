@@ -6,7 +6,8 @@
  */
 
 /** O que conta numa Sequência, como no GLOSSARY.md. */
-const SEQUENCIA_COUNTS = "Só Corridas contam, e uma Corrida que ele não disputou quebra a Sequência.";
+const SEQUENCIA_COUNTS =
+  "Só Corridas contam, e uma Corrida que ele não disputou quebra a Sequência.";
 const SEQUENCIA_RULE = `${SEQUENCIA_COUNTS} O atual é a Sequência que chega à última Corrida da temporada.`;
 /** A Pole é só de Corrida. */
 const SPRINT_POLE = "largar em 1º numa Sprint não conta";
@@ -19,8 +20,7 @@ export const DRIVER_INDICATORS = {
   podiums:
     "As vezes em que o piloto chegou entre os 3 primeiros, em Corridas e Sprints. O subtítulo mostra quantas Sessões ele disputou.",
   best: "A melhor posição de chegada do piloto numa Sessão, Corrida ou Sprint. O N× diz quantas vezes ele chegou nessa posição.",
-  poles:
-    `As Corridas em que o piloto largou em 1º; ${SPRINT_POLE}. A Conversão de pole diz quantas dessas Poles viraram vitória, como X de Y.`,
+  poles: `As Corridas em que o piloto largou em 1º; ${SPRINT_POLE}. A Conversão de pole diz quantas dessas Poles viraram vitória, como X de Y.`,
   fastestLaps:
     "As Sessões, Corrida ou Sprint, em que o piloto fez a Volta mais rápida: a melhor volta da Sessão entre todos os pilotos.",
   hatTricks: "As Corridas em que o piloto fez Pole, vitória e Volta mais rápida na mesma Corrida.",

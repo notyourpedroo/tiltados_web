@@ -3,7 +3,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { LicenseCard } from "@/components/LicenseCard";
-import { Card, PageTitle, SectionTitle, Skeleton, Table, TeamMark, td, th, tr } from "@/components/ui";
+import {
+  Card,
+  PageTitle,
+  SectionTitle,
+  Skeleton,
+  Table,
+  TeamMark,
+  td,
+  th,
+  tr,
+} from "@/components/ui";
 import { getPunishments, getSuperLicense } from "@/lib/api";
 import { formatDate } from "@/lib/format";
 import { teamStyle } from "@/lib/teams";
@@ -29,10 +39,10 @@ async function SuperLicense({ season }: { season: string }) {
   return (
     <>
       <PageTitle eyebrow="Temporada 2026" title="Superlicença">
-        Cada piloto começa com 12 pontos. Infrações descontam pontos da Superlicença: com 8 ou
-        menos o piloto entra em atenção, com 4 ou menos em alerta crítico, e ao zerar é
-        suspenso da próxima Corrida. Depois de cumprir a Suspensão, o saldo segue zerado, e a
-        próxima punição gera uma nova.
+        Cada piloto começa com 12 pontos. Infrações descontam pontos da Superlicença: com 8 ou menos
+        o piloto entra em atenção, com 4 ou menos em alerta crítico, e ao zerar é suspenso da
+        próxima Corrida. Depois de cumprir a Suspensão, o saldo segue zerado, e a próxima punição
+        gera uma nova.
       </PageTitle>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -61,7 +71,10 @@ async function SuperLicense({ season }: { season: string }) {
                     {formatDate(p.race_date)}
                   </td>
                   <td className={td}>
-                    <Link href={`/2026/corridas/${p.race_id}`} className="font-bold hover:underline">
+                    <Link
+                      href={`/2026/corridas/${p.race_id}`}
+                      className="font-bold hover:underline"
+                    >
                       {p.race_name}
                     </Link>
                   </td>

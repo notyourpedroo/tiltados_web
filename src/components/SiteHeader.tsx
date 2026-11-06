@@ -52,9 +52,7 @@ export function SiteHeader() {
                 href={seasonHref(s)}
                 aria-current={s === season ? "true" : undefined}
                 className={`rounded-full px-3 py-1 transition-colors ${
-                  s === season
-                    ? "bg-text text-bg"
-                    : "text-text-2 hover:text-text"
+                  s === season ? "bg-text text-bg" : "text-text-2 hover:text-text"
                 }`}
               >
                 {s}
@@ -78,9 +76,7 @@ export function SiteHeader() {
               href={href}
               aria-current={active ? "page" : undefined}
               className={`whitespace-nowrap border-b-2 px-3 pb-2.5 pt-1 transition-colors ${
-                active
-                  ? "border-accent text-text"
-                  : "border-transparent text-muted hover:text-text"
+                active ? "border-accent text-text" : "border-transparent text-muted hover:text-text"
               }`}
             >
               {s.label}

@@ -10,7 +10,8 @@ import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const FICHAS_INICIO = "<!-- fichas: gerado por scripts/design-system-index.mjs (npm run ds:index) -->";
+export const FICHAS_INICIO =
+  "<!-- fichas: gerado por scripts/design-system-index.mjs (npm run ds:index) -->";
 export const FICHAS_FIM = "<!-- /fichas -->";
 
 // Ordem das seções. A prévia sem grupo é a capa.
@@ -41,7 +42,9 @@ export function readFichas() {
 export function fichasHtml(fichas = readFichas()) {
   const lines = [];
   for (const group of GROUPS) {
-    const inGroup = fichas.filter((f) => f.group === group).sort((a, b) => (a.name < b.name ? -1 : 1));
+    const inGroup = fichas
+      .filter((f) => f.group === group)
+      .sort((a, b) => (a.name < b.name ? -1 : 1));
     if (inGroup.length === 0) continue;
     lines.push(`<section><h2>${group}</h2>`);
     for (const { name, height, guide } of inGroup) {

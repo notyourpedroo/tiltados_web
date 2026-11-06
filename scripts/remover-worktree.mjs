@@ -19,7 +19,8 @@ if (targets.length === 0) {
   process.exit(1);
 }
 
-const git = (...gitArgs) => execFileSync("git", gitArgs, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+const git = (...gitArgs) =>
+  execFileSync("git", gitArgs, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
 const normalize = (p) => path.resolve(p).toLowerCase();
 // A primeira entrada do `git worktree list` é o checkout principal.
 const worktrees = git("worktree", "list", "--porcelain")
@@ -49,7 +50,9 @@ for (const target of targets) {
     git("worktree", "remove", ...(force ? ["--force"] : []), dir);
     console.log(`Removido: ${dir}`);
   } catch (error) {
-    console.error(`${dir}: o git recusou a remoção (use --force para descartar mudanças):\n${error.stderr ?? error.message}`);
+    console.error(
+      `${dir}: o git recusou a remoção (use --force para descartar mudanças):\n${error.stderr ?? error.message}`,
+    );
     failed = true;
   }
 }
