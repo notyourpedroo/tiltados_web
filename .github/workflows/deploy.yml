@@ -27,8 +27,8 @@ jobs:
           # Histórico inteiro, para o passo seguinte ler os commits do PR.
           fetch-depth: 0
 
-      # O Contributors do GitHub conta o autor de cada commit da main. Commit de
-      # bot (Dependabot) é reescrito antes do merge: docs/agents/workflow.md.
+      # O Contributors do GitHub conta o autor de cada commit da main, e commit
+      # de bot não entra nela: o PR falha em commit de autor [bot].
       - name: Autor dos commits
         if: github.event_name == 'pull_request'
         env:
@@ -37,7 +37,7 @@ jobs:
         run: |
           bots="$(git log --format='%h %an <%ae>' "$BASE..$HEAD" | grep -F '[bot]' || true)"
           if [ -n "$bots" ]; then
-            echo "::error::Commit com autor bot; reescreva o autor antes do merge (docs/agents/workflow.md):"
+            echo "::error::Commit com autor bot; refaça o commit com o seu autor antes do merge:"
             echo "$bots"
             exit 1
           fi
