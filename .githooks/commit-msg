@@ -37,4 +37,10 @@ printf '%s\n' "$MESSAGE" | grep -Eiq '^co-authored-by:.*(claude|anthropic)' &&
 printf '%s\n' "$MESSAGE" | grep -Eq '(^|[^A-Za-z0-9._-])@[A-Za-z0-9]' &&
   fail "tire o @ da frente do nome: o GitHub transforma @nome em mencao a um usuario"
 
+# Referência a issue sem # não vira link no GitHub, e o merge por rebase leva a
+# mensagem para a main como está. O # fica no meio da linha: o git descarta a
+# linha que começa com #.
+printf '%s\n' "$MESSAGE" | grep -Eiq '(^|[^A-Za-z0-9_-])(issue|spec|ticket|pr) [0-9]+' &&
+  fail "cite a issue com #, no fim da linha: 'Refs #103' (linha que comeca com # e descartada)"
+
 exit 0
