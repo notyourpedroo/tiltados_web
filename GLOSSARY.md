@@ -34,7 +34,7 @@ Uma Sessão prevista na temporada que ainda não tem resultado registrado, mesmo
 _Avoid_: sessão futura
 
 **Sessão disputada**:
-Uma Sessão com resultado registrado em que o piloto de fato correu. Um abandono conta; uma linha de resultado de quem não participou da Sessão não conta.
+Uma Sessão com resultado registrado em que o piloto de fato correu. Um abandono conta; uma linha de resultado de quem não participou da Sessão não conta. No código, essa linha é a Não participação, nome técnico das regras de 2025 que não aparece na tela.
 
 ## Campeonato
 
