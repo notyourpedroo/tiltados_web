@@ -228,7 +228,7 @@ if (failures.length) {
     console.error(
       "\nRota com erro 5xx mesmo depois de uma segunda tentativa. Veja o log do servidor de dev:\n" +
         "  - SyntaxError em JSON.parse: o cache está corrompido; pare o next dev, apague o .next e suba de novo.\n" +
-        "  - Tiltados API ... respondeu 502 ou 429: a API está fora ou limitando; rode de novo só essas rotas, ou contra a API local (README, \"Rodando contra a API local\").",
+        '  - Tiltados API ... respondeu 502 ou 429: a API está fora ou limitando; rode de novo só essas rotas, ou contra a API local (README, "Rodando contra a API local").',
     );
   }
   process.exit(1);
