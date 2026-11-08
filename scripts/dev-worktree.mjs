@@ -24,7 +24,9 @@ const worktrees = git("worktree", "list", "--porcelain")
   .filter((line) => line.startsWith("worktree "))
   .map((line) => line.slice("worktree ".length));
 const main = worktrees[0];
-const agents = worktrees.filter((w) => normalize(w).startsWith(normalize(path.join(main, ".claude", "worktrees"))));
+const agents = worktrees.filter((w) =>
+  normalize(w).startsWith(normalize(path.join(main, ".claude", "worktrees"))),
+);
 
 let dir;
 if (given) {
@@ -50,9 +52,12 @@ if (!existsSync(path.join(dir, "node_modules"))) {
   process.exit(1);
 }
 const env = path.join(dir, ".env.local");
-if (!existsSync(env) && existsSync(path.join(main, ".env.local"))) copyFileSync(path.join(main, ".env.local"), env);
+if (!existsSync(env) && existsSync(path.join(main, ".env.local")))
+  copyFileSync(path.join(main, ".env.local"), env);
 
-console.log(`Worktree ${dir} (${git("-C", dir, "branch", "--show-current") || "HEAD solto"}) na porta ${port}`);
+console.log(
+  `Worktree ${dir} (${git("-C", dir, "branch", "--show-current") || "HEAD solto"}) na porta ${port}`,
+);
 const dev = spawn("npm", ["run", "dev", "--", "--port", port], {
   cwd: dir,
   env: { ...process.env, TURBOPACK_ROOT: main },
