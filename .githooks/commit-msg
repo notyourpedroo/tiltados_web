@@ -40,7 +40,10 @@ printf '%s\n' "$MESSAGE" | grep -Eq '(^|[^A-Za-z0-9._-])@[A-Za-z0-9]' &&
 # Referência a issue sem # não vira link no GitHub, e o merge por rebase leva a
 # mensagem para a main como está. O # fica no meio da linha: o git descarta a
 # linha que começa com #.
-printf '%s\n' "$MESSAGE" | grep -Eiq '(^|[^A-Za-z0-9_-])(issue|spec|ticket|pr) [0-9]+' &&
-  fail "cite a issue com #, no fim da linha: 'Refs #103' (linha que comeca com # e descartada)"
+REF="$(printf '%s\n' "$MESSAGE" |
+  grep -Eio '(^|[^A-Za-z0-9_-])(issue|spec|ticket|pr)s? +[0-9]+([^A-Za-z0-9]|$)' |
+  head -n 1 | grep -Eo '[0-9]+' | head -n 1)"
+[ -n "$REF" ] &&
+  fail "cite a issue com #, no meio ou no fim da linha: 'Refs #${REF}' (o git descarta a linha que comeca com #)"
 
 exit 0
