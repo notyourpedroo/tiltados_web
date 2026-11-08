@@ -6,42 +6,39 @@
 //
 //   node scripts/dev-worktree.mjs [caminho] [--port 3005]
 //   node scripts/dev-worktree.mjs .claude/worktrees/agent-a1b2c3
-import { execFileSync, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import { copyFileSync, existsSync } from "node:fs";
 import path from "node:path";
+import { findWorktree, git, main, normalize, worktrees } from "./worktrees.mjs";
 
+const usage = "Uso: node scripts/dev-worktree.mjs [caminho] [--port 3005]";
 const args = process.argv.slice(2);
-const portIndex = args.indexOf("--port");
-const port = portIndex >= 0 ? args[portIndex + 1] : "3005";
-const given = args.filter((_, i) => i !== portIndex && i !== portIndex + 1)[0];
-
-const git = (...gitArgs) =>
-  execFileSync("git", gitArgs, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
-const normalize = (p) => path.resolve(p).toLowerCase();
-// A primeira entrada do `git worktree list` é o checkout principal.
-const worktrees = git("worktree", "list", "--porcelain")
-  .split("\n")
-  .filter((line) => line.startsWith("worktree "))
-  .map((line) => line.slice("worktree ".length));
-const main = worktrees[0];
-const agents = worktrees.filter((w) =>
-  normalize(w).startsWith(normalize(path.join(main, ".claude", "worktrees"))),
-);
+let port = "3005";
+const paths = [];
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === "--port") port = args[++i];
+  else paths.push(args[i]);
+}
+if (!/^\d+$/.test(port ?? "") || paths.length > 1) {
+  console.error(usage);
+  process.exit(1);
+}
 
 let dir;
-if (given) {
-  dir = worktrees.find((w) => normalize(w) === normalize(given));
-  if (!dir) {
-    console.error(`${given}: não é um worktree deste repositório.`);
-    process.exit(1);
-  }
+if (paths.length === 1) {
+  dir = findWorktree(paths[0]);
+  if (!dir) process.exit(1);
 } else {
+  // Worktree registrado com a pasta já apagada (prunable) fica de fora.
+  const agentsRoot = normalize(path.join(main, ".claude", "worktrees")) + path.sep;
+  const agents = worktrees
+    .filter((w) => normalize(w).startsWith(agentsRoot) && existsSync(w))
+    .map((w) => ({ w, committedAt: Number(git("-C", w, "log", "-1", "--format=%ct")) }));
   if (agents.length === 0) {
     console.error("Nenhum worktree de agente em .claude/worktrees/.");
     process.exit(1);
   }
-  const committedAt = (w) => Number(git("-C", w, "log", "-1", "--format=%ct"));
-  dir = agents.reduce((newest, w) => (committedAt(w) > committedAt(newest) ? w : newest));
+  dir = agents.reduce((newest, a) => (a.committedAt > newest.committedAt ? a : newest)).w;
 }
 
 if (!existsSync(path.join(dir, "node_modules"))) {
@@ -55,13 +52,13 @@ const env = path.join(dir, ".env.local");
 if (!existsSync(env) && existsSync(path.join(main, ".env.local")))
   copyFileSync(path.join(main, ".env.local"), env);
 
-console.log(
-  `Worktree ${dir} (${git("-C", dir, "branch", "--show-current") || "HEAD solto"}) na porta ${port}`,
-);
-const dev = spawn("npm", ["run", "dev", "--", "--port", port], {
+const branch = git("-C", dir, "branch", "--show-current").trim() || "HEAD solto";
+console.log(`Worktree ${dir} (${branch}) na porta ${port}`);
+// Uma string só: o npm do Windows é um .cmd e precisa do shell; a porta já foi validada.
+const dev = spawn(`npm run dev -- --port ${port}`, {
   cwd: dir,
   env: { ...process.env, TURBOPACK_ROOT: main },
   stdio: "inherit",
   shell: true,
 });
-dev.on("exit", (code) => process.exit(code ?? 0));
+dev.on("exit", (code) => process.exit(code ?? 1));
