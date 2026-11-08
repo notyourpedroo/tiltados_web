@@ -27,8 +27,8 @@ jobs:
           # Histórico inteiro, para o passo seguinte ler os commits do PR.
           fetch-depth: 0
 
-      # O Contributors do GitHub conta o autor de cada commit da main, e commit
-      # de bot não entra nela: o PR falha em commit de autor [bot].
+      # O Contributors do GitHub conta o autor de cada commit da `main`, e
+      # commit de bot não deve entrar nele.
       - name: Autor dos commits
         if: github.event_name == 'pull_request'
         env:
