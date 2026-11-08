@@ -44,7 +44,7 @@ A skill `mattpocock-skills:code-review`, apontada para o merge-base com a `main`
 
 Uma spec com um ticket só segue o fluxo do implementador, num branch a partir do `origin/main`, e o PR traz um `Closes` para o ticket e um para a spec. Quando a skill `mattpocock-skills:implement-spec` despacha essa spec, o implementador entrega o branch do ticket sem push, e a sessão principal publica o branch e abre o PR.
 
-Um ticket que leva uma mudança sem commit do checkout principal (uma entrada do `GLOSSARY.md` escrita na conversa da spec, por exemplo) segue assim. O implementador copia o arquivo do checkout principal para o worktree e commita só essa mudança. Depois do merge, a sessão principal confere que o arquivo do checkout é igual ao da `main` (`git diff --quiet origin/main -- <arquivo>`) e só então o descarta (`git checkout -- <arquivo>`), para o `git pull` passar.
+Um ticket que leva uma mudança sem commit do checkout principal (uma entrada do `GLOSSARY.md` escrita na conversa da spec, por exemplo) segue assim. O implementador copia o arquivo do checkout principal para o worktree e commita só essa mudança. Depois do merge, a sessão principal confere que o arquivo do checkout é igual ao da `main` (`git fetch` e `git diff --quiet origin/main -- <arquivo>`) e só então o descarta (`git checkout -- <arquivo>`), para o `git pull` passar.
 
 Uma spec cujos tickets se bloqueiam entre si chega à `main` num PR só, a partir de um **branch de integração** `tipo/descricao-curta` criado do `origin/main`. O PR abre como rascunho depois do primeiro ticket integrado e traz um `Closes` para a spec e um para cada ticket. As regras acima valem para esse PR, com estas diferenças:
 
