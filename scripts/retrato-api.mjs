@@ -4,37 +4,47 @@
 //
 //   node scripts/retrato-api.mjs 2025 2026
 //
+// Com --check, não grava: compara o retrato salvo com a API e sai com código 1
+// apontando a rota que divergiu (o workflow retrato.yml roda assim para 2025).
+//
 // O endereço vem de TILTADOS_API_URL ou do .env.local.
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
+import { getApi } from "./api-url.mjs";
 
-function apiUrl() {
-  if (process.env.TILTADOS_API_URL) return process.env.TILTADOS_API_URL;
-  if (existsSync(".env.local")) {
-    const line = readFileSync(".env.local", "utf8")
-      .split(/\r?\n/)
-      .find((l) => l.startsWith("TILTADOS_API_URL="));
-    if (line) return line.slice("TILTADOS_API_URL=".length).trim();
-  }
-  throw new Error("TILTADOS_API_URL não definida (nem no ambiente, nem no .env.local).");
-}
-
-const seasons = process.argv.slice(2);
+const args = process.argv.slice(2);
+const check = args.includes("--check");
+const seasons = args.filter((a) => a !== "--check");
 if (seasons.length === 0) {
-  console.error("Uso: node scripts/retrato-api.mjs <ano>...");
+  console.error("Uso: node scripts/retrato-api.mjs [--check] <ano>...");
   process.exit(1);
 }
-const base = apiUrl().replace(/\/+$/, "");
 
+let diverged = false;
 for (const season of seasons) {
   const fixture = {};
   for (const route of [`/load/${season}/races`, `/load/${season}/results`]) {
-    const res = await fetch(base + route, { headers: { Accept: "application/json" } });
-    if (!res.ok) throw new Error(`${route}: HTTP ${res.status}`);
-    fixture[route] = await res.json();
+    fixture[route] = await getApi(route);
   }
   const path = `scripts/fixtures/retrato-${season}.json`;
-  writeFileSync(path, JSON.stringify(fixture, null, 2) + "\n");
-  console.log(
-    `${path}: ${fixture[`/load/${season}/races`].length} Sessões, ${fixture[`/load/${season}/results`].length} resultados`,
+  const summary = `${fixture[`/load/${season}/races`].length} Sessões, ${fixture[`/load/${season}/results`].length} resultados`;
+
+  if (!check) {
+    writeFileSync(path, JSON.stringify(fixture, null, 2) + "\n");
+    console.log(`${path}: ${summary}`);
+    continue;
+  }
+
+  const saved = JSON.parse(readFileSync(path, "utf8"));
+  const stale = Object.keys(fixture).filter(
+    (route) => JSON.stringify(saved[route]) !== JSON.stringify(fixture[route]),
   );
+  for (const route of stale) {
+    diverged = true;
+    console.error(
+      `${path}: ${route} diverge da API (salvo: ${saved[route]?.length ?? 0}, API: ${fixture[route].length}). Refaça com node scripts/retrato-api.mjs ${season}.`,
+    );
+  }
+  if (stale.length === 0) console.log(`${path}: igual à API (${summary})`);
 }
+// exitCode, não exit(): sair à força logo depois do fetch derruba o Node no Windows.
+if (diverged) process.exitCode = 1;
