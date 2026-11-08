@@ -32,4 +32,4 @@ Subagentes em worktree: base do branch, `node_modules` e verificação. See `doc
 
 ### Tiltados API
 
-Rotas, formato das respostas e regras (status, Suspensão, Chance de título) no `README.md` da API, em `../tiltados_api` ("Endpoints Disponíveis", "Regras de Negócio", "Exemplos de Uso e Respostas"); o código parte do `main.py`. Para rodar o site contra a API local ou simular estados que ainda não aconteceram, veja "Rodando contra a API local" e "Simulando estados que ainda não aconteceram" no `README.md`.
+Rotas, formato das respostas e regras (status, Suspensão, Chance de título) no `README.md` da API, em `../tiltados_api` ("Endpoints Disponíveis", "Regras de Negócio", "Exemplos de Uso e Respostas"); o código parte do `main.py`. Para rodar o site contra a API local ou simular estados que ainda não aconteceram, veja "Rodando contra a API local" e "Simulando estados que ainda não aconteceram" no `README.md`. Para conferir um dado da API configurada: `node scripts/api.mjs <rota>`.
