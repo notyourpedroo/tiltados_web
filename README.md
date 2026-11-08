@@ -79,7 +79,8 @@ o servidor de dev guarda as respostas da API e continua mostrando as da fixture 
 Os `retrato-<ano>.json` são cópias das Sessões e dos resultados reais, que o `src/lib/real-seasons.test.ts`
 usa para conferir se os números dos perfis e dos destaques fazem sentido com o que a API manda de verdade.
 Refaça-os com `node scripts/retrato-api.mjs 2025 2026` quando a API mudar de formato; um teste que passar a
-falhar aponta um dado que as contas ainda não tratam.
+falhar aponta um dado que as contas ainda não tratam. O workflow `retrato.yml` roda toda segunda
+`node scripts/retrato-api.mjs --check 2025`, que falha quando o retrato salvo diverge da API publicada.
 
 As rotas, o formato das respostas e as regras estão no README da API ("Endpoints Disponíveis", "Regras de
 Negócio" e "Exemplos de Uso e Respostas"); o código parte do `main.py`.

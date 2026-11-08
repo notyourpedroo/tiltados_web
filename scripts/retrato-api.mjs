@@ -8,7 +8,7 @@
 // apontando a rota que divergiu (o workflow retrato.yml roda assim para 2025).
 //
 // O endereço vem de TILTADOS_API_URL ou do .env.local.
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { getApi } from "./api-url.mjs";
 
 const args = process.argv.slice(2);
@@ -34,14 +34,25 @@ for (const season of seasons) {
     continue;
   }
 
+  if (!existsSync(path)) {
+    diverged = true;
+    console.error(`${path}: não existe. Grave com node scripts/retrato-api.mjs ${season}.`);
+    continue;
+  }
   const saved = JSON.parse(readFileSync(path, "utf8"));
   const stale = Object.keys(fixture).filter(
     (route) => JSON.stringify(saved[route]) !== JSON.stringify(fixture[route]),
   );
   for (const route of stale) {
     diverged = true;
+    const savedRows = saved[route]?.length ?? 0;
+    const apiRows = fixture[route].length;
+    const how =
+      savedRows === apiRows
+        ? `mesmas ${apiRows} linhas, conteúdo diferente`
+        : `${savedRows} → ${apiRows} linhas`;
     console.error(
-      `${path}: ${route} diverge da API (salvo: ${saved[route]?.length ?? 0}, API: ${fixture[route].length}). Refaça com node scripts/retrato-api.mjs ${season}.`,
+      `${path}: ${route} diverge da API (${how}). Refaça com node scripts/retrato-api.mjs ${season}.`,
     );
   }
   if (stale.length === 0) console.log(`${path}: igual à API (${summary})`);
