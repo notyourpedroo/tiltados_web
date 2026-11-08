@@ -1,0 +1,29 @@
+name: Retrato da API
+
+# Confere se o retrato de 2025 (scripts/fixtures/retrato-2025.json), base do teste
+# de sanidade, ainda é igual à API publicada. Fica fora do check obrigatório da
+# main: a API mudar não trava PR, só avisa que o retrato precisa ser refeito.
+# 2026 fica de fora porque o retrato dela envelhece a cada Sessão disputada.
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Conferir retrato de 2025
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - run: node scripts/retrato-api.mjs --check 2025
+        env:
+          TILTADOS_API_URL: https://${{ secrets.DEPLOY_HOST }}/api
