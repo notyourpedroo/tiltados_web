@@ -12,6 +12,10 @@ Regras de julgamento para a revisão. As regras mecânicas ficam no ESLint (`esl
 
 - Textos da tela, nomes de teste e de issue usam os termos do `GLOSSARY.md` (Etapa, Sessão, Corrida, Chance de título, Motivo...), evitando os sinônimos marcados como _Avoid_. O ESLint barra os inequívocos (carteira, gancho, ban...); confira os ambíguos, como "GP" no sentido de Etapa e "licença" no lugar de Superlicença. Identificadores que espelham a API (`prediction`, `race`) podem manter o nome da rota; os de conceitos que só o site tem usam o termo do glossário (`inDupla`), nunca um sinônimo _Avoid_. O ESLint barra os identificadores com `lineup`, `pace` e `streak`; um _Avoid_ inglês novo no glossário entra na lista `IDENTIFIERS` do `eslint.config.mjs`.
 
+## Dependências
+
+- PR que atualiza dependência sobe juntos `next` e `eslint-config-next`, e juntos `tailwindcss` e os `@tailwindcss/*`. O major do `@types/node` acompanha o `node-version` do CI (`.github/workflows/deploy.yml`).
+
 ## Documentação
 
 - Página nova entra na tabela "Páginas" do `README.md`; arquivo novo em `src/lib/` entra na árvore "Estrutura" (o `readme.test.ts` confere).
