@@ -7,9 +7,9 @@
 //   node scripts/remover-worktree.mjs .claude/worktrees/agent-a1b2c3
 //
 // --force passa ao git: descarta mudanças não commitadas do worktree.
-import { execFileSync } from "node:child_process";
 import { existsSync, lstatSync, unlinkSync } from "node:fs";
 import path from "node:path";
+import { findWorktree, git, main } from "./worktrees.mjs";
 
 const args = process.argv.slice(2);
 const force = args.includes("--force");
@@ -19,22 +19,12 @@ if (targets.length === 0) {
   process.exit(1);
 }
 
-const git = (...gitArgs) =>
-  execFileSync("git", gitArgs, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
-const normalize = (p) => path.resolve(p).toLowerCase();
-// A primeira entrada do `git worktree list` é o checkout principal.
-const worktrees = git("worktree", "list", "--porcelain")
-  .split("\n")
-  .filter((line) => line.startsWith("worktree "))
-  .map((line) => line.slice("worktree ".length));
-const main = worktrees[0];
 const mainModules = path.join(main, "node_modules");
 
 let failed = false;
 for (const target of targets) {
-  const dir = worktrees.find((w) => normalize(w) === normalize(target));
+  const dir = findWorktree(target);
   if (!dir) {
-    console.error(`${target}: não é um worktree deste repositório.`);
     failed = true;
     continue;
   }
