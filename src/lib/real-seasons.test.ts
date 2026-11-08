@@ -44,7 +44,7 @@ describe("Não participações no retrato real de 2025", () => {
     expect(leftover).toEqual([]);
   });
 
-  test("a Corrida da GP da Bélgica fica com 6 pilotos e o GP do Japão sem o piloto 9", () => {
+  test("a Corrida da Etapa da Bélgica fica com 6 pilotos e a do Japão, sem o piloto 9", () => {
     expect(results[16]).toHaveLength(6);
     expect(results[4].map((r) => r.driverId)).not.toContain(9);
   });

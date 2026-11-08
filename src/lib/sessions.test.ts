@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { buildSessions } from "./sessions";
-import type { ApiRace, ApiResult } from "./types";
+import type { ApiRace, ApiResult, Season } from "./types";
 
 // Montagem dos resultados a partir de linhas cruas da API montadas à mão.
 
@@ -31,7 +31,7 @@ function sessionWithLastNotRunning(size: number): ApiResult[] {
   return [...rows, row(size, size, size, "9:99.999")];
 }
 
-function driversIn(season: "2025" | "2026", rows: ApiResult[]): number[] {
+function driversIn(season: Season, rows: ApiResult[]): number[] {
   return buildSessions(season, [RACE], rows).results[RACE.race_id].map((r) => r.driverId);
 }
 
