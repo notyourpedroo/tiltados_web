@@ -30,6 +30,8 @@ GitHub shares one number space across issues and PRs, so a bare `#42` may be eit
 
 Create a GitHub issue.
 
+Um critério de aceite do tipo "os testes ficam vermelhos sem a mudança" nomeia os testes que ele cobre. Os testes de guarda, que pegam uma mudança larga demais (o caso que deve continuar igual), passam com ou sem a mudança e ficam de fora desse critério.
+
 ## When a skill says "fetch the relevant ticket"
 
 Read it as in **Read an issue** above.
