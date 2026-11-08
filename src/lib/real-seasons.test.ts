@@ -5,19 +5,59 @@ import { driverProfile } from "./driver-season";
 import { seasonHighlights } from "./season-highlights";
 import { buildSessions } from "./sessions";
 import { teamProfile } from "./team-season";
-import type { ApiRace, ApiResult } from "./types";
+import type { ApiRace, ApiResult, Season } from "./types";
 
 // Sanidade das contas sobre os dados reais da API (retratos de scripts/retrato-api.mjs).
 // As fixtures montadas à mão só têm os casos que alguém lembrou; aqui entram os que a
 // API manda de verdade, como o "9:99.999" de quem não marcou volta em 2025.
 
-function realSeason(season: string) {
+function realSnapshot(season: Season) {
   const path = join(__dirname, `../../scripts/fixtures/retrato-${season}.json`);
   const fixture = JSON.parse(readFileSync(path, "utf8"));
   const races: ApiRace[] = fixture[`/load/${season}/races`];
   const results: ApiResult[] = fixture[`/load/${season}/results`];
-  return { ...buildSessions(races, results), drivers: {} };
+  return { races, results };
 }
+
+function realSeason(season: Season) {
+  const { races, results } = realSnapshot(season);
+  return { ...buildSessions(season, races, results), drivers: {} };
+}
+
+describe("Não participações no retrato real de 2025", () => {
+  const raw = realSnapshot("2025").results;
+  const { results } = realSeason("2025");
+  const rawSize = new Map<number, number>();
+  for (const r of raw) rawSize.set(r.race_id, (rawSize.get(r.race_id) ?? 0) + 1);
+  const assembled = Object.entries(results).flatMap(([raceId, list]) =>
+    list.map((r) => ({ raceId: Number(raceId), ...r })),
+  );
+
+  test("as 75 Não participações saem da montagem", () => {
+    expect(raw.length - assembled.length).toBe(75);
+    const leftover = assembled.filter(
+      (r) =>
+        r.bestLap === "9:99.999" &&
+        r.grid === rawSize.get(r.raceId) &&
+        r.position === rawSize.get(r.raceId),
+    );
+    expect(leftover).toEqual([]);
+  });
+
+  test("a Corrida da GP da Bélgica fica com 6 pilotos e o GP do Japão sem o piloto 9", () => {
+    expect(results[16]).toHaveLength(6);
+    expect(results[4].map((r) => r.driverId)).not.toContain(9);
+  });
+
+  test("o abandono real (piloto 1, largou P7 e chegou P10 sem tempo) continua", () => {
+    expect(results[10].find((r) => r.driverId === 1)).toMatchObject({
+      position: 10,
+      grid: 7,
+      gained: -3,
+      bestLap: "9:99.999",
+    });
+  });
+});
 
 /** Caminhos dentro do objeto com número que não é finito (NaN, Infinity). */
 function nonFinite(value: unknown, path = ""): string[] {
@@ -28,7 +68,7 @@ function nonFinite(value: unknown, path = ""): string[] {
   return [];
 }
 
-describe.each(["2025", "2026"])("temporada real de %s", (season) => {
+describe.each<Season>(["2025", "2026"])("temporada real de %s", (season) => {
   const data = realSeason(season);
   const played = data.sessions.filter((s) => data.results[s.id].length > 0);
   const races = played.filter((s) => !s.isSprint).length;
