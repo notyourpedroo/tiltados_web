@@ -27,12 +27,18 @@ Ticket que muda o `package.json` roda `npm ci` (ou o `npm install` da mudança) 
 - `npm run typecheck` gera os tipos de rota do Next (`next typegen`) antes do `tsc`; num worktree novo, o `tsc --noEmit` sozinho reclama de `PageProps`.
 - `npm test` e `npm run lint` rodam como no checkout principal.
 - `npm run build` pré-renderiza todas as rotas contra o `TILTADOS_API_URL`. Com a API de produção do `.env.local`, ele pode falhar com `respondeu 429`: suba a API local (`tiltados-api-local` no `.claude/launch.json`) e rode `$env:TILTADOS_API_URL = "http://127.0.0.1:8000"; npm run build`.
-- A conferência no navegador fica com a revisão do PR, no checkout principal (`gh pr checkout <pr>`). Quando ele está ocupado por outra sessão, rode o site no worktree:
-  - O Turbopack recusa a junction de `node_modules`, que aponta para fora da raiz que ele deduz ("Symlink node_modules could not be resolved"). Aponte `TURBOPACK_ROOT` para o checkout principal, que contém o worktree e o `node_modules`: `$env:TURBOPACK_ROOT = "E:\Dev\Code\tiltados_web"`. Só para o `npm run dev`: no `npm run build` a variável também muda a raiz do pacote `standalone`.
-  - Use o Turbopack: com `--webpack` a página sobe sem estilo, porque o Tailwind entra pelo loader `@tailwindcss/turbopack` do `next.config.ts`.
-  - O `.env.local` não vem no worktree: copie o do checkout principal.
-  - Use uma porta própria (`npm run dev -- --port 3005`), porque vários servidores de dev disputam a 3000.
+- A conferência no navegador fica com a revisão do PR, no checkout principal (`gh pr checkout <pr>`). Quando ele está ocupado por outra sessão, ou o branch do PR está em checkout no worktree do implementador, rode o site no worktree com `node scripts/dev-worktree.mjs [caminho] [--port 3005]`. Sem caminho, ele pega o worktree de agente com o commit mais recente. O `preview_start` só lê o `.claude/launch.json` do checkout principal, que é local e ignorado pelo Git: se ele não tiver a entrada `tiltados-web-worktree`, acrescente-a:
+
+  ```json
+  { "name": "tiltados-web-worktree", "runtimeExecutable": "node", "runtimeArgs": ["scripts/dev-worktree.mjs"], "port": 3005 }
+  ```
+
+  O que o script resolve, e quem subir o worktree à mão precisa repetir:
+  - O Turbopack recusa a junction de `node_modules`, que aponta para fora da raiz que ele deduz ("Symlink node_modules could not be resolved"). O `TURBOPACK_ROOT` aponta para o checkout principal, que contém o worktree e o `node_modules`. Só no `npm run dev`: no `npm run build` a variável também muda a raiz do pacote `standalone`.
+  - O `.env.local` não vem no worktree: ele copia o do checkout principal.
+  - Porta própria, porque vários servidores de dev disputam a 3000.
+  - O Turbopack (o padrão do `npm run dev`): com `--webpack` a página sobe sem estilo, porque o Tailwind entra pelo loader `@tailwindcss/turbopack` do `next.config.ts`.
 - Armadilhas do `next dev`, no worktree ou no checkout principal:
   - Na primeira subida ele pode parar num aviso de vulnerabilidade que sugere `next upgrade`. Suba de novo com o mesmo comando; o upgrade é decisão do usuário.
-  - Trocar de branch com o servidor de pé corrompe o cache: as rotas dão 500 com `SyntaxError` em `JSON.parse`. Pare o servidor, apague o `.next` e suba de novo. O `rolagem.mjs` acusa isso como `HTTP 500`.
+  - Trocar de branch com o servidor de pé corrompe o cache: as rotas dão 500 com `SyntaxError` em `JSON.parse`. Pare o servidor, apague o `.next` e suba de novo. O `rolagem.mjs` acusa isso como `HTTP 500`, mesmo depois da segunda tentativa que ele dá a todo 5xx.
   - Depois de navegar no cliente, o DOM da rota anterior fica na página, escondido. Para contar elementos de uma página, carregue-a direto (recarregue).
