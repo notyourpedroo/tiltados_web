@@ -33,6 +33,9 @@ A Sessão curta de uma Etapa, com pontuação menor.
 Uma Sessão prevista na temporada que ainda não tem resultado registrado, mesmo que a data já tenha passado.
 _Avoid_: sessão futura
 
+**Sessão disputada**:
+Uma Sessão com resultado registrado em que o piloto de fato correu. Um abandono conta; uma linha de resultado de quem não participou da Sessão não conta.
+
 ## Campeonato
 
 **Campeão**:
