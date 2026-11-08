@@ -1,7 +1,7 @@
 // Sessões e resultados a partir das respostas cruas da API (sem buscar nada), para
 // season.ts e para o teste de sanidade com os retratos reais da API.
 import { lapToMs } from "./lap";
-import type { ApiRace, ApiResult } from "./types";
+import type { ApiRace, ApiResult, Season } from "./types";
 
 // Mesma tabela de files/{season}/scores.csv da API (igual em 2025 e 2026).
 const RACE_POINTS = [25, 18, 15, 12, 10, 8];
@@ -35,11 +35,30 @@ export interface SessionResult {
   points: number;
 }
 
+/** Tempo que a API de 2025 manda para quem não marcou volta. */
+const NO_LAP = "9:99.999";
+
+/**
+ * Linha de resultado de quem não participou da Sessão: os arquivos de 2025 registram
+ * o piloto largando e chegando em último, com `9:99.999`. O abandono real (largou à
+ * frente e chegou em último sem tempo) não se encaixa e segue como Sessão disputada.
+ */
+function isNonParticipation(season: Season, row: ApiResult, sessionSize: number): boolean {
+  return (
+    season === "2025" &&
+    row.driver_fastest_lap.trim() === NO_LAP &&
+    row.driver_start_position === sessionSize &&
+    row.driver_final_position === sessionSize
+  );
+}
+
 /**
  * Sessões em ordem cronológica (sprint antes da corrida) e os resultados de cada uma,
- * ordenados pela posição final e com a Volta mais rápida marcada.
+ * só com as Sessões disputadas, ordenados pela posição final e com a Volta mais
+ * rápida marcada.
  */
 export function buildSessions(
+  season: Season,
   apiRaces: ApiRace[],
   apiResults: ApiResult[],
 ): { sessions: Session[]; results: Record<number, SessionResult[]> } {
@@ -73,9 +92,12 @@ export function buildSessions(
   const sprintById = new Map(sessions.map((s) => [s.id, s.isSprint]));
   const results: Record<number, SessionResult[]> = {};
   for (const s of sessions) results[s.id] = [];
+  const sessionSize = new Map<number, number>();
+  for (const r of apiResults) sessionSize.set(r.race_id, (sessionSize.get(r.race_id) ?? 0) + 1);
   for (const r of apiResults) {
     const isSprint = sprintById.get(r.race_id);
     if (isSprint === undefined) continue;
+    if (isNonParticipation(season, r, sessionSize.get(r.race_id)!)) continue;
     results[r.race_id].push({
       driverId: r.driver_id,
       teamId: r.team_id,
