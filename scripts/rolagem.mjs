@@ -1,7 +1,8 @@
 // Rolagem horizontal: abre cada rota em várias larguras no Chrome headless e falha
 // quando a página fica mais larga que a janela, apontando o elemento que estoura, ou
 // quando um texto de uma linha (.truncate) sai cortado a 1280 px. Uma rota que não
-// responde 2xx falha pelo status, sem medir a página de erro. Cada tooltip de card é
+// responde 2xx falha pelo status, sem medir a página de erro; um 5xx tem uma segunda
+// tentativa, porque a API às vezes pisca. Cada tooltip de card é
 // aberto e falha quando o balão sai da janela.
 // Sem rotas, percorre o site inteiro a partir de /2025 e /2026 (perfis, Etapas...).
 //
@@ -22,6 +23,7 @@ const chrome = process.env.CHROME ?? "C:\\Program Files\\Google\\Chrome\\Applica
 const WIDTHS = [375, 640, 768, 1024, 1280];
 const DESKTOP = 1024;
 const PARALLEL = 4;
+const RETRY_DELAY_MS = 3000;
 
 const given = routesFrom(process.argv.slice(2));
 const crawl = given.length === 0;
@@ -125,6 +127,26 @@ const MEASURE = `(async () => {
   return { overflow, culprit, links, cut, tooltips };
 })()`;
 
+async function measure(route, sessionId) {
+  const loaded = new Promise((resolve) => {
+    const listener = (msg) => {
+      if (msg.sessionId === sessionId && msg.method === "Page.loadEventFired") {
+        listeners.delete(listener);
+        resolve();
+      }
+    };
+    listeners.add(listener);
+  });
+  await send("Page.navigate", { url: `${base}/${route}` }, sessionId);
+  await loaded;
+  const { result } = await send(
+    "Runtime.evaluate",
+    { expression: MEASURE, awaitPromise: true, returnByValue: true },
+    sessionId,
+  );
+  return result.value;
+}
+
 async function check(route) {
   const { targetId } = await send("Target.createTarget", { url: "about:blank" });
   const { sessionId } = await send("Target.attachToTarget", { targetId, flatten: true });
@@ -138,23 +160,13 @@ async function check(route) {
       { width, height: 900, deviceScaleFactor: 1, mobile: width < 640 },
       sessionId,
     );
-    const loaded = new Promise((resolve) => {
-      const listener = (msg) => {
-        if (msg.sessionId === sessionId && msg.method === "Page.loadEventFired") {
-          listeners.delete(listener);
-          resolve();
-        }
-      };
-      listeners.add(listener);
-    });
-    await send("Page.navigate", { url: `${base}/${route}` }, sessionId);
-    await loaded;
-    const { result } = await send(
-      "Runtime.evaluate",
-      { expression: MEASURE, awaitPromise: true, returnByValue: true },
-      sessionId,
-    );
-    const { status, overflow, culprit, links, cut, tooltips } = result.value;
+    let measured = await measure(route, sessionId);
+    // Um 5xx pode ser a API piscando (502, 429): tenta de novo antes de acusar.
+    if (measured.status >= 500) {
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      measured = await measure(route, sessionId);
+    }
+    const { status, overflow, culprit, links, cut, tooltips } = measured;
     if (status) {
       failures.push(`/${route}: HTTP ${status}`);
       break;
@@ -214,7 +226,9 @@ if (failures.length) {
   for (const failure of failures.sort()) console.error(`  ${failure}`);
   if (failures.some((failure) => failure.includes(": HTTP 5"))) {
     console.error(
-      "\nRota com erro 5xx: se o servidor de dev mostra SyntaxError em JSON.parse, o cache está corrompido; pare o next dev, apague o .next e suba de novo.",
+      "\nRota com erro 5xx mesmo depois de uma segunda tentativa. Veja o log do servidor de dev:\n" +
+        "  - SyntaxError em JSON.parse: o cache está corrompido; pare o next dev, apague o .next e suba de novo.\n" +
+        "  - Tiltados API ... respondeu 502 ou 429: a API está fora ou limitando; rode de novo só essas rotas, ou contra a API local (README, \"Rodando contra a API local\").",
     );
   }
   process.exit(1);
