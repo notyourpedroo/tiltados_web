@@ -14,7 +14,7 @@ Regras de julgamento para a revisão. As regras mecânicas ficam no ESLint (`esl
 
 ## Dependências
 
-- PR que atualiza dependência sobe juntos `next` e `eslint-config-next`, e juntos `tailwindcss` e os `@tailwindcss/*`. O major do `@types/node` acompanha o `node-version` do CI (`.github/workflows/deploy.yml`).
+- No PR que atualiza dependência, confira no `package.json` que `next` e `eslint-config-next` estão na mesma versão, que `tailwindcss` e os `@tailwindcss/*` subiram juntos e que o major do `@types/node` é o do `node-version` do CI (`.github/workflows/deploy.yml`).
 
 ## Documentação
 
