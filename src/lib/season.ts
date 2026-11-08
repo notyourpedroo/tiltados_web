@@ -75,7 +75,7 @@ export async function getSeason(season: Season): Promise<SeasonData> {
     drivers[d.driver_id] = { id: d.driver_id, name: d.driver_name, teamId: d.team_id };
   }
 
-  const { sessions, results } = buildSessions(season, apiRaces, apiResults);
+  const { sessions, results } = buildSessions(apiRaces, apiResults);
 
   // Acumula pontos, vitórias em GP e pódios sessão a sessão; a posição em cada
   // momento usa o mesmo desempate da API (pontos, vitórias, pódios) e, persistindo

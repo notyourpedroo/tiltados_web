@@ -21,26 +21,24 @@ function realSnapshot(season: Season) {
 
 function realSeason(season: Season) {
   const { races, results } = realSnapshot(season);
-  return { ...buildSessions(season, races, results), drivers: {} };
+  return { ...buildSessions(races, results), drivers: {} };
 }
 
-describe("Não participações no retrato real de 2025", () => {
+describe("resultados do retrato real de 2025", () => {
   const raw = realSnapshot("2025").results;
   const { results } = realSeason("2025");
   const rawSize = new Map<number, number>();
   for (const r of raw) rawSize.set(r.race_id, (rawSize.get(r.race_id) ?? 0) + 1);
-  const assembled = Object.entries(results).flatMap(([raceId, list]) =>
-    list.map((r) => ({ raceId: Number(raceId), ...r })),
-  );
 
-  test("as 75 Não participações saem da montagem", () => {
-    expect(raw.length - assembled.length).toBe(75);
-    const leftover = assembled.filter(
+  test("a API não manda linha de quem não correu (largada e chegada em último, sem tempo)", () => {
+    // Corrigido na origem em tiltados_api#40; antes eram 75 linhas, e o site as descartava.
+    const leftover = raw.filter(
       (r) =>
-        r.bestLap === "9:99.999" &&
-        r.grid === rawSize.get(r.raceId) &&
-        r.position === rawSize.get(r.raceId),
+        r.driver_fastest_lap.trim() === "9:99.999" &&
+        r.driver_start_position === rawSize.get(r.race_id) &&
+        r.driver_final_position === rawSize.get(r.race_id),
     );
+    expect(raw).toHaveLength(215);
     expect(leftover).toEqual([]);
   });
 

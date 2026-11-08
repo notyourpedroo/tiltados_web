@@ -154,7 +154,7 @@ async function DriverProfile({ season, driverId }: { season: string; driverId: s
           label="Pódios"
           description={DRIVER_INDICATORS.podiums}
           value={standing.podiums}
-          sub={plural(sessions.length, "sessão disputada", "sessões disputadas")}
+          sub={plural(standing.races, "sessão disputada", "sessões disputadas")}
         />
         <StatTile
           label="Melhor resultado"
