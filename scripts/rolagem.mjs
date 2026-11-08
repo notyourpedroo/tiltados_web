@@ -2,8 +2,8 @@
 // quando a página fica mais larga que a janela, apontando o elemento que estoura, ou
 // quando um texto de uma linha (.truncate) sai cortado a 1280 px. Uma rota que não
 // responde 2xx falha pelo status, sem medir a página de erro; um 5xx tem uma segunda
-// tentativa, porque a API às vezes pisca. Cada tooltip de card é
-// aberto e falha quando o balão sai da janela.
+// tentativa, porque a API às vezes pisca. Cada tooltip de card é aberto e falha quando
+// o balão sai da janela.
 // Sem rotas, percorre o site inteiro a partir de /2025 e /2026 (perfis, Etapas...).
 //
 //   node scripts/rolagem.mjs [rota]...
@@ -161,7 +161,7 @@ async function check(route) {
       sessionId,
     );
     let measured = await measure(route, sessionId);
-    // Um 5xx pode ser a API piscando (502, 429): tenta de novo antes de acusar.
+    // O site responde 500 quando a API pisca (502, 429): tenta de novo antes de acusar.
     if (measured.status >= 500) {
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
       measured = await measure(route, sessionId);
