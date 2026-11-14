@@ -37,7 +37,7 @@ Abra http://localhost:3000. O `npm install` também ativa o hook `commit-msg` de
 Verificações (as duas primeiras rodam no CI junto com o build):
 
 ```bash
-npm run lint       # ESLint, inclusive as regras de cor do design system
+npm run lint       # ESLint (inclusive as regras de cor do design system), Prettier e knip (export sem uso)
 npm test           # Vitest
 npm run typecheck  # gera os tipos de rota do Next e roda o tsc
 ```
