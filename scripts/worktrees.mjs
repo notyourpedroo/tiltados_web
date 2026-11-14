@@ -9,10 +9,13 @@ export const git = (...gitArgs) =>
 export const normalize = (p) => path.resolve(p).toLowerCase();
 
 // A primeira entrada do `git worktree list` é o checkout principal.
-export const worktrees = git("worktree", "list", "--porcelain")
-  .split("\n")
-  .filter((line) => line.startsWith("worktree "))
-  .map((line) => line.slice("worktree ".length));
+export const listWorktrees = () =>
+  git("worktree", "list", "--porcelain")
+    .split("\n")
+    .filter((line) => line.startsWith("worktree "))
+    .map((line) => line.slice("worktree ".length));
+
+export const worktrees = listWorktrees();
 
 export const main = worktrees[0];
 
