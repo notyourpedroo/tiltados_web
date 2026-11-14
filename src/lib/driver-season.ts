@@ -149,8 +149,8 @@ export interface PreviousSeasonProfile {
   profile: DriverProfile;
 }
 
-/** Médias do piloto numa Temporada anterior. */
-export interface PreviousSeasonAverages {
+/** Médias do piloto numa Temporada: uma coluna do Comparativo, anterior ou atual. */
+export interface SeasonColumnAverages {
   /** Temporada, ex.: "2025". */
   season: Season;
   averages: SeasonAverages;
@@ -164,6 +164,8 @@ export interface ComparisonCell {
   text: string;
   /** Melhor valor da linha entre as Temporadas exibidas; o negrito da tela. */
   best: boolean;
+  /** Célula da temporada atual, a última da linha; destacada na tela. */
+  current: boolean;
 }
 
 /** Evolução da temporada atual contra a Temporada anterior mais recente disputada. */
@@ -239,29 +241,34 @@ export function seasonComparison(
   });
   const reference = played.at(-1);
   if (!now || !reference) return null;
-  const columns: PreviousSeasonAverages[] = [...played, { season, averages: now }];
+  const columns: SeasonColumnAverages[] = [...played, { season, averages: now }];
   return {
     seasons: columns.map((c) => c.season),
     rows: COMPARISON_ROWS.map((row) => {
-      const text = (a: SeasonAverages) => {
-        const value = row.value(a);
-        return value === null ? "—" : row.format(value);
-      };
-      const best = bestValues(
-        row,
-        columns.map((c) => row.value(c.averages)),
-      );
+      const values = columns.map((c) => row.value(c.averages));
+      const best = bestValues(row, values);
       return {
         label: row.label,
         cells: columns.map((c, i) => ({
           season: c.season,
-          text: text(c.averages),
+          text: displayed(row, values[i]),
           best: best[i],
+          current: i === columns.length - 1,
         })),
         trend: comparisonTrend(row, row.value(reference.averages), row.value(now)),
       };
     }),
   };
+}
+
+/** O valor como aparece na tela; "—" sem valor. */
+function displayed(row: RowDefinition, value: number | null): string {
+  return value === null ? "—" : row.format(value);
+}
+
+/** Dois valores com o mesmo texto na tela contam como iguais. */
+function sameDisplayed(row: RowDefinition, a: number, b: number): boolean {
+  return displayed(row, a) === displayed(row, b);
 }
 
 /**
@@ -271,11 +278,12 @@ export function seasonComparison(
  */
 function bestValues(row: RowDefinition, values: (number | null)[]): boolean[] {
   const present = values.filter((v) => v !== null);
-  const texts = new Set(present.map(row.format));
-  if (present.length < 2 || texts.size < 2) return values.map(() => false);
+  if (present.length < 2 || present.every((v) => sameDisplayed(row, v, present[0]))) {
+    return values.map(() => false);
+  }
   const sign = row.higherIsBetter ? 1 : -1;
-  const top = row.format(sign * Math.max(...present.map((v) => sign * v)));
-  return values.map((v) => v !== null && row.format(v) === top);
+  const top = sign * Math.max(...present.map((v) => sign * v));
+  return values.map((v) => v !== null && sameDisplayed(row, v, top));
 }
 
 /** Melhora ou piora, comparando os valores como aparecem na tela. */
@@ -285,7 +293,7 @@ function comparisonTrend(
   now: number | null,
 ): ComparisonTrend | null {
   if (before === null || now === null) return null;
-  if (row.format(before) === row.format(now)) return "igual";
+  if (sameDisplayed(row, before, now)) return "igual";
   const better = row.higherIsBetter ? now > before : now < before;
   return better ? "melhor" : "pior";
 }

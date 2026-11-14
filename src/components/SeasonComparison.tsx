@@ -37,11 +37,11 @@ export function SeasonComparison({ seasons, rows }: SeasonComparisonData) {
           {rows.map((row) => (
             <tr key={row.label} className="border-t border-line">
               <td className="py-2 font-bold">{row.label}</td>
-              {row.cells.map((cell, i) => (
+              {row.cells.map((cell) => (
                 <td
                   key={cell.season}
                   className={`tabular py-2 text-right ${
-                    i === row.cells.length - 1 ? "text-text" : "text-text-2"
+                    cell.current ? "text-text" : "text-text-2"
                   } ${cell.best ? "font-black" : "font-normal"}`}
                 >
                   {cell.text}
