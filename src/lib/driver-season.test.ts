@@ -538,6 +538,19 @@ describe("Comparativo com as Temporadas anteriores", () => {
       ?.cells.filter((c) => c.best)
       .map((c) => c.season);
 
+  test("só a célula da temporada atual é marcada como atual, em toda linha", () => {
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2024", older], ["2025", previous]),
+    );
+
+    for (const r of comparison?.rows ?? []) {
+      expect(r.cells.filter((c) => c.current).map((c) => c.season)).toEqual(["2026"]);
+    }
+    expect(comparison?.rows).toHaveLength(5);
+  });
+
   test("o melhor valor da linha pode ser o da temporada atual, mesmo incompleta", () => {
     const comparison = seasonComparison(
       "2026",
