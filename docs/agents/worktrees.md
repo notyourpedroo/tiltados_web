@@ -18,7 +18,7 @@ O worktree vem sem `node_modules`. Em vez de `npm install`, crie uma junction pa
 New-Item -ItemType Junction -Path node_modules -Target E:\Dev\Code\tiltados_web\node_modules
 ```
 
-Para apagar worktrees, use `node scripts/remover-worktree.mjs <caminho>... [--force]`: ele desfaz a junction e só então roda `git worktree remove`. Uma remoção recursiva com a junction no lugar apaga o `node_modules` do checkout principal. O `gh pr merge --delete-branch` faz essa remoção sozinho quando o branch do PR está em checkout num worktree, então rode o script nesse worktree antes do merge. Se o `node_modules` do checkout principal já foi apagado, `npm ci` no checkout principal o recria.
+Para apagar worktrees, use `node scripts/remover-worktree.mjs <caminho>... [--force]`: ele desfaz a junction e só então roda `git worktree remove`, e apaga a pasta vazia que o git deixa quando ela está em uso. Uma remoção recursiva com a junction no lugar apaga o `node_modules` do checkout principal. O `gh pr merge --delete-branch` faz essa remoção sozinho quando o branch do PR está em checkout num worktree, então rode o script nesse worktree antes do merge. Se o `node_modules` do checkout principal já foi apagado, `npm ci` no checkout principal o recria.
 
 Ticket que muda o `package.json` roda `npm ci` (ou o `npm install` da mudança) no próprio worktree, sem a junction: pela junction, o `npm install` reescreve o `node_modules` do checkout principal.
 
