@@ -7,9 +7,9 @@
 //   node scripts/remover-worktree.mjs .claude/worktrees/agent-a1b2c3
 //
 // --force passa ao git: descarta mudanças não commitadas do worktree.
-import { existsSync, lstatSync, unlinkSync } from "node:fs";
+import { existsSync, lstatSync, rmdirSync, unlinkSync } from "node:fs";
 import path from "node:path";
-import { findWorktree, git, main } from "./worktrees.mjs";
+import { findWorktree, git, listWorktrees, main, normalize } from "./worktrees.mjs";
 
 const args = process.argv.slice(2);
 const force = args.includes("--force");
@@ -39,10 +39,30 @@ for (const target of targets) {
   try {
     git("worktree", "remove", ...(force ? ["--force"] : []), dir);
     console.log(`Removido: ${dir}`);
+    leftover(dir);
   } catch (error) {
+    // Pasta em uso: o git tira o worktree do registro e esvazia a pasta, mas falha ao
+    // apagá-la. Aí não houve recusa, só a pasta que sobrou.
+    if (!listWorktrees().some((w) => normalize(w) === normalize(dir))) {
+      console.log(`Removido: ${dir}`);
+      leftover(dir);
+      continue;
+    }
     console.error(
       `${dir}: o git recusou a remoção (use --force para descartar mudanças):\n${error.stderr ?? error.message}`,
     );
+    failed = true;
+  }
+}
+
+// A pasta do worktree removido às vezes fica para trás, vazia, quando está em uso
+// (uma sessão com `cd` nela). Vazia, ela sai aqui; o rmdir nunca apaga pasta com conteúdo.
+function leftover(dir) {
+  if (!existsSync(dir)) return;
+  try {
+    rmdirSync(dir);
+  } catch {
+    console.error(`${dir}: a pasta ficou para trás (em uso ou com arquivos); apague-a à mão.`);
     failed = true;
   }
 }
