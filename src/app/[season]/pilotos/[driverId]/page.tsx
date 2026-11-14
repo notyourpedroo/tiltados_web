@@ -92,11 +92,11 @@ async function DriverSeasonComparison({ season, driverId }: { season: Season; dr
       })),
     ),
   ]);
-  const comparison = seasonComparison(driverProfile(current, driverId), previous);
+  const comparison = seasonComparison(season, driverProfile(current, driverId), previous);
   if (!comparison) return null;
   return (
     <div className="mt-10">
-      <SeasonComparison season={season} {...comparison} />
+      <SeasonComparison {...comparison} />
     </div>
   );
 }

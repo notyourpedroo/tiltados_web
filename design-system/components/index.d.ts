@@ -259,33 +259,26 @@ export interface TeammateDuelProps {
   first: DuelSide;
   second: DuelSide;
 }
-/** Médias por Sessão de um piloto numa temporada (SeasonAverages em src/lib/driver-season.ts). */
-export interface SeasonAverages {
-  /** Pontos por Sessão disputada. */
-  pointsPerSession: number;
-  /** Parte das Corridas disputadas que venceu, de 0 a 1; null sem Corrida. */
-  raceWinRate: number | null;
-  /** Parte das Sessões disputadas em que chegou no pódio, de 0 a 1. */
-  podiumRate: number;
-  /** Chegada média em Corridas; null sem Corrida. */
-  avgFinish: number | null;
-  /** Ritmo, em fração (0,012 = 1,2%); null sem tempo válido. */
-  ritmo: number | null;
-}
-/** Médias do piloto numa Temporada anterior (PreviousSeasonAverages em src/lib/driver-season.ts). */
-export interface PreviousSeasonAverages {
+/** Uma célula do Comparativo (ComparisonCell em src/lib/driver-season.ts). */
+export interface ComparisonCell {
   /** Temporada, ex.: "2025". */
   season: string;
-  averages: SeasonAverages;
+  /** Texto exibido; "—" quando a média não tem valor. */
+  text: string;
+}
+/** Uma linha do Comparativo, pronta para exibir (ComparisonRow em src/lib/driver-season.ts). */
+export interface ComparisonRow {
+  /** "Pontos por sessão", "Vitórias em corridas", "Pódios", "Chegada média" ou "Ritmo". */
+  label: string;
+  /** Uma célula por Temporada: as anteriores em ordem cronológica e a atual por último. */
+  cells: ComparisonCell[];
+  /** Contra a Temporada anterior mais recente disputada; null quando um dos lados é "—". */
+  trend: "melhor" | "pior" | "igual" | null;
 }
 export interface SeasonComparisonProps {
-  /** Temporada atual, ex.: "2026". */
-  season: string;
-  current: SeasonAverages;
-  /** Temporadas anteriores disputadas pelo piloto, em ordem cronológica. */
-  previous: PreviousSeasonAverages[];
-  /** Temporada anterior contra a qual a evolução compara: a mais recente disputada. */
-  reference: PreviousSeasonAverages;
+  /** Temporadas das colunas: as anteriores disputadas em ordem cronológica e a atual por último. */
+  seasons: string[];
+  rows: ComparisonRow[];
 }
 /** Status da Superlicença como a API escreve (LicenseStatus em src/lib/types.ts). */
 export type LicenseStatus =

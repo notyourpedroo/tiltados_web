@@ -526,58 +526,154 @@ describe("Comparativo com as Temporadas anteriores", () => {
   ): PreviousSeasonProfile[] =>
     seasons.map(([id, data]) => ({ season: id as Season, profile: driverProfile(data, driverId) }));
 
-  test("compara as médias por Sessão da temporada atual com as da Temporada anterior", () => {
+  /** Linha do Comparativo pelo rótulo. */
+  const row = (comparison: ReturnType<typeof seasonComparison>, label: string) =>
+    comparison?.rows.find((r) => r.label === label);
+  /** Textos exibidos numa linha, por Temporada, na ordem das colunas. */
+  const texts = (comparison: ReturnType<typeof seasonComparison>, label: string) =>
+    row(comparison, label)?.cells.map((c) => [c.season, c.text]);
+
+  test("traz as cinco linhas, na ordem da tela", () => {
     const comparison = seasonComparison(
+      "2026",
       driverProfile(current, 10),
       previousProfiles(10, ["2025", previous]),
     );
 
-    expect(comparison?.current).toEqual({
-      pointsPerSession: 15,
-      raceWinRate: 0,
-      podiumRate: 1,
-      avgFinish: 3,
-      ritmo: 0.01,
-    });
-    expect(comparison?.previous.map((p) => p.season)).toEqual(["2025"]);
-    // 7 + 25 + 12 pontos em 3 Sessões; Ritmo: 1%, 0% e 2%.
-    expect(comparison?.previous[0].averages).toEqual({
-      pointsPerSession: expect.closeTo(44 / 3),
-      raceWinRate: 0.5,
-      podiumRate: expect.closeTo(2 / 3),
-      avgFinish: 2.5,
-      ritmo: expect.closeTo(0.01),
-    });
-    expect(comparison?.reference.season).toBe("2025");
+    expect(comparison?.rows.map((r) => r.label)).toEqual([
+      "Pontos por sessão",
+      "Vitórias em corridas",
+      "Pódios",
+      "Chegada média",
+      "Ritmo",
+    ]);
+  });
+
+  test("compara as médias por Sessão da temporada atual com as da Temporada anterior", () => {
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2025", previous]),
+    );
+
+    // Anterior: 7 + 25 + 12 pontos em 3 Sessões; Ritmo: 1%, 0% e 2%.
+    // Atual: 15 pontos numa Corrida, 3º, Ritmo de 1%.
+    expect(texts(comparison, "Pontos por sessão")).toEqual([
+      ["2025", "14,7"],
+      ["2026", "15,0"],
+    ]);
+    expect(texts(comparison, "Vitórias em corridas")).toEqual([
+      ["2025", "50%"],
+      ["2026", "0%"],
+    ]);
+    expect(texts(comparison, "Pódios")).toEqual([
+      ["2025", "67%"],
+      ["2026", "100%"],
+    ]);
+    expect(texts(comparison, "Chegada média")).toEqual([
+      ["2025", "2,5"],
+      ["2026", "3,0"],
+    ]);
+    expect(texts(comparison, "Ritmo")).toEqual([
+      ["2025", "1,0%"],
+      ["2026", "1,0%"],
+    ]);
   });
 
   test("traz as várias Temporadas anteriores em ordem cronológica, com a seta contra a mais recente", () => {
     const comparison = seasonComparison(
+      "2026",
       driverProfile(current, 10),
       previousProfiles(10, ["2024", older], ["2025", previous]),
     );
 
-    expect(comparison?.previous.map((p) => p.season)).toEqual(["2024", "2025"]);
-    expect(comparison?.previous[0].averages.pointsPerSession).toBe(18);
-    expect(comparison?.reference.season).toBe("2025");
-    expect(comparison?.reference.averages.avgFinish).toBe(2.5);
+    expect(comparison?.seasons).toEqual(["2024", "2025", "2026"]);
+    expect(texts(comparison, "Pontos por sessão")).toEqual([
+      ["2024", "18,0"],
+      ["2025", "14,7"],
+      ["2026", "15,0"],
+    ]);
+    // 15,0 contra 14,7 de 2025, e não contra 18,0 de 2024.
+    expect(row(comparison, "Pontos por sessão")?.trend).toBe("melhor");
   });
 
   test("Temporada anterior sem Sessão do piloto fica de fora, e a seta vai contra a mais recente disputada", () => {
     const comparison = seasonComparison(
+      "2026",
       driverProfile(current, 10),
       previousProfiles(10, ["2023", older], ["2024", previous], ["2025", skipped]),
     );
 
-    expect(comparison?.previous.map((p) => p.season)).toEqual(["2023", "2024"]);
-    expect(comparison?.reference.season).toBe("2024");
-    expect(comparison?.reference.averages.avgFinish).toBe(2.5);
+    expect(comparison?.seasons).toEqual(["2023", "2024", "2026"]);
+    expect(texts(comparison, "Chegada média")).toEqual([
+      ["2023", "2,0"],
+      ["2024", "2,5"],
+      ["2026", "3,0"],
+    ]);
+    // 15,0 contra 14,7 de 2024, e não contra 18,0 de 2023.
+    expect(row(comparison, "Pontos por sessão")?.trend).toBe("melhor");
+  });
+
+  test("a evolução compara pelos textos exibidos, com menor melhor na Chegada média e no Ritmo", () => {
+    // Atual com chegada e Ritmo menores que a anterior, e menos pontos.
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(previous, 10),
+      previousProfiles(10, ["2025", current]),
+    );
+
+    expect(row(comparison, "Pontos por sessão")?.trend).toBe("pior");
+    expect(row(comparison, "Vitórias em corridas")?.trend).toBe("melhor");
+    expect(row(comparison, "Pódios")?.trend).toBe("pior");
+    expect(row(comparison, "Chegada média")?.trend).toBe("melhor");
+    // Ritmo de 1% nas duas.
+    expect(row(comparison, "Ritmo")?.trend).toBe("igual");
+
+    // Mais lento que a anterior: o Ritmo maior é pior.
+    const slower = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2025", older]),
+    );
+    expect(texts(slower, "Ritmo")).toEqual([
+      ["2025", "0,0%"],
+      ["2026", "1,0%"],
+    ]);
+    expect(row(slower, "Ritmo")?.trend).toBe("pior");
+    expect(row(slower, "Chegada média")?.trend).toBe("pior");
+  });
+
+  test('valores diferentes com o mesmo texto exibido dão "= igual"', () => {
+    // Ritmo de 1,01% na anterior contra 1% na atual: os dois aparecem como 1,0%.
+    const close = season(
+      [],
+      [
+        race,
+        [
+          result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+          result(race, 10, FERRARI, 3, { bestLap: "1:30.910" }),
+        ],
+      ],
+    );
+
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2025", close]),
+    );
+
+    expect(texts(comparison, "Ritmo")).toEqual([
+      ["2025", "1,0%"],
+      ["2026", "1,0%"],
+    ]);
+    expect(row(comparison, "Ritmo")?.trend).toBe("igual");
   });
 
   test("só aparece para quem tem Sessão disputada na temporada atual e em alguma Temporada anterior", () => {
     // Estreante: não correu nenhuma Temporada anterior.
     expect(
       seasonComparison(
+        "2026",
         driverProfile(current, 30),
         previousProfiles(30, ["2024", older], ["2025", previous]),
       ),
@@ -585,31 +681,61 @@ describe("Comparativo com as Temporadas anteriores", () => {
     // Correu as anteriores, mas ainda não a atual.
     expect(
       seasonComparison(
+        "2026",
         driverProfile(skipped, 10),
         previousProfiles(10, ["2024", older], ["2025", previous]),
       ),
     ).toBeNull();
     // Correu a atual, mas nenhuma das Temporadas anteriores tem Sessão dele.
     expect(
-      seasonComparison(driverProfile(current, 10), previousProfiles(10, ["2025", skipped])),
+      seasonComparison("2026", driverProfile(current, 10), previousProfiles(10, ["2025", skipped])),
     ).toBeNull();
     // Primeira temporada: não há Temporada anterior.
-    expect(seasonComparison(driverProfile(current, 10), [])).toBeNull();
+    expect(seasonComparison("2026", driverProfile(current, 10), [])).toBeNull();
   });
 
-  test("piloto que só correu Sprint não tem % de vitórias em Corridas nem chegada média", () => {
+  test("piloto que só correu Sprint não tem % de vitórias em Corridas nem chegada média, e fica sem evolução nelas", () => {
     const sprintOnly = season([], [sprint, [result(sprint, 10, FERRARI, 1)]]);
 
     const comparison = seasonComparison(
+      "2026",
       driverProfile(sprintOnly, 10),
       previousProfiles(10, ["2025", previous]),
     );
 
-    expect(comparison?.current).toMatchObject({
-      pointsPerSession: 8,
-      raceWinRate: null,
-      podiumRate: 1,
-      avgFinish: null,
-    });
+    expect(texts(comparison, "Pontos por sessão")).toEqual([
+      ["2025", "14,7"],
+      ["2026", "8,0"],
+    ]);
+    expect(texts(comparison, "Vitórias em corridas")).toEqual([
+      ["2025", "50%"],
+      ["2026", "—"],
+    ]);
+    expect(texts(comparison, "Pódios")).toEqual([
+      ["2025", "67%"],
+      ["2026", "100%"],
+    ]);
+    expect(texts(comparison, "Chegada média")).toEqual([
+      ["2025", "2,5"],
+      ["2026", "—"],
+    ]);
+    expect(row(comparison, "Vitórias em corridas")?.trend).toBeNull();
+    expect(row(comparison, "Chegada média")?.trend).toBeNull();
+  });
+
+  test("sem evolução quando a Temporada anterior é que não tem valor", () => {
+    const sprintOnly = season([], [sprint, [result(sprint, 10, FERRARI, 1)]]);
+
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2025", sprintOnly]),
+    );
+
+    expect(texts(comparison, "Chegada média")).toEqual([
+      ["2025", "—"],
+      ["2026", "3,0"],
+    ]);
+    expect(row(comparison, "Chegada média")?.trend).toBeNull();
   });
 });
