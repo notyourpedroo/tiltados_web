@@ -162,6 +162,8 @@ export interface ComparisonCell {
   season: Season;
   /** Texto exibido; "—" quando a média não tem valor. */
   text: string;
+  /** Melhor valor da linha entre as Temporadas exibidas; o negrito da tela. */
+  best: boolean;
 }
 
 /** Evolução da temporada atual contra a Temporada anterior mais recente disputada. */
@@ -245,13 +247,35 @@ export function seasonComparison(
         const value = row.value(a);
         return value === null ? "—" : row.format(value);
       };
+      const best = bestValues(
+        row,
+        columns.map((c) => row.value(c.averages)),
+      );
       return {
         label: row.label,
-        cells: columns.map((c) => ({ season: c.season, text: text(c.averages) })),
+        cells: columns.map((c, i) => ({
+          season: c.season,
+          text: text(c.averages),
+          best: best[i],
+        })),
         trend: comparisonTrend(row, row.value(reference.averages), row.value(now)),
       };
     }),
   };
+}
+
+/**
+ * Quais valores da linha são o melhor entre as Temporadas exibidas, comparando
+ * como aparecem na tela. Os sem valor ficam fora; nenhum é o melhor com menos
+ * de dois valores ou com a linha toda igual.
+ */
+function bestValues(row: RowDefinition, values: (number | null)[]): boolean[] {
+  const present = values.filter((v) => v !== null);
+  const texts = new Set(present.map(row.format));
+  if (present.length < 2 || texts.size < 2) return values.map(() => false);
+  const sign = row.higherIsBetter ? 1 : -1;
+  const top = row.format(sign * Math.max(...present.map((v) => sign * v)));
+  return values.map((v) => v !== null && row.format(v) === top);
 }
 
 /** Melhora ou piora, comparando os valores como aparecem na tela. */

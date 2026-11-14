@@ -265,6 +265,8 @@ export interface ComparisonCell {
   season: string;
   /** Texto exibido; "—" quando a média não tem valor. */
   text: string;
+  /** Melhor valor da linha entre as Temporadas exibidas, em 900; empatados todos marcados. */
+  best: boolean;
 }
 /** Uma linha do Comparativo, pronta para exibir (ComparisonRow em src/lib/driver-season.ts). */
 export interface ComparisonRow {

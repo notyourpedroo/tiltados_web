@@ -532,6 +532,158 @@ describe("Comparativo com as Temporadas anteriores", () => {
   /** Textos exibidos numa linha, por Temporada, na ordem das colunas. */
   const texts = (comparison: ReturnType<typeof seasonComparison>, label: string) =>
     row(comparison, label)?.cells.map((c) => [c.season, c.text]);
+  /** Temporadas com o melhor valor da linha (as que ficam em negrito). */
+  const bests = (comparison: ReturnType<typeof seasonComparison>, label: string) =>
+    row(comparison, label)
+      ?.cells.filter((c) => c.best)
+      .map((c) => c.season);
+
+  test("o melhor valor da linha pode ser o da temporada atual, mesmo incompleta", () => {
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2025", previous]),
+    );
+
+    // 15,0 contra 14,7; 100% contra 67%.
+    expect(bests(comparison, "Pontos por sessão")).toEqual(["2026"]);
+    expect(bests(comparison, "Pódios")).toEqual(["2026"]);
+  });
+
+  test("o melhor valor da linha pode ser o de uma Temporada anterior", () => {
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2025", previous]),
+    );
+
+    // 50% contra 0%: a atual não fica em negrito.
+    expect(bests(comparison, "Vitórias em corridas")).toEqual(["2025"]);
+  });
+
+  test("na Chegada média e no Ritmo o melhor é o menor valor", () => {
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2025", older]),
+    );
+
+    // Chegada 2,0 contra 3,0; Ritmo 0,0% contra 1,0%.
+    expect(bests(comparison, "Chegada média")).toEqual(["2025"]);
+    expect(bests(comparison, "Ritmo")).toEqual(["2025"]);
+
+    const reversed = seasonComparison(
+      "2026",
+      driverProfile(older, 10),
+      previousProfiles(10, ["2025", current]),
+    );
+    expect(bests(reversed, "Chegada média")).toEqual(["2026"]);
+    expect(bests(reversed, "Ritmo")).toEqual(["2026"]);
+  });
+
+  test("linha com o mesmo valor em todas as Temporadas fica sem melhor", () => {
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2025", previous]),
+    );
+
+    // Ritmo de 1,0% nas duas.
+    expect(bests(comparison, "Ritmo")).toEqual([]);
+  });
+
+  test('"—" fica fora da disputa e não impede o melhor entre os outros valores', () => {
+    const sprintOnly = season([], [sprint, [result(sprint, 10, FERRARI, 1)]]);
+
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(sprintOnly, 10),
+      previousProfiles(10, ["2024", older], ["2025", previous]),
+    );
+
+    // Chegada 2,0 e 2,5 nas anteriores; a atual, só com Sprint, fica em "—".
+    expect(texts(comparison, "Chegada média")).toEqual([
+      ["2024", "2,0"],
+      ["2025", "2,5"],
+      ["2026", "—"],
+    ]);
+    expect(bests(comparison, "Chegada média")).toEqual(["2024"]);
+  });
+
+  test('linha com um único valor, as outras em "—", fica sem melhor', () => {
+    const sprintOnly = season([], [sprint, [result(sprint, 10, FERRARI, 1)]]);
+
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(sprintOnly, 10),
+      previousProfiles(10, ["2025", previous]),
+    );
+
+    // 50% na anterior contra "—" na atual: não houve comparação.
+    expect(bests(comparison, "Vitórias em corridas")).toEqual([]);
+    expect(bests(comparison, "Chegada média")).toEqual([]);
+  });
+
+  test("Temporadas empatadas no melhor valor são todas o melhor", () => {
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2024", older], ["2025", previous]),
+    );
+
+    // Pódios 100%, 67% e 100%.
+    expect(bests(comparison, "Pódios")).toEqual(["2024", "2026"]);
+  });
+
+  test("o melhor é escolhido entre todas as Temporadas anteriores, não só a mais recente", () => {
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2024", older], ["2025", previous]),
+    );
+
+    // Pontos 18,0, 14,7 e 15,0; Chegada 2,0, 2,5 e 3,0.
+    expect(bests(comparison, "Pontos por sessão")).toEqual(["2024"]);
+    expect(bests(comparison, "Chegada média")).toEqual(["2024"]);
+  });
+
+  test("valores diferentes com o mesmo texto exibido empatam no melhor", () => {
+    // Ritmo de 2% numa, 1,01% noutra: 2,0% e 1,0% na tela.
+    const slow = season(
+      [],
+      [
+        race,
+        [
+          result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+          result(race, 10, FERRARI, 3, { bestLap: "1:31.800" }),
+        ],
+      ],
+    );
+    const close = season(
+      [],
+      [
+        race,
+        [
+          result(race, 20, MCLAREN, 1, { bestLap: "1:30.000" }),
+          result(race, 10, FERRARI, 3, { bestLap: "1:30.910" }),
+        ],
+      ],
+    );
+
+    const comparison = seasonComparison(
+      "2026",
+      driverProfile(current, 10),
+      previousProfiles(10, ["2024", slow], ["2025", close]),
+    );
+
+    // O 1% da atual e o 1,01% de 2025 aparecem iguais: os dois são o melhor.
+    expect(texts(comparison, "Ritmo")).toEqual([
+      ["2024", "2,0%"],
+      ["2025", "1,0%"],
+      ["2026", "1,0%"],
+    ]);
+    expect(bests(comparison, "Ritmo")).toEqual(["2025", "2026"]);
+  });
 
   test("traz as cinco linhas, na ordem da tela", () => {
     const comparison = seasonComparison(

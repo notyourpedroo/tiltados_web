@@ -9,8 +9,9 @@ const TREND: Record<ComparisonTrend, string> = {
 
 /**
  * Médias por Sessão do piloto em cada Temporada anterior inteira e na temporada
- * atual até agora, com a indicação de melhora ou piora contra a referência. Só
- * desenha as linhas prontas de `seasonComparison`.
+ * atual até agora, com a indicação de melhora ou piora contra a referência e o
+ * melhor valor de cada linha em negrito. Só desenha as linhas prontas de
+ * `seasonComparison`.
  */
 export function SeasonComparison({ seasons, rows }: SeasonComparisonData) {
   const season = seasons.at(-1);
@@ -40,8 +41,8 @@ export function SeasonComparison({ seasons, rows }: SeasonComparisonData) {
                 <td
                   key={cell.season}
                   className={`tabular py-2 text-right ${
-                    i === row.cells.length - 1 ? "font-black" : "text-text-2"
-                  }`}
+                    i === row.cells.length - 1 ? "text-text" : "text-text-2"
+                  } ${cell.best ? "font-black" : "font-normal"}`}
                 >
                   {cell.text}
                 </td>
