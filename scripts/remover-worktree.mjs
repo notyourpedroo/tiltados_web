@@ -38,26 +38,24 @@ for (const target of targets) {
   if (existsSync(modules) && lstatSync(modules).isSymbolicLink()) unlinkSync(modules);
   try {
     git("worktree", "remove", ...(force ? ["--force"] : []), dir);
-    console.log(`Removido: ${dir}`);
-    leftover(dir);
   } catch (error) {
     // Pasta em uso: o git tira o worktree do registro e esvazia a pasta, mas falha ao
     // apagá-la. Aí não houve recusa, só a pasta que sobrou.
-    if (!listWorktrees().some((w) => normalize(w) === normalize(dir))) {
-      console.log(`Removido: ${dir}`);
-      leftover(dir);
+    if (listWorktrees().some((w) => normalize(w) === normalize(dir))) {
+      console.error(
+        `${dir}: o git recusou a remoção (use --force para descartar mudanças):\n${error.stderr ?? error.message}`,
+      );
+      failed = true;
       continue;
     }
-    console.error(
-      `${dir}: o git recusou a remoção (use --force para descartar mudanças):\n${error.stderr ?? error.message}`,
-    );
-    failed = true;
   }
+  console.log(`Removido: ${dir}`);
+  removerPastaVazia(dir);
 }
 
 // A pasta do worktree removido às vezes fica para trás, vazia, quando está em uso
 // (uma sessão com `cd` nela). Vazia, ela sai aqui; o rmdir nunca apaga pasta com conteúdo.
-function leftover(dir) {
+function removerPastaVazia(dir) {
   if (!existsSync(dir)) return;
   try {
     rmdirSync(dir);
