@@ -1,5 +1,6 @@
 // Contas de um piloto numa temporada, a partir dos dados já carregados (não busca
 // nada na API). Espelho do perfil da equipe (team-season.ts).
+import { decimal, percent } from "./format";
 import { lapToMs } from "./lap";
 import type { SeasonData, Session, SessionResult } from "./season";
 import type { Season } from "./types";
@@ -155,15 +156,68 @@ export interface PreviousSeasonAverages {
   averages: SeasonAverages;
 }
 
+/** Uma célula do Comparativo: a média de uma Temporada como aparece na tela. */
+export interface ComparisonCell {
+  /** Temporada, ex.: "2025". */
+  season: Season;
+  /** Texto exibido; "—" quando a média não tem valor. */
+  text: string;
+}
+
+/** Evolução da temporada atual contra a Temporada anterior mais recente disputada. */
+export type ComparisonTrend = "melhor" | "pior" | "igual";
+
+/** Uma linha do Comparativo, pronta para exibir. */
+export interface ComparisonRow {
+  label: string;
+  /** Uma célula por Temporada: as anteriores em ordem cronológica e a atual por último. */
+  cells: ComparisonCell[];
+  /** null quando a atual ou a referência não têm valor. */
+  trend: ComparisonTrend | null;
+}
+
 /** Comparativo da temporada atual com as Temporadas anteriores do piloto. */
 export interface SeasonComparisonData {
-  /** Médias da temporada atual até agora. */
-  current: SeasonAverages;
-  /** Temporadas anteriores em que o piloto disputou Sessão, em ordem cronológica. */
-  previous: PreviousSeasonAverages[];
-  /** Referência de "▲ melhor / ▼ pior": a mais recente de `previous`. */
-  reference: PreviousSeasonAverages;
+  /** Temporadas das colunas: as anteriores disputadas em ordem cronológica e a atual por último. */
+  seasons: Season[];
+  rows: ComparisonRow[];
 }
+
+interface RowDefinition {
+  label: string;
+  value: (a: SeasonAverages) => number | null;
+  format: (n: number) => string;
+  /** Maior é melhor (pontos, vitórias, pódios) ou menor é melhor (chegada, Ritmo). */
+  higherIsBetter: boolean;
+}
+
+const COMPARISON_ROWS: RowDefinition[] = [
+  {
+    label: "Pontos por sessão",
+    value: (a) => a.pointsPerSession,
+    format: (n) => decimal(n),
+    higherIsBetter: true,
+  },
+  {
+    label: "Vitórias em corridas",
+    value: (a) => a.raceWinRate,
+    format: (n) => percent(n, 0),
+    higherIsBetter: true,
+  },
+  {
+    label: "Pódios",
+    value: (a) => a.podiumRate,
+    format: (n) => percent(n, 0),
+    higherIsBetter: true,
+  },
+  {
+    label: "Chegada média",
+    value: (a) => a.avgFinish,
+    format: (n) => decimal(n),
+    higherIsBetter: false,
+  },
+  { label: "Ritmo", value: (a) => a.ritmo, format: (n) => percent(n), higherIsBetter: false },
+];
 
 /**
  * Comparativo da temporada atual até agora com as Temporadas anteriores inteiras,
@@ -172,16 +226,44 @@ export interface SeasonComparisonData {
  * ele não tem Sessão disputada na atual ou em nenhuma Temporada anterior.
  */
 export function seasonComparison(
+  season: Season,
   current: DriverProfile,
   previous: PreviousSeasonProfile[],
 ): SeasonComparisonData | null {
   const now = seasonAverages(current);
-  const played = previous.flatMap(({ season, profile }) => {
-    const averages = seasonAverages(profile);
-    return averages ? [{ season, averages }] : [];
+  const played = previous.flatMap((p) => {
+    const averages = seasonAverages(p.profile);
+    return averages ? [{ season: p.season, averages }] : [];
   });
   const reference = played.at(-1);
-  return now && reference ? { current: now, previous: played, reference } : null;
+  if (!now || !reference) return null;
+  const columns: PreviousSeasonAverages[] = [...played, { season, averages: now }];
+  return {
+    seasons: columns.map((c) => c.season),
+    rows: COMPARISON_ROWS.map((row) => {
+      const text = (a: SeasonAverages) => {
+        const value = row.value(a);
+        return value === null ? "—" : row.format(value);
+      };
+      return {
+        label: row.label,
+        cells: columns.map((c) => ({ season: c.season, text: text(c.averages) })),
+        trend: comparisonTrend(row, row.value(reference.averages), row.value(now)),
+      };
+    }),
+  };
+}
+
+/** Melhora ou piora, comparando os valores como aparecem na tela. */
+function comparisonTrend(
+  row: RowDefinition,
+  before: number | null,
+  now: number | null,
+): ComparisonTrend | null {
+  if (before === null || now === null) return null;
+  if (row.format(before) === row.format(now)) return "igual";
+  const better = row.higherIsBetter ? now > before : now < before;
+  return better ? "melhor" : "pior";
 }
 
 function seasonAverages({ stats, performance, sessions }: DriverProfile): SeasonAverages | null {
