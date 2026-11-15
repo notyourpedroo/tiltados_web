@@ -1,5 +1,68 @@
-import { describe, expect, test } from "vitest";
-import { tooltipPlacement } from "./tooltip";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { openTimer, tooltipPlacement } from "./tooltip";
+
+describe("Temporizador de abertura do tooltip", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test("com o mouse, abre exatamente no fim do atraso e não antes", () => {
+    const open = vi.fn();
+    const timer = openTimer(open, 500);
+    timer.mouseEnter();
+    vi.advanceTimersByTime(499);
+    expect(open).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  test("não abre se o mouse sai antes do fim do atraso", () => {
+    const open = vi.fn();
+    const timer = openTimer(open, 500);
+    timer.mouseEnter();
+    vi.advanceTimersByTime(300);
+    timer.mouseLeave();
+    vi.advanceTimersByTime(1000);
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  test("o foco pelo teclado abre na hora e não abre de novo quando o atraso venceria", () => {
+    const open = vi.fn();
+    const timer = openTimer(open, 500);
+    timer.mouseEnter();
+    vi.advanceTimersByTime(200);
+    timer.keyboardFocus();
+    expect(open).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(1000);
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  test("não abre depois de descartado, como quando o card sai da tela na contagem", () => {
+    const open = vi.fn();
+    const timer = openTimer(open, 500);
+    timer.mouseEnter();
+    vi.advanceTimersByTime(300);
+    timer.dispose();
+    vi.advanceTimersByTime(1000);
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  test("sair e voltar a entrar recomeça a contagem", () => {
+    const open = vi.fn();
+    const timer = openTimer(open, 500);
+    timer.mouseEnter();
+    vi.advanceTimersByTime(400);
+    timer.mouseLeave();
+    timer.mouseEnter();
+    vi.advanceTimersByTime(499);
+    expect(open).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+});
 
 const viewport = { width: 1280, height: 800 };
 // Card de 200 px de largura e 100 px de altura.

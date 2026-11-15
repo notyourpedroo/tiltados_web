@@ -1,4 +1,37 @@
 // Onde o balão do Tooltip (components/Tooltip.tsx) abre: dentro da janela, sem rolagem.
+// E quando: com o mouse, só depois de o cursor ficar parado sobre o card.
+
+/** Quanto tempo o mouse fica sobre o card antes de o balão abrir, em ms. */
+export const HOVER_OPEN_DELAY = 500;
+
+/** Os eventos do card que decidem quando o balão abre. */
+export interface OpenTimer {
+  /** O mouse entrou no card: abre depois do atraso. */
+  mouseEnter(): void;
+  /** O card recebeu foco pelo teclado: abre na hora e cancela a abertura marcada. */
+  keyboardFocus(): void;
+  /** O mouse saiu do card: cancela a abertura marcada. */
+  mouseLeave(): void;
+  /** O card saiu da tela: nada marcado abre depois. */
+  dispose(): void;
+}
+
+/** Temporizador de abertura do balão: chama `open` quando o card pede a descrição. */
+export function openTimer(open: () => void, delay: number): OpenTimer {
+  let pending: ReturnType<typeof setTimeout> | undefined;
+  const cancel = () => clearTimeout(pending);
+  return {
+    mouseEnter() {
+      pending = setTimeout(open, delay);
+    },
+    keyboardFocus() {
+      cancel();
+      open();
+    },
+    mouseLeave: cancel,
+    dispose: cancel,
+  };
+}
 
 /** Folga mínima entre o balão e a borda da janela, em px. */
 const EDGE = 16;
