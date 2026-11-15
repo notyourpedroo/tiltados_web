@@ -5,13 +5,20 @@ import {
   useEffect,
   useId,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   useSyncExternalStore,
+  type FocusEvent,
   type MouseEvent,
   type ReactNode,
 } from "react";
-import { tooltipPlacement, type TooltipPlacement } from "@/lib/tooltip";
+import {
+  HOVER_OPEN_DELAY,
+  openTimer,
+  tooltipPlacement,
+  type TooltipPlacement,
+} from "@/lib/tooltip";
 
 // O critério é o dispositivo ter hover (mouse), não a largura da janela.
 const HOVER_QUERY = "(hover: hover)";
@@ -28,8 +35,8 @@ const hasHoverOnServer = () => true;
 let closeOpen: (() => void) | null = null;
 
 /**
- * Card com um tooltip de descrição. Com hover, abre ao passar o mouse ou focar pelo
- * teclado e fecha ao sair; sem hover, abre e fecha com toque, fecha com toque fora e
+ * Card com um tooltip de descrição. Com hover, abre depois de o mouse ficar parado sobre
+ * o card (`HOVER_OPEN_DELAY`) ou na hora ao focar pelo teclado, e fecha na hora ao sair; sem hover, abre e fecha com toque, fecha com toque fora e
  * só um fica aberto por vez. Tocar num link dentro do card navega e fecha o tooltip.
  * Abre abaixo do card, ou acima quando abaixo não cabe, e se reposiciona ao rolar ou
  * redimensionar a janela. Esc fecha. A descrição liga ao card por `aria-describedby`.
@@ -57,6 +64,8 @@ export function Tooltip({
     closeOpen = close;
     setOpen(true);
   }, [close]);
+  const timer = useMemo(() => openTimer(show, HOVER_OPEN_DELAY), [show]);
+  useEffect(() => () => timer.dispose(), [timer]);
 
   // Encaixa o balão na janela ao abrir e a cada rolagem ou redimensionamento.
   useLayoutEffect(() => {
@@ -100,6 +109,15 @@ export function Tooltip({
     [close],
   );
 
+  const onMouseLeave = () => {
+    timer.mouseLeave();
+    close();
+  };
+  // Só o foco pelo teclado abre: o que vem de um clique deixa o hover seguir o seu tempo.
+  const onFocus = (event: FocusEvent) => {
+    if ((event.target as Element).matches(":focus-visible")) timer.keyboardFocus();
+  };
+
   const onClick = (event: MouseEvent) => {
     if (hover) return;
     if (open || (event.target as Element).closest("a")) close();
@@ -112,9 +130,9 @@ export function Tooltip({
       tabIndex={0}
       aria-describedby={id}
       className={`relative outline-none focus-visible:ring-2 focus-visible:ring-text-2 ${hover ? "" : "cursor-pointer"} ${className}`}
-      onMouseEnter={hover ? show : undefined}
-      onMouseLeave={hover ? close : undefined}
-      onFocus={hover ? show : undefined}
+      onMouseEnter={hover ? timer.mouseEnter : undefined}
+      onMouseLeave={hover ? onMouseLeave : undefined}
+      onFocus={hover ? onFocus : undefined}
       onBlur={hover ? close : undefined}
       onClick={onClick}
       onKeyDown={(event) => event.key === "Escape" && close()}
