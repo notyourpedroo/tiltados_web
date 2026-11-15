@@ -106,8 +106,8 @@ const MEASURE = `(async () => {
     const label = (card.querySelector("p")?.textContent ?? "").replace("ⓘ", "").trim();
     card.scrollIntoView({ block: "end" });
     // O load chega antes da hidratação: tenta abrir até o React ligar os eventos.
-    // Com hover, o Tooltip só abre na hora no foco que casa com :focus-visible, e o
-    // card.focus() do headless casa; se todo card der "não abriu", comece por aí.
+    // Com hover, o onFocus do Tooltip só abre na hora no foco que casa com :focus-visible,
+    // e o card.focus() do headless casa; se todo card der "não abriu", comece por aí.
     for (let tries = 0; bubble.hidden && tries < 30; tries++) {
       if (hover) {
         card.blur();
