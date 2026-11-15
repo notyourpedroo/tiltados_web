@@ -62,6 +62,16 @@ describe("Temporizador de abertura do tooltip", () => {
     vi.advanceTimersByTime(1);
     expect(open).toHaveBeenCalledTimes(1);
   });
+
+  test("entrar de novo sem ter saído não marca uma segunda abertura", () => {
+    const open = vi.fn();
+    const timer = openTimer(open, 500);
+    timer.mouseEnter();
+    timer.mouseEnter();
+    timer.mouseLeave();
+    vi.advanceTimersByTime(1000);
+    expect(open).not.toHaveBeenCalled();
+  });
 });
 
 const viewport = { width: 1280, height: 800 };
