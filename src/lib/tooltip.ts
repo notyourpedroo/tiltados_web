@@ -22,6 +22,7 @@ export function openTimer(open: () => void, delay: number): OpenTimer {
   const cancel = () => clearTimeout(pending);
   return {
     mouseEnter() {
+      cancel();
       pending = setTimeout(open, delay);
     },
     keyboardFocus() {
