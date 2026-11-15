@@ -36,10 +36,11 @@ let closeOpen: (() => void) | null = null;
 
 /**
  * Card com um tooltip de descrição. Com hover, abre depois de o mouse ficar parado sobre
- * o card (`HOVER_OPEN_DELAY`) ou na hora ao focar pelo teclado, e fecha na hora ao sair; sem hover, abre e fecha com toque, fecha com toque fora e
- * só um fica aberto por vez. Tocar num link dentro do card navega e fecha o tooltip.
- * Abre abaixo do card, ou acima quando abaixo não cabe, e se reposiciona ao rolar ou
- * redimensionar a janela. Esc fecha. A descrição liga ao card por `aria-describedby`.
+ * o card (`HOVER_OPEN_DELAY`) ou na hora ao focar pelo teclado, e fecha na hora ao sair;
+ * sem hover, abre e fecha com toque, fecha com toque fora e só um fica aberto por vez.
+ * Tocar num link dentro do card navega e fecha o tooltip. Abre abaixo do card, ou acima
+ * quando abaixo não cabe, e se reposiciona ao rolar ou redimensionar a janela. Esc fecha
+ * e cancela a abertura marcada. A descrição liga ao card por `aria-describedby`.
  */
 export function Tooltip({
   description,
@@ -109,7 +110,8 @@ export function Tooltip({
     [close],
   );
 
-  const onMouseLeave = () => {
+  // Sair do card e apertar Esc fecham na hora e cancelam a abertura marcada.
+  const cancelAndClose = () => {
     timer.mouseLeave();
     close();
   };
@@ -131,11 +133,11 @@ export function Tooltip({
       aria-describedby={id}
       className={`relative outline-none focus-visible:ring-2 focus-visible:ring-text-2 ${hover ? "" : "cursor-pointer"} ${className}`}
       onMouseEnter={hover ? timer.mouseEnter : undefined}
-      onMouseLeave={hover ? onMouseLeave : undefined}
+      onMouseLeave={hover ? cancelAndClose : undefined}
       onFocus={hover ? onFocus : undefined}
       onBlur={hover ? close : undefined}
       onClick={onClick}
-      onKeyDown={(event) => event.key === "Escape" && close()}
+      onKeyDown={(event) => event.key === "Escape" && cancelAndClose()}
     >
       {children}
       <div
