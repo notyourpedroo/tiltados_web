@@ -35,12 +35,8 @@ const hasHoverOnServer = () => true;
 let closeOpen: (() => void) | null = null;
 
 /**
- * Card com um tooltip de descrição. Com hover, abre depois de o mouse ficar parado sobre
- * o card (`HOVER_OPEN_DELAY`) ou na hora ao focar pelo teclado, e fecha na hora ao sair;
- * sem hover, abre e fecha com toque, fecha com toque fora e só um fica aberto por vez.
- * Tocar num link dentro do card navega e fecha o tooltip. Abre abaixo do card, ou acima
- * quando abaixo não cabe, e se reposiciona ao rolar ou redimensionar a janela. Esc fecha
- * e cancela a abertura marcada. A descrição liga ao card por `aria-describedby`.
+ * Card com um tooltip de descrição. O comportamento (hover, teclado, toque, Esc, posição)
+ * está na ficha `design-system/components/Tooltip/README.md`: mudou aqui, muda lá.
  */
 export function Tooltip({
   description,
@@ -116,6 +112,8 @@ export function Tooltip({
     close();
   };
   // Só o foco pelo teclado abre: o que vem de um clique deixa o hover seguir o seu tempo.
+  // O scripts/rolagem.mjs abre os balões com card.focus(), que no Chrome headless casa
+  // com :focus-visible; mudar este critério pode quebrar a varredura.
   const onFocus = (event: FocusEvent) => {
     if ((event.target as Element).matches(":focus-visible")) timer.keyboardFocus();
   };
